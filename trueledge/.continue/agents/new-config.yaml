@@ -1,0 +1,6 @@
+models:
+  - name: Claude Opus (AgentRouter)
+    provider: openai
+    model: claude-opus
+    apiBase: https://agentrouter.org/v1
+    apiKey: sk-r7HimshLf0bs3uCgtYQRdyHVofPf5t3mPwSXksZ05B121ha8Y

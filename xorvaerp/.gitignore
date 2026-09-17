@@ -1,0 +1,22 @@
+# ─── .NET ───────────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+
+# ─── Node / Vite ────────────────────────────────────────
+node_modules/
+dist/
+*.local
+
+# ─── Secrets & environment ──────────────────────────────
+# (dev secrets live in dotnet user-secrets, never in the repo)
+.env
+.env.*
+appsettings.*.Local.json
+
+# ─── OS / editor noise ──────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log

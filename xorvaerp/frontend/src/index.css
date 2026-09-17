@@ -1,0 +1,141 @@
+/* ═══════════════════════════════════════════════════════════════
+   XORVA ERP — Global Design System (Tailwind CSS v4)
+   Refined-violet, soft-flat. Dual theme (light + dark).
+   The app's existing color names (void/abyss/surface/frost/primary…)
+   are re-mapped to runtime, theme-aware variables so every utility
+   re-resolves when <html data-theme> flips. Values below are the
+   approved direction from docs/design-preview.html.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import "tailwindcss";
+
+/* Map existing Tailwind color names → runtime --c-* vars.
+   `inline` makes utilities reference the --c-* vars directly (not a
+   frozen build-time value), which is what makes theming work. */
+@theme inline {
+  --color-void:       var(--c-ground);   /* page background            */
+  --color-abyss:      var(--c-surface);  /* cards, sidebar, modals     */
+  --color-surface:    var(--c-inset);    /* inputs, hover, secondary   */
+  --color-elevated:   var(--c-elevated); /* nested surface             */
+  --color-hover:      var(--c-hover);
+
+  --color-primary:    var(--c-brand);    /* buttons, active            */
+  --color-glow:       var(--c-brand-ink);/* hover, focus, links        */
+  --color-brand-2:    var(--c-brand-2);  /* gradient partner           */
+  --color-brand-weak: var(--c-brand-weak);/* badges, active nav fill   */
+
+  --color-frost:      var(--c-ink);      /* primary text               */
+  --color-frost-dim:  var(--c-muted);    /* secondary text             */
+  --color-dim:        var(--c-faint);    /* muted text, labels         */
+  --color-border:     var(--c-border);   /* hairlines                  */
+
+  --color-danger:     var(--c-bad);
+  --color-success:    var(--c-ok);
+  --color-warning:    var(--c-warn);
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Consolas", monospace;
+}
+
+/* ─── Runtime palette — LIGHT is the base ─────────────────────── */
+:root {
+  --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-elevated:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+  --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+  --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+  --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+  --c-ok:#12A150; --c-warn:#B7791F; --c-bad:#DA3B3B;
+  color-scheme: light;
+}
+
+/* ─── Dark override (set explicitly via the header toggle) ─────── */
+:root[data-theme="dark"] {
+  --c-ground:#090910; --c-surface:#12121B; --c-elevated:#1A1A27; --c-inset:#191925; --c-hover:#20202F;
+  --c-border:#262639; --c-border-strong:#33334B;
+  --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+  --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+  --c-ok:#3DDC87; --c-warn:#F5C15A; --c-bad:#F26D6C;
+  color-scheme: dark;
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  background-color: var(--c-ground);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+::selection { background: var(--c-brand-weak); color: var(--c-brand-ink); }
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-brand); }
+
+/* ─── Soft elevation (theme-aware) ────────────────────────────── */
+:root {
+  --c-shadow-sm: 0 1px 2px rgba(22,22,45,.05);
+  --c-shadow:    0 1px 2px rgba(22,22,45,.04), 0 8px 24px rgba(22,22,45,.07);
+}
+:root[data-theme="dark"] {
+  --c-shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --c-shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.4);
+}
+.shadow-soft    { box-shadow: var(--c-shadow); }
+.shadow-soft-sm { box-shadow: var(--c-shadow-sm); }
+
+/* ─── Landing-page motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@keyframes xorva-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-26px); }
+}
+.animate-float { animation: xorva-float 9s ease-in-out infinite; }
+@keyframes xorva-float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50%      { transform: translateY(22px) translateX(-14px); }
+}
+.animate-float-slow { animation: xorva-float-slow 13s ease-in-out infinite; }
+
+/* Editorial display face (available if needed). */
+.font-display { font-family: "Instrument Serif", Georgia, "Times New Roman", serif; font-weight: 400; }
+
+/* ─── Landing: glass + gradient mesh (modern SaaS look) ───────── */
+.glass {
+  background: color-mix(in srgb, var(--c-surface) 62%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid color-mix(in srgb, var(--c-border) 80%, transparent);
+}
+.mesh {
+  background:
+    radial-gradient(45% 45% at 18% 12%,  color-mix(in srgb, var(--c-brand)    38%, transparent), transparent 70%),
+    radial-gradient(42% 42% at 85% 18%,  color-mix(in srgb, var(--c-brand-ink) 34%, transparent), transparent 70%),
+    radial-gradient(55% 55% at 55% 105%, color-mix(in srgb, var(--c-brand-2)   26%, transparent), transparent 72%);
+}
+.text-gradient {
+  background: linear-gradient(100deg, var(--c-brand-2), var(--c-brand-ink));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+@keyframes xorva-spin { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: xorva-spin 20s linear infinite; }
+@keyframes xorva-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-marquee { animation: xorva-marquee 28s linear infinite; }
+@keyframes xorva-toast-in { from { opacity: 0; transform: translateX(16px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow, .animate-marquee, .animate-float, .animate-float-slow { animation: none !important; }
+}
+.grid-bg {
+  background-image:
+    linear-gradient(var(--c-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+          mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+}

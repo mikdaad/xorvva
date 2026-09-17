@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Modules/">
+    <Project Path="Modules/Xorva.Modules.Accounting/Xorva.Modules.Accounting.csproj" />
+    <Project Path="Modules/Xorva.Modules.Approvals/Xorva.Modules.Approvals.csproj" />
+    <Project Path="Modules/Xorva.Modules.Commerce/Xorva.Modules.Commerce.csproj" />
+    <Project Path="Modules/Xorva.Modules.Auth/Xorva.Modules.Auth.csproj" />
+    <Project Path="Modules/Xorva.Modules.HR/Xorva.Modules.HR.csproj" />
+    <Project Path="Modules/Xorva.Modules.Platform/Xorva.Modules.Platform.csproj" />
+    <Project Path="Modules/Xorva.Modules.Tenants/Xorva.Modules.Tenants.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Xorva.Tests.Integration/Xorva.Tests.Integration.csproj" />
+    <Project Path="Tests/Xorva.Tests.Unit/Xorva.Tests.Unit.csproj" />
+  </Folder>
+  <Project Path="Xorva.API/Xorva.API.csproj" />
+  <Project Path="Xorva.Core/Xorva.Core.csproj" />
+  <Project Path="Xorva.Infrastructure/Xorva.Infrastructure.csproj" />
+</Solution>

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xorva — How We Solve It, Dynamically</title>
+<style>
+  :root{
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C;
+    --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+    --r:16px; --r-sm:11px;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+      --c-border:#262639; --c-border-strong:#33334B;
+      --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+      --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+      --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8;
+      --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+      --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+    }
+  }
+  :root[data-theme="light"]{ --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC; --c-border:#E7E7F1; --c-border-strong:#DADAE8; --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6; --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA; --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA; --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14); --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30); }
+  :root[data-theme="dark"]{ --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F; --c-border:#262639; --c-border-strong:#33334B; --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83; --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6; --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8; --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14); --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7); --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85); }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--c-ground); color:var(--c-ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:1060px; margin:0 auto; padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 64px; }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--c-brand-ink); }
+
+  .head{ display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+  .brandrow{ display:flex; align-items:center; gap:11px; }
+  .logo{ width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--c-brand),var(--c-brand-2)); display:grid; place-items:center; color:#fff; font-weight:800; box-shadow:var(--shadow); }
+  .brandrow b{ font-size:16px; } .brandrow span{ color:var(--c-faint); font-size:13px; }
+  .title{ font-size:clamp(26px,4.3vw,42px); font-weight:800; letter-spacing:-.025em; line-height:1.06; }
+  .title em{ font-style:normal; color:var(--c-brand-ink); }
+  .lede{ font-size:clamp(15px,1.7vw,18px); color:var(--c-muted); max-width:64ch; }
+
+  /* honesty banner */
+  .honest{ display:flex; gap:13px; align-items:flex-start; background:var(--c-warn-weak); border:1px solid var(--c-warn); border-radius:var(--r); padding:14px 17px; margin-bottom:24px; }
+  .honest .i{ font-size:18px; line-height:1.2; }
+  .honest p{ margin:0; font-size:14px; color:var(--c-ink); }
+  .honest p b{ color:var(--c-warn); }
+
+  /* legend */
+  .legend{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:22px; }
+  .lg{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--c-muted); }
+  .tag{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:4px 9px; border-radius:999px; white-space:nowrap; }
+  .tag.built{ background:var(--c-ok-weak); color:var(--c-ok-ink); }
+  .tag.cfg{ background:var(--c-brand-weak); color:var(--c-brand-ink); }
+  .tag.code{ background:var(--c-warn-weak); color:var(--c-warn); }
+
+  /* steps */
+  .steps{ display:flex; flex-direction:column; gap:11px; margin-bottom:34px; }
+  .step{ display:grid; grid-template-columns:44px minmax(0,1fr) 116px; align-items:start; gap:10px; background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:15px 17px; box-shadow:var(--shadow); }
+  .step .n{ width:34px; height:34px; border-radius:10px; background:var(--c-brand-weak); color:var(--c-brand-ink); font-weight:800; font-size:14px; display:grid; place-items:center; }
+  .step .t h3{ font-size:15.5px; font-weight:750; letter-spacing:-.01em; }
+  .step .t .do{ font-size:13.5px; color:var(--c-muted); margin-top:4px; }
+  .step .t .do code{ font-family:var(--mono); font-size:12px; background:var(--c-inset); padding:1px 6px; border-radius:5px; color:var(--c-brand-ink); }
+  .step .t .solve{ font-size:12.5px; color:var(--c-ok-ink); font-weight:650; margin-top:7px; display:flex; align-items:center; gap:6px; }
+  .step .t .solve::before{ content:"→ solves"; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--c-faint); }
+  .step .tg{ justify-self:end; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
+  .step.spot{ border-color:var(--c-warn); box-shadow:0 0 0 1px var(--c-warn), var(--shadow); }
+  .step.spot .n{ background:var(--c-warn-weak); color:var(--c-warn); }
+
+  /* reality columns */
+  .sec-h{ display:flex; align-items:baseline; gap:12px; margin:0 2px 14px; flex-wrap:wrap; }
+  .sec-h h2{ font-size:clamp(18px,2.3vw,23px); font-weight:800; letter-spacing:-.02em; }
+  .sec-h p{ margin:0; color:var(--c-muted); font-size:14px; }
+  .reality{ display:grid; grid-template-columns:1fr 1fr; gap:13px; margin-bottom:34px; }
+  .rc{ border-radius:var(--r); padding:16px 17px; border:1.5px solid; box-shadow:var(--shadow); }
+  .rc.now{ background:var(--c-ok-weak); border-color:var(--c-ok); }
+  .rc.build{ background:var(--c-brand-weak); border-color:var(--c-brand); }
+  .rc .h{ font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; margin-bottom:11px; display:flex; align-items:center; gap:8px; }
+  .rc.now .h{ color:var(--c-ok-ink); } .rc.build .h{ color:var(--c-brand-ink); }
+  .rc ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .rc li{ font-size:13.5px; color:var(--c-muted); padding-left:19px; position:relative; }
+  .rc li b{ color:var(--c-ink); font-weight:650; }
+  .rc.now li::before{ content:"✓"; position:absolute; left:0; color:var(--c-ok); font-weight:800; }
+  .rc.build li::before{ content:"○"; position:absolute; left:2px; color:var(--c-brand); font-size:12px; top:1px; }
+
+  /* phases */
+  .phases{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:32px; }
+  .ph{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:15px 16px; box-shadow:var(--shadow); }
+  .ph.p1{ border-color:var(--c-brand); box-shadow:0 0 0 1px var(--c-brand), var(--shadow); }
+  .ph .l{ font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--c-faint); }
+  .ph.p1 .l{ color:var(--c-brand-ink); }
+  .ph h3{ font-size:14.5px; font-weight:750; margin:6px 0 7px; }
+  .ph p{ margin:0; font-size:13px; color:var(--c-muted); }
+  .ph .win{ display:inline-block; margin-top:9px; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--c-ok-ink); background:var(--c-ok-weak); padding:4px 9px; border-radius:999px; }
+
+  .pitch{ background:linear-gradient(135deg,var(--c-brand-ink),var(--c-brand)); color:#fff; border-radius:var(--r); padding:clamp(20px,3vw,30px); box-shadow:var(--shadow-lg); }
+  .pitch .cap{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.8; }
+  .pitch p{ margin:9px 0 0; font-size:clamp(16px,2.1vw,21px); font-weight:700; letter-spacing:-.02em; line-height:1.35; text-wrap:balance; }
+  .pitch p b{ background:rgba(255,255,255,.16); padding:1px 7px; border-radius:6px; }
+
+  @media (max-width:800px){ .reality,.phases{ grid-template-columns:1fr; } .step{ grid-template-columns:34px minmax(0,1fr); } .step .tg{ grid-column:2; flex-direction:row; align-items:center; justify-self:start; margin-top:8px; } }
+  @media (prefers-reduced-motion:no-preference){
+    .step,.rc,.ph,.pitch,.honest{ animation:rise .5s cubic-bezier(.2,.7,.3,1) both; }
+    .step:nth-child(2){animation-delay:.03s}.step:nth-child(3){animation-delay:.06s}.step:nth-child(4){animation-delay:.09s}.step:nth-child(5){animation-delay:.12s}.step:nth-child(6){animation-delay:.15s}.step:nth-child(7){animation-delay:.18s}
+    @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="brandrow"><div class="logo">X</div><b>Xorva</b><span>· For the lead — realistic, no fluff</span></div>
+    <div class="eyebrow">How we solve your business — dynamically</div>
+    <h1 class="title">One engine, <em>configured to you.</em><br>Here's exactly how — and what's real.</h1>
+    <p class="lede">Xorva isn't rebuilt for each client. It's one engine we <b>configure</b> into your business as a
+      "pack." These are the actual steps, honestly tagged: what's <b>set up as data</b>, what's <b>reusable code</b>, and what already <b>works today</b>.</p>
+  </header>
+
+  <div class="honest">
+    <span class="i">⚠️</span>
+    <p><b>Straight talk:</b> ~90% of this is configuration on one engine; ~10% is reusable code (payroll math). Some engine pieces still need building — so this is a <b>build-and-configure project delivered in phases</b>, not an instant switch. No serious ERP does WPS payroll as pure no-code — the math is always coded rules.</p>
+  </div>
+
+  <div class="legend">
+    <span class="lg"><span class="tag built">Works today</span> already in Xorva</span>
+    <span class="lg"><span class="tag cfg">Config</span> set up as data — dynamic, no code</span>
+    <span class="lg"><span class="tag code">Plugin</span> reusable engine code, written once</span>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="n">1</div>
+      <div class="t"><h3>Switch on your modules</h3>
+        <div class="do">Turn on <b>HR</b> (your office staff), <b>Accounting</b>, and the <b>Manpower pack</b> for your company only.</div>
+        <div class="solve">You get exactly what you need — nothing you don't.</div></div>
+      <div class="tg"><span class="tag built">Works today</span></div>
+    </div>
+
+    <div class="step">
+      <div class="n">2</div>
+      <div class="t"><h3>Shape your world as data — no coding</h3>
+        <div class="do">Define, as configuration: <code>Worker</code> (your product) with your fields (MOL ID, category, WPS bank), plus <code>Agreement</code>, <code>LPO</code>, <code>Timesheet</code>, and your labels.</div>
+        <div class="solve">Your exact forms &amp; terms — it feels built for you.</div></div>
+      <div class="tg"><span class="tag cfg">Config</span></div>
+    </div>
+
+    <div class="step">
+      <div class="n">3</div>
+      <div class="t"><h3>Load your real data</h3>
+        <div class="do">Import your <b>180 workers</b> + office staff, your <b>client companies</b>, and your <b>agreements &amp; rates</b>.</div>
+        <div class="solve">Your actual people and contracts, day one.</div></div>
+      <div class="tg"><span class="tag cfg">Config</span></div>
+    </div>
+
+    <div class="step spot">
+      <div class="n">4</div>
+      <div class="t"><h3>Labour Board — who's free vs engaged</h3>
+        <div class="do">A live board over each worker's status: <b>Free</b> or <b>Engaged</b> (which client, which site, until when).</div>
+        <div class="solve">Deploy idle workers fast — stop paying for the bench.</div></div>
+      <div class="tg"><span class="tag cfg">Config</span></div>
+    </div>
+
+    <div class="step spot">
+      <div class="n">5</div>
+      <div class="t"><h3>Timesheet — one canonical sheet</h3>
+        <div class="do">You keep one sheet. <b>Import the client's Excel</b> or <b>AI reads the scanned sheet → your staff approves</b>. Attach their sheet as proof, reconcile, <b>Lock</b>.</div>
+        <div class="solve">Every client's different format — handled. The headache gone.</div></div>
+      <div class="tg"><span class="tag cfg">Config</span><span class="tag code">+ AI assist</span></div>
+    </div>
+
+    <div class="step">
+      <div class="n">6</div>
+      <div class="t"><h3>Money IN — invoice per agreement</h3>
+        <div class="do">From the locked sheet → invoice (rate × time + OT + VAT), <b>due on your term (30 / 10 days)</b>, tracked in receivables.</div>
+        <div class="solve">Billing &amp; who-owes-what, automatic.</div></div>
+      <div class="tg"><span class="tag built">Invoicing built</span><span class="tag code">+ rate plugin</span></div>
+    </div>
+
+    <div class="step">
+      <div class="n">7</div>
+      <div class="t"><h3>Money OUT — WPS + Non-WPS payroll</h3>
+        <div class="do">Same sheet → each worker's <b>WPS basic</b> (bank file) + <b>Non-WPS</b> (OT, food, incentive − deductions).</div>
+        <div class="solve">Both salary streams, from one source.</div></div>
+      <div class="tg"><span class="tag built">Payroll base</span><span class="tag code">+ WPS plugin</span></div>
+    </div>
+
+    <div class="step">
+      <div class="n">8</div>
+      <div class="t"><h3>Margin &amp; the books</h3>
+        <div class="do">Worker salary = <b>direct cost</b> vs invoice = <b>margin per contract</b>; office salary = overhead. All posts to the ledger.</div>
+        <div class="solve">Profit per worker/client, and clean accounts.</div></div>
+      <div class="tg"><span class="tag built">Accounting built</span></div>
+    </div>
+
+  </div>
+
+  <!-- REALITY -->
+  <div class="sec-h"><h2>What's real, today vs. to build</h2><p>No butter — the honest split.</p></div>
+  <div class="reality">
+    <div class="rc now">
+      <div class="h">Already works in Xorva</div>
+      <ul>
+        <li>Multi-company &amp; per-company modules</li>
+        <li>Accounting + ledger</li>
+        <li>Invoicing + aged receivables (30/10-day terms)</li>
+        <li>Payroll base &amp; approvals</li>
+        <li>HR for your office staff</li>
+      </ul>
+    </div>
+    <div class="rc build">
+      <div class="h">To build (engine + Manpower pack)</div>
+      <ul>
+        <li><b>Dynamic entity engine</b> (Worker / Deployment / Timesheet as config)</li>
+        <li><b>Labour Board</b> view</li>
+        <li><b>Canonical timesheet</b> + import / AI read</li>
+        <li>Timesheet → invoice rate-calc <b>plugin</b></li>
+        <li>WPS / Non-WPS split + WPS file <b>plugin</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="sec-h"><h2>How we deliver it</h2><p>Phased — value each step, no big-bang.</p></div>
+  <div class="phases">
+    <div class="ph p1"><div class="l">Phase 1 · first slice</div><h3>One customer, end to end</h3><p>Workers + agreement/rates + timesheet → auto <b>Invoice + WPS/Non-WPS</b> for Bauer.</p><span class="win">The demo that proves it</span></div>
+    <div class="ph"><div class="l">Phase 2 · scale</div><h3>Board &amp; more clients</h3><p>Labour Board, Excel import per client, deployment splitting, margin reports.</p></div>
+    <div class="ph"><div class="l">Phase 3 · automate</div><h3>AI &amp; full rollout</h3><p>AI reads scanned timesheets, all customers, exception handling.</p></div>
+  </div>
+
+  <div class="pitch">
+    <div class="cap">The honest promise</div>
+    <p>We <b>configure</b> Xorva into your business as a pack — most of it data, a little reusable code — and deliver it <b>in phases</b>, starting with one customer working end to end. Same engine, built for you, not rebuilt.</p>
+  </div>
+
+</div>
+</html>

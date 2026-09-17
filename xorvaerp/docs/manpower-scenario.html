@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xorva — Manpower Scenario</title>
+<style>
+  :root{
+    /* ---- Xorva brand tokens (light) ---- */
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+    --r: 16px; --r-sm: 11px;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+      --c-border:#262639; --c-border-strong:#33334B;
+      --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+      --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+      --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+      --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+    }
+  }
+  :root[data-theme="light"]{
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+  }
+  :root[data-theme="dark"]{
+    --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+    --c-border:#262639; --c-border-strong:#33334B;
+    --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+    --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+    --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+    --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--c-ground); color:var(--c-ink);
+    font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{ max-width:1080px; margin:0 auto; padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 64px; }
+  .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--c-brand-ink); }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  .tnum{ font-variant-numeric:tabular-nums; }
+
+  /* ---------- header ---------- */
+  .head{ display:flex; flex-direction:column; gap:18px; margin-bottom:34px; }
+  .brandrow{ display:flex; align-items:center; gap:11px; }
+  .logo{ width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--c-brand),var(--c-brand-2));
+    display:grid; place-items:center; color:#fff; font-weight:800; font-size:15px; box-shadow:var(--shadow); }
+  .brandrow b{ font-size:16px; letter-spacing:-.01em; }
+  .brandrow span{ color:var(--c-faint); font-size:13px; }
+  .title{ font-size:clamp(28px,4.6vw,46px); font-weight:800; letter-spacing:-.025em; line-height:1.04; }
+  .title em{ font-style:normal; color:var(--c-brand-ink); }
+  .lede{ font-size:clamp(15px,1.7vw,18px); color:var(--c-muted); max-width:60ch; }
+  .actors{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{ display:inline-flex; align-items:center; gap:7px; background:var(--c-surface); border:1px solid var(--c-border);
+    padding:6px 12px; border-radius:999px; font-size:13px; font-weight:600; box-shadow:var(--shadow); }
+  .chip small{ color:var(--c-faint); font-weight:500; }
+  .dot{ width:7px; height:7px; border-radius:50%; background:var(--c-brand); }
+  .dot.g{ background:var(--c-ok); } .dot.v{ background:var(--c-brand-2); }
+
+  /* ---------- thesis / fork ---------- */
+  .thesis{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r);
+    padding:clamp(18px,2.5vw,28px); box-shadow:var(--shadow-lg); margin-bottom:40px; }
+  .thesis .cap{ font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--c-faint); margin-bottom:16px; }
+  .fork{ display:grid; grid-template-columns: minmax(0,1fr) 40px minmax(0,1.15fr); align-items:center; gap:8px; }
+  .source{ background:var(--c-brand-weak); border:1.5px solid var(--c-brand); border-radius:var(--r-sm);
+    padding:16px 18px; }
+  .source .k{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--c-brand-ink); }
+  .source .v{ font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:4px; }
+  .source .s{ font-size:13px; color:var(--c-muted); margin-top:5px; }
+  .branch{ display:grid; place-items:center; }
+  .branch svg{ width:40px; height:120px; overflow:visible; }
+  .outs{ display:flex; flex-direction:column; gap:12px; }
+  .out{ border-radius:var(--r-sm); padding:14px 16px; border:1.5px solid; display:flex; align-items:center; gap:13px; }
+  .out.in{ background:var(--c-ok-weak); border-color:var(--c-ok); }
+  .out.pay{ background:var(--c-brand-weak); border-color:var(--c-brand-2); }
+  .out .ic{ width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex:0 0 auto; color:#fff; font-weight:800; font-size:15px; }
+  .out.in .ic{ background:var(--c-ok); } .out.pay .ic{ background:var(--c-brand-2); }
+  .out .tx{ min-width:0; }
+  .out .tx .k{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--c-faint); }
+  .out .tx .v{ font-size:16px; font-weight:800; letter-spacing:-.01em; }
+  .out .tx .v b{ color:var(--c-ink); }
+  .amt{ margin-left:auto; font-size:16px; font-weight:800; letter-spacing:-.01em; white-space:nowrap; }
+  .amt.in{ color:var(--c-ok); }
+
+  /* ---------- acts ---------- */
+  .sec-h{ display:flex; align-items:baseline; gap:14px; margin:0 2px 18px; flex-wrap:wrap; }
+  .sec-h h2{ font-size:clamp(19px,2.4vw,24px); font-weight:800; letter-spacing:-.02em; }
+  .sec-h p{ margin:0; color:var(--c-muted); font-size:14px; }
+  .acts{ display:flex; flex-direction:column; gap:12px; margin-bottom:44px; }
+  .act{ display:grid; grid-template-columns:52px minmax(0,1fr); background:var(--c-surface);
+    border:1px solid var(--c-border); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); }
+  .act .n{ background:var(--c-inset); display:flex; align-items:flex-start; justify-content:center; padding-top:18px;
+    font-size:13px; font-weight:800; color:var(--c-brand-ink); letter-spacing:.02em; border-right:1px solid var(--c-border); }
+  .act .body{ padding:16px 18px; display:grid; grid-template-columns: 1fr; gap:10px; }
+  .act h3{ font-size:16px; font-weight:750; letter-spacing:-.01em; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .tag{ font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px;
+    background:var(--c-inset); color:var(--c-muted); }
+  .tag.once{ background:var(--c-brand-weak); color:var(--c-brand-ink); }
+  .tag.click{ background:var(--c-ok-weak); color:var(--c-ok); }
+  .tag.hot{ background:var(--c-warn-weak); color:var(--c-warn); }
+  .pr{ display:grid; grid-template-columns:auto 1fr; gap:8px 12px; font-size:14px; align-items:start; }
+  .pr .lbl{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; padding-top:2px; white-space:nowrap; }
+  .pr .lbl.p{ color:var(--c-bad); } .pr .lbl.x{ color:var(--c-brand-ink); }
+  .pr .val{ color:var(--c-muted); } .pr .val b{ color:var(--c-ink); font-weight:650; }
+  .act.hilite{ border-color:var(--c-warn); box-shadow:0 0 0 1px var(--c-warn), var(--shadow-lg); }
+  .act.hilite .n{ background:var(--c-warn-weak); color:var(--c-warn); border-right-color:transparent; }
+
+  /* ---------- honesty ---------- */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:44px; }
+  .hcard{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:16px 17px; box-shadow:var(--shadow); }
+  .hcard .cap{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .hcard.built .cap{ color:var(--c-ok); } .hcard.pack .cap{ color:var(--c-brand-ink); } .hcard.ai .cap{ color:var(--c-warn); }
+  .hcard ul{ margin:0; padding-left:0; list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .hcard li{ font-size:13.5px; color:var(--c-muted); padding-left:18px; position:relative; }
+  .hcard li::before{ content:""; position:absolute; left:2px; top:8px; width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.5; }
+  .hcard.built li{ color:var(--c-muted); }
+  .hcard .cap .sq{ width:9px; height:9px; border-radius:3px; }
+  .hcard.built .sq{ background:var(--c-ok); } .hcard.pack .sq{ background:var(--c-brand); } .hcard.ai .sq{ background:var(--c-warn); }
+
+  /* ---------- phases ---------- */
+  .phases{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:40px; }
+  .phase{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:16px 17px; box-shadow:var(--shadow); position:relative; }
+  .phase.p1{ border-color:var(--c-brand); box-shadow:0 0 0 1px var(--c-brand), var(--shadow); }
+  .phase .ph{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--c-faint); }
+  .phase.p1 .ph{ color:var(--c-brand-ink); }
+  .phase h3{ font-size:15px; font-weight:750; margin:6px 0 8px; letter-spacing:-.01em; }
+  .phase p{ margin:0; font-size:13.5px; color:var(--c-muted); }
+  .phase .win{ display:inline-block; margin-top:10px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--c-ok); background:var(--c-ok-weak); padding:4px 9px; border-radius:999px; }
+
+  /* ---------- footer pitch ---------- */
+  .pitch{ background:linear-gradient(135deg,var(--c-brand-ink),var(--c-brand)); color:#fff; border-radius:var(--r);
+    padding:clamp(22px,3vw,34px); box-shadow:var(--shadow-lg); }
+  .pitch .cap{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.8; }
+  .pitch p{ margin:10px 0 0; font-size:clamp(17px,2.3vw,23px); font-weight:700; letter-spacing:-.02em; line-height:1.32; text-wrap:balance; }
+  .pitch p b{ color:#fff; background:rgba(255,255,255,.16); padding:1px 7px; border-radius:6px; }
+
+  @media (max-width:780px){
+    .fork{ grid-template-columns:1fr; }
+    .branch{ transform:rotate(90deg); height:34px; } .branch svg{ height:34px; width:80px; }
+    .grid3,.phases{ grid-template-columns:1fr; }
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .thesis,.act,.hcard,.phase,.pitch{ animation:rise .5s cubic-bezier(.2,.7,.3,1) both; }
+    .act:nth-child(2){animation-delay:.03s} .act:nth-child(3){animation-delay:.06s}
+    .act:nth-child(4){animation-delay:.09s} .act:nth-child(5){animation-delay:.12s}
+    @keyframes rise{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="brandrow">
+      <div class="logo">X</div><b>Xorva</b><span>· Solution scenario</span>
+    </div>
+    <div class="eyebrow">Manpower supply — one monthly cycle</div>
+    <h1 class="title">One attendance sheet.<br><em>Two money flows.</em></h1>
+    <p class="lede">Enter each worker's attendance once — however the client sends it — and Xorva produces the
+      customer invoice <b>and</b> the workers' WPS + Non-WPS salary from that single, locked source.</p>
+    <div class="actors">
+      <span class="chip"><span class="dot"></span>Gulf Oasis Manpower <small>· uses Xorva</small></span>
+      <span class="chip"><span class="dot g"></span>Bauer <small>· customer (Ruwais / Kizad)</small></span>
+      <span class="chip"><span class="dot v"></span>~180 workers <small>· supplied on hire</small></span>
+    </div>
+  </header>
+
+  <!-- THESIS -->
+  <section class="thesis">
+    <div class="cap">The core idea</div>
+    <div class="fork">
+      <div class="source">
+        <div class="k">Locked attendance</div>
+        <div class="v">One source of truth</div>
+        <div class="s">Present · absent · leave · OT hours — per worker, per site. Approved &amp; locked once.</div>
+      </div>
+      <div class="branch" aria-hidden="true">
+        <svg viewBox="0 0 40 120">
+          <path d="M2 60 H16 C26 60 22 22 38 22" fill="none" stroke="var(--c-ok)" stroke-width="2.2"/>
+          <path d="M2 60 H16 C26 60 22 98 38 98" fill="none" stroke="var(--c-brand-2)" stroke-width="2.2"/>
+          <circle cx="2" cy="60" r="3.4" fill="var(--c-brand)"/>
+        </svg>
+      </div>
+      <div class="outs">
+        <div class="out in">
+          <div class="ic">↑</div>
+          <div class="tx"><div class="k">Money in — invoice to Bauer</div><div class="v tnum">4 Helpers × 2,730 + OT + 5% VAT</div></div>
+          <div class="amt in tnum">34,398 AED</div>
+        </div>
+        <div class="out pay">
+          <div class="ic">↓</div>
+          <div class="tx"><div class="k">Money out — worker payroll</div><div class="v">WPS basic <small style="color:var(--c-faint)">+</small> Non-WPS (OT · food · ± )</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTS -->
+  <div class="sec-h">
+    <h2>The monthly cycle</h2>
+    <p>Each step maps a real client pain → how it's handled in Xorva.</p>
+  </div>
+
+  <div class="acts">
+
+    <div class="act">
+      <div class="n">01</div>
+      <div class="body">
+        <h3>Customer &amp; agreement <span class="tag once">Set once</span></h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Every customer has different rates &amp; overtime rules.</div>
+          <div class="lbl x">Xorva</div><div class="val">Bauer agreement holds the <b>rate card</b>: Helper <b class="tnum">10h × 10.5 × 26 = 2,730/mo</b>; OT ×1.25 / Sun ×1.50 / Hol ×2.50; Ramadan 6h = 8h. Set once, reused monthly.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <div class="n">02</div>
+      <div class="body">
+        <h3>The order (LPO)</h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Client sends a purchase order for N workers for a period.</div>
+          <div class="lbl x">Xorva</div><div class="val">Log LPO <b class="tnum">10003088/3</b> → <b>4 Helpers, 3 months</b>. Linked to the agreement, so pricing is already known.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <div class="n">03</div>
+      <div class="body">
+        <h3>Deploy the workers</h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">One worker works some days at Ruwais, some at Kizad, some at another client.</div>
+          <div class="lbl x">Xorva</div><div class="val">Assign workers to a site with dates. A worker can hold <b>several assignments</b>, so split-deployment is tracked.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act hilite">
+      <div class="n">04</div>
+      <div class="body">
+        <h3>Capture attendance <span class="tag hot">The headache — solved here</span></h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Every client's timesheet looks different (KEZAD = scanned paper, Jihua = weekly grid). You make yours, then correct it to match theirs.</div>
+          <div class="lbl x">Xorva</div><div class="val">One <b>canonical grid</b>. Fill it three ways: type it · <b>import the client's Excel</b> · <b>AI reads the scanned sheet and proposes numbers → your staff approves</b>. Attach the client's timesheet as proof, Xorva <b>flags mismatches</b>, you correct and <b>Lock</b>. Locked = the one source for everything below.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <div class="n">05</div>
+      <div class="body">
+        <h3>Invoice the customer <span class="tag click">One click</span></h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Building invoices from timesheets by hand every month.</div>
+          <div class="lbl x">Xorva</div><div class="val">From locked attendance → <b class="tnum">4 × 2,730 + OT + 5% VAT = 34,398 AED</b>. Posts to the ledger automatically.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <div class="n">06</div>
+      <div class="body">
+        <h3>Pay the workers — WPS + Non-WPS <span class="tag click">One run</span></h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Basic salary via the WPS bank file; everything else (OT, food, incentive, absences, deductions) as Non-WPS.</div>
+          <div class="lbl x">Xorva</div><div class="val">Same attendance → each worker splits into <b>WPS basic</b> (bank file) and <b>Non-WPS</b> (OT + food + incentive − deductions, with reasons). Posts salary journals.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <div class="n">07</div>
+      <div class="body">
+        <h3>Margin &amp; reports</h3>
+        <div class="pr">
+          <div class="lbl p">Pain</div><div class="val">Is each worker / contract actually making money?</div>
+          <div class="lbl x">Xorva</div><div class="val">Money-in (invoice) vs money-out (salary) per worker &amp; site = <b>profit per deployment</b>. The monthly report — automatic, not Excel.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HONESTY -->
+  <div class="sec-h">
+    <h2>What's real — no over-promising</h2>
+    <p>The line we hold with the client and with ourselves.</p>
+  </div>
+  <div class="grid3">
+    <div class="hcard built">
+      <div class="cap"><span class="sq"></span>Already built &amp; tested</div>
+      <ul>
+        <li>Multi-company &amp; branches</li>
+        <li>Chart of accounts + ledger</li>
+        <li>Invoicing, bills, payments</li>
+        <li>Payroll base &amp; approvals</li>
+      </ul>
+    </div>
+    <div class="hcard pack">
+      <div class="cap"><span class="sq"></span>Configured pack + coded rules</div>
+      <ul>
+        <li>Agreement / rate-card</li>
+        <li>Deployment &amp; canonical timesheet</li>
+        <li>Timesheet → invoice</li>
+        <li>WPS / Non-WPS split &amp; file</li>
+        <li><em>Real work, delivered in phases</em></li>
+      </ul>
+    </div>
+    <div class="hcard ai">
+      <div class="cap"><span class="sq"></span>AI's bounded role</div>
+      <ul>
+        <li>Reads messy / scanned timesheets</li>
+        <li>Proposes the numbers</li>
+        <li><b>A human approves</b></li>
+        <li>Deterministic code does the money</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="sec-h">
+    <h2>How we deliver it</h2>
+    <p>Phased — the first slice is the demo that wins the deal.</p>
+  </div>
+  <div class="phases">
+    <div class="phase p1">
+      <div class="ph">Phase 1 · first slice</div>
+      <h3>One customer, end to end</h3>
+      <p>Worker registry + agreement/rates + canonical timesheet → auto <b>Invoice</b> + <b>WPS/Non-WPS payroll</b> for Bauer.</p>
+      <span class="win">The deal-winning demo</span>
+    </div>
+    <div class="phase">
+      <div class="ph">Phase 2 · scale</div>
+      <h3>More customers &amp; insight</h3>
+      <p>Excel import per client format, deployment splitting across sites, margin &amp; monthly reports.</p>
+    </div>
+    <div class="phase">
+      <div class="ph">Phase 3 · automate</div>
+      <h3>AI &amp; full rollout</h3>
+      <p>AI timesheet reading for scanned sheets, all customers, exception handling.</p>
+    </div>
+  </div>
+
+  <!-- PITCH -->
+  <div class="pitch">
+    <div class="cap">The whole story in one line</div>
+    <p>Enter each worker's attendance <b>once</b> — however the client sends it — and Xorva produces the customer's
+      invoice and the workers' WPS + Non-WPS salary from that <b>single source</b>, with the client's own timesheet attached as proof.</p>
+  </div>
+
+</div>
+</html>

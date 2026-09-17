@@ -1,0 +1,312 @@
+{
+  "info": {
+    "name": "Xorva ERP — Full API",
+    "description": "Complete Xorva ERP API. Auth is automatic: run 'Login' and the accessToken is captured into {{token}} for every other request. IDs (companyId, departmentId, designationId, employeeId, ruleId, approvalRequestId, leaveTypeId) are auto-captured when you create things, so the demo flows chain together. Base URL: {{baseUrl}} (default http://localhost:5270).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5270" },
+    { "key": "token", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "companyId", "value": "" },
+    { "key": "departmentId", "value": "" },
+    { "key": "designationId", "value": "" },
+    { "key": "employeeId", "value": "" },
+    { "key": "ruleId", "value": "" },
+    { "key": "approvalRequestId", "value": "" },
+    { "key": "leaveTypeId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1 · Auth",
+      "item": [
+        {
+          "name": "Register Tenant (public signup)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "const d = pm.response.json();",
+            "if (d.data && d.data.companyId) { pm.collectionVariables.set('companyId', d.data.companyId); }",
+            "pm.test('201 created', () => pm.response.code === 201);"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/tenants/register", "host": ["{{baseUrl}}"], "path": ["api", "tenants", "register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"tenantName\": \"RightSource Group\",\n  \"companyName\": \"RightSource Trading\",\n  \"email\": \"ceo@rightsource.test\",\n  \"password\": \"Password@2026\",\n  \"firstName\": \"Mohammed\",\n  \"lastName\": \"Al-Rashid\"\n}" }
+          }
+        },
+        {
+          "name": "Login (captures token)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "const d = pm.response.json();",
+            "if (d.data && d.data.accessToken) {",
+            "  pm.collectionVariables.set('token', d.data.accessToken);",
+            "  pm.collectionVariables.set('refreshToken', d.data.refreshToken);",
+            "}",
+            "pm.test('200 + token', () => pm.response.code === 200 && !!d.data.accessToken);"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ceo@rightsource.test\",\n  \"password\": \"Password@2026\"\n}" }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] } }
+        },
+        {
+          "name": "Register User (add user — CompanyAdmin+)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"gm@rightsource.test\",\n  \"password\": \"Password@2026\",\n  \"firstName\": \"General\",\n  \"lastName\": \"Manager\",\n  \"role\": \"CompanyAdmin\",\n  \"companyId\": \"{{companyId}}\"\n}" }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/refresh", "host": ["{{baseUrl}}"], "path": ["api", "auth", "refresh"] },
+            "body": { "mode": "raw", "raw": "{\n  \"token\": \"{{refreshToken}}\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 · Tenant & Companies",
+      "item": [
+        {
+          "name": "Get Current Tenant",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tenants/current", "host": ["{{baseUrl}}"], "path": ["api", "tenants", "current"] } }
+        },
+        {
+          "name": "Complete Onboarding (CEO)",
+          "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/tenants/complete-onboarding", "host": ["{{baseUrl}}"], "path": ["api", "tenants", "complete-onboarding"] } }
+        },
+        {
+          "name": "List Companies (captures companyId)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "const d = pm.response.json();",
+            "if (d.data && d.data.length) { pm.collectionVariables.set('companyId', d.data[0].id); }"
+          ], "type": "text/javascript" } }],
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/companies", "host": ["{{baseUrl}}"], "path": ["api", "companies"] } }
+        },
+        {
+          "name": "Create Company (SuperAdmin)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "const d = pm.response.json();",
+            "if (d.data && d.data.id) { pm.collectionVariables.set('companyId', d.data.id); }"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies", "host": ["{{baseUrl}}"], "path": ["api", "companies"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"RightSource IT\",\n  \"currency\": \"USD\",\n  \"timezone\": \"Asia/Riyadh\",\n  \"activeModules\": [\"HR\", \"Accounting\"]\n}" }
+          }
+        },
+        {
+          "name": "Set Company Modules (SuperAdmin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies/{{companyId}}/modules", "host": ["{{baseUrl}}"], "path": ["api", "companies", "{{companyId}}", "modules"] },
+            "body": { "mode": "raw", "raw": "{\n  \"modules\": [\"HR\", \"Accounting\", \"Sales\"]\n}" }
+          }
+        },
+        {
+          "name": "Update Company Settings",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies/{{companyId}}/settings", "host": ["{{baseUrl}}"], "path": ["api", "companies", "{{companyId}}", "settings"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"RightSource Trading\",\n  \"currency\": \"AED\",\n  \"timezone\": \"Asia/Dubai\"\n}" }
+          }
+        },
+        {
+          "name": "List Branches",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/branches", "host": ["{{baseUrl}}"], "path": ["api", "branches"] } }
+        },
+        {
+          "name": "Create Branch (approvable)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/branches", "host": ["{{baseUrl}}"], "path": ["api", "branches"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"name\": \"Dubai HQ\",\n  \"city\": \"Dubai\",\n  \"country\": \"UAE\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · Dashboard",
+      "item": [
+        { "name": "My Dashboard (role-aware)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/dashboard", "host": ["{{baseUrl}}"], "path": ["api", "dashboard"] } } },
+        { "name": "Admin Overview (SystemAdmin only)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/admin/overview", "host": ["{{baseUrl}}"], "path": ["api", "admin", "overview"] } } }
+      ]
+    },
+    {
+      "name": "4 · HR — Structure",
+      "item": [
+        {
+          "name": "Create Designation",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data) pm.collectionVariables.set('designationId', d.data.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/designations", "host": ["{{baseUrl}}"], "path": ["api", "designations"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"title\": \"Software Engineer\",\n  \"code\": \"SE\",\n  \"level\": 5\n}" }
+          }
+        },
+        { "name": "List Designations", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/designations", "host": ["{{baseUrl}}"], "path": ["api", "designations"] } } },
+        {
+          "name": "Create Department",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data) pm.collectionVariables.set('departmentId', d.data.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/departments", "host": ["{{baseUrl}}"], "path": ["api", "departments"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"name\": \"Engineering\",\n  \"code\": \"ENG\",\n  \"description\": \"Software team\"\n}" }
+          }
+        },
+        { "name": "List Departments", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/departments", "host": ["{{baseUrl}}"], "path": ["api", "departments"] } } }
+      ]
+    },
+    {
+      "name": "5 · HR — Employees",
+      "item": [
+        {
+          "name": "Create Employee (approvable)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "const d = pm.response.json();",
+            "if (d.data && d.data.id) pm.collectionVariables.set('employeeId', d.data.id);",
+            "if (d.approvalRequestId) pm.collectionVariables.set('approvalRequestId', d.approvalRequestId);"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/employees", "host": ["{{baseUrl}}"], "path": ["api", "employees"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"firstName\": \"Ahmed\",\n  \"lastName\": \"Ali\",\n  \"email\": \"ahmed@rightsource.test\",\n  \"gender\": \"Male\",\n  \"departmentId\": \"{{departmentId}}\",\n  \"designationId\": \"{{designationId}}\",\n  \"joinDate\": \"2026-07-18\",\n  \"employmentType\": \"FullTime\",\n  \"basicSalary\": 15000\n}" }
+          }
+        },
+        { "name": "List Employees (paged/filtered)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/employees?page=1&pageSize=20", "host": ["{{baseUrl}}"], "path": ["api", "employees"], "query": [{ "key": "page", "value": "1" }, { "key": "pageSize", "value": "20" }, { "key": "search", "value": "", "disabled": true }, { "key": "departmentId", "value": "", "disabled": true }] } } },
+        { "name": "Get Employee", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/employees/{{employeeId}}", "host": ["{{baseUrl}}"], "path": ["api", "employees", "{{employeeId}}"] } } },
+        { "name": "Get My Profile", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/employees/me", "host": ["{{baseUrl}}"], "path": ["api", "employees", "me"] } } },
+        {
+          "name": "Change Salary (approvable)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/employees/{{employeeId}}/salary", "host": ["{{baseUrl}}"], "path": ["api", "employees", "{{employeeId}}", "salary"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"newSalary\": 18000,\n  \"reason\": \"Annual raise\"\n}" }
+          }
+        },
+        {
+          "name": "Change Status (approvable)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/employees/{{employeeId}}/status", "host": ["{{baseUrl}}"], "path": ["api", "employees", "{{employeeId}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"newStatus\": \"OnProbation\",\n  \"reason\": \"Standard probation\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 · HR — Leave",
+      "item": [
+        {
+          "name": "Seed Default Leave Types",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data && d.data.length) pm.collectionVariables.set('leaveTypeId', d.data[0].id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/leave-types/seed-defaults", "host": ["{{baseUrl}}"], "path": ["api", "leave-types", "seed-defaults"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\"\n}" }
+          }
+        },
+        {
+          "name": "List Leave Types (captures leaveTypeId)",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data && d.data.length) pm.collectionVariables.set('leaveTypeId', d.data[0].id);"], "type": "text/javascript" } }],
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/leave-types", "host": ["{{baseUrl}}"], "path": ["api", "leave-types"] } }
+        },
+        {
+          "name": "Add Holiday",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/holidays", "host": ["{{baseUrl}}"], "path": ["api", "holidays"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"name\": \"National Day\",\n  \"date\": \"2026-12-02\"\n}" }
+          }
+        },
+        { "name": "List Holidays", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/holidays", "host": ["{{baseUrl}}"], "path": ["api", "holidays"] } } },
+        {
+          "name": "Apply for Leave (approvable; login as employee first)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/leaves", "host": ["{{baseUrl}}"], "path": ["api", "leaves"] },
+            "body": { "mode": "raw", "raw": "{\n  \"leaveTypeId\": \"{{leaveTypeId}}\",\n  \"fromDate\": \"2026-08-03\",\n  \"toDate\": \"2026-08-07\",\n  \"reason\": \"Family vacation\"\n}" }
+          }
+        },
+        { "name": "My Leaves", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/leaves/me", "host": ["{{baseUrl}}"], "path": ["api", "leaves", "me"] } } },
+        { "name": "My Leave Balance", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/leaves/balance", "host": ["{{baseUrl}}"], "path": ["api", "leaves", "balance"] } } },
+        { "name": "Team / Company Leaves", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/leaves", "host": ["{{baseUrl}}"], "path": ["api", "leaves"] } } }
+      ]
+    },
+    {
+      "name": "7 · Approvals",
+      "item": [
+        { "name": "Registry (dynamic actions for company)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/approval-rules/registry?companyId={{companyId}}", "host": ["{{baseUrl}}"], "path": ["api", "approval-rules", "registry"], "query": [{ "key": "companyId", "value": "{{companyId}}" }] } } },
+        {
+          "name": "Create Rule (captures ruleId)",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data) pm.collectionVariables.set('ruleId', d.data.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/approval-rules", "host": ["{{baseUrl}}"], "path": ["api", "approval-rules"] },
+            "body": { "mode": "raw", "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"name\": \"Leave Approval\",\n  \"actionKey\": \"HR.LeaveRequest\",\n  \"approverRoles\": [\"Manager\"],\n  \"isActive\": true\n}" }
+          }
+        },
+        { "name": "List Rules", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/approval-rules?companyId={{companyId}}", "host": ["{{baseUrl}}"], "path": ["api", "approval-rules"], "query": [{ "key": "companyId", "value": "{{companyId}}" }] } } },
+        {
+          "name": "Delete Rule",
+          "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/approval-rules/{{ruleId}}", "host": ["{{baseUrl}}"], "path": ["api", "approval-rules", "{{ruleId}}"] } }
+        },
+        {
+          "name": "Pending Inbox (captures first requestId)",
+          "event": [{ "listen": "test", "script": { "exec": ["const d = pm.response.json(); if (d.data && d.data.length) pm.collectionVariables.set('approvalRequestId', d.data[0].id);"], "type": "text/javascript" } }],
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/approvals/pending", "host": ["{{baseUrl}}"], "path": ["api", "approvals", "pending"] } }
+        },
+        {
+          "name": "Approve Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/approvals/{{approvalRequestId}}/approve", "host": ["{{baseUrl}}"], "path": ["api", "approvals", "{{approvalRequestId}}", "approve"] },
+            "body": { "mode": "raw", "raw": "{\n  \"comment\": \"Approved\"\n}" }
+          }
+        },
+        {
+          "name": "Reject Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/approvals/{{approvalRequestId}}/reject", "host": ["{{baseUrl}}"], "path": ["api", "approvals", "{{approvalRequestId}}", "reject"] },
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Not this time\"\n}" }
+          }
+        },
+        { "name": "History (audit trail)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/approvals/history", "host": ["{{baseUrl}}"], "path": ["api", "approvals", "history"] } } }
+      ]
+    }
+  ]
+}

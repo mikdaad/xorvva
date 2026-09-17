@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f3fe0e3d-1ff9-4eaf-ab65-c1d69c034f98</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xorva.Infrastructure\Xorva.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Accounting\Xorva.Modules.Accounting.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Auth\Xorva.Modules.Auth.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Tenants\Xorva.Modules.Tenants.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.HR\Xorva.Modules.HR.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Approvals\Xorva.Modules.Approvals.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Platform\Xorva.Modules.Platform.csproj" />
+    <ProjectReference Include="..\Modules\Xorva.Modules.Commerce\Xorva.Modules.Commerce.csproj" />
+  </ItemGroup>
+
+</Project>

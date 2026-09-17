@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Commerce owns customers/suppliers, invoices, bills and their reports. It is a
+         DIRECTED dependency on Accounting: it posts to the ledger (IJournalPoster) and
+         reads chart/tax/settings. Accounting never references Commerce (no cycle). -->
+    <ProjectReference Include="..\..\Xorva.Core\Xorva.Core.csproj" />
+    <ProjectReference Include="..\Xorva.Modules.Accounting\Xorva.Modules.Accounting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

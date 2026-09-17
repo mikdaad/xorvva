@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xorva — How We Work This Client</title>
+<style>
+  :root{
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C;
+    --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA;
+    --c-eng:#5A4CC4; --c-eng-weak:#EEECFC;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+    --r:16px; --r-sm:11px;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+      --c-border:#262639; --c-border-strong:#33334B;
+      --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+      --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+      --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8;
+      --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14);
+      --c-eng:#B3A2FB; --c-eng-weak:rgba(124,111,224,.18);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+      --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+    }
+  }
+  :root[data-theme="light"]{ --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC; --c-border:#E7E7F1; --c-border-strong:#DADAE8; --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6; --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA; --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA; --c-eng:#5A4CC4; --c-eng-weak:#EEECFC; --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14); --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30); }
+  :root[data-theme="dark"]{ --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F; --c-border:#262639; --c-border-strong:#33334B; --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83; --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6; --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8; --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14); --c-eng:#B3A2FB; --c-eng-weak:rgba(124,111,224,.18); --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7); --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85); }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--c-ground); color:var(--c-ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 64px; }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  .tnum{ font-variant-numeric:tabular-nums; }
+  .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--c-brand-ink); }
+
+  .head{ display:flex; flex-direction:column; gap:14px; margin-bottom:30px; }
+  .brandrow{ display:flex; align-items:center; gap:11px; }
+  .logo{ width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--c-brand),var(--c-brand-2)); display:grid; place-items:center; color:#fff; font-weight:800; box-shadow:var(--shadow); }
+  .brandrow b{ font-size:16px; } .brandrow span{ color:var(--c-faint); font-size:13px; }
+  .title{ font-size:clamp(26px,4.3vw,42px); font-weight:800; letter-spacing:-.025em; line-height:1.06; }
+  .title em{ font-style:normal; color:var(--c-brand-ink); }
+  .lede{ font-size:clamp(15px,1.7vw,18px); color:var(--c-muted); max-width:62ch; }
+
+  .sec-h{ display:flex; align-items:baseline; gap:12px; margin:0 2px 14px; flex-wrap:wrap; }
+  .sec-h h2{ font-size:clamp(18px,2.3vw,23px); font-weight:800; letter-spacing:-.02em; }
+  .sec-h p{ margin:0; color:var(--c-muted); font-size:14px; }
+
+  /* ---- Labour board (hero) ---- */
+  .board{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); box-shadow:var(--shadow-lg); overflow:hidden; margin-bottom:16px; }
+  .board-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px; border-bottom:1px solid var(--c-border); flex-wrap:wrap; }
+  .board-top .lft{ display:flex; align-items:center; gap:10px; } .board-top h3{ font-size:15px; font-weight:750; }
+  .stats{ display:flex; gap:8px; flex-wrap:wrap; }
+  .stat{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:700; padding:5px 11px; border-radius:999px; border:1px solid var(--c-border); }
+  .stat .d{ width:8px; height:8px; border-radius:50%; }
+  .stat.tot{ background:var(--c-inset); color:var(--c-muted); }
+  .stat.eng .d{ background:var(--c-eng); } .stat.eng{ color:var(--c-eng); background:var(--c-eng-weak); border-color:transparent; }
+  .stat.free .d{ background:var(--c-ok); } .stat.free{ color:var(--c-ok-ink); background:var(--c-ok-weak); border-color:transparent; }
+  .stat.lv .d{ background:var(--c-warn); } .stat.lv{ color:var(--c-warn); background:var(--c-warn-weak); border-color:transparent; }
+
+  .tbl-scroll{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; min-width:560px; }
+  th{ text-align:left; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--c-faint); padding:10px 18px; background:var(--c-inset); }
+  td{ padding:11px 18px; border-top:1px solid var(--c-border); font-size:13.5px; }
+  tr:hover td{ background:var(--c-hover); }
+  .wname{ font-weight:650; } .wcat{ color:var(--c-muted); }
+  .pill{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; padding:4px 9px; border-radius:999px; }
+  .pill .d{ width:7px; height:7px; border-radius:50%; }
+  .pill.free{ background:var(--c-ok-weak); color:var(--c-ok-ink); } .pill.free .d{ background:var(--c-ok); }
+  .pill.eng{ background:var(--c-eng-weak); color:var(--c-eng); } .pill.eng .d{ background:var(--c-eng); }
+  .pill.lv{ background:var(--c-warn-weak); color:var(--c-warn); } .pill.lv .d{ background:var(--c-warn); }
+  .where{ color:var(--c-muted); } .where b{ color:var(--c-ink); font-weight:650; }
+  .until{ color:var(--c-faint); font-size:12.5px; }
+  .idle-note{ display:flex; align-items:center; gap:10px; padding:12px 18px; background:var(--c-ok-weak); border-top:1px solid var(--c-border); font-size:13px; color:var(--c-ok-ink); font-weight:600; }
+  .idle-note b{ color:var(--c-ok-ink); }
+  .board-caption{ text-align:center; font-size:13px; color:var(--c-faint); margin-bottom:36px; }
+  .board-caption b{ color:var(--c-ok-ink); }
+
+  /* ---- operating loop ---- */
+  .loop{ display:flex; flex-direction:column; gap:10px; margin-bottom:38px; }
+  .lstep{ display:grid; grid-template-columns:46px minmax(0,1fr) auto; align-items:center; gap:8px; background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:13px 16px; box-shadow:var(--shadow); }
+  .lstep .n{ font-size:12px; font-weight:800; color:var(--c-brand-ink); background:var(--c-brand-weak); width:32px; height:32px; border-radius:9px; display:grid; place-items:center; }
+  .lstep .t b{ font-size:14.5px; font-weight:700; letter-spacing:-.01em; }
+  .lstep .t p{ margin:2px 0 0; font-size:13px; color:var(--c-muted); }
+  .lstep .t .flip{ font-family:var(--mono); font-size:12px; font-weight:700; }
+  .lstep .t .flip .a{ color:var(--c-ok-ink); } .lstep .t .flip .b2{ color:var(--c-eng); }
+  .spot{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:4px 9px; border-radius:999px; white-space:nowrap; }
+  .spot.a{ background:var(--c-ok-weak); color:var(--c-ok-ink); }
+  .spot.b{ background:var(--c-warn-weak); color:var(--c-warn); }
+  .lstep.hot{ border-color:var(--c-warn); box-shadow:0 0 0 1px var(--c-warn), var(--shadow); }
+  .lstep.avail{ border-color:var(--c-ok); box-shadow:0 0 0 1px var(--c-ok), var(--shadow); }
+
+  /* ---- two spotlights ---- */
+  .spots{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:38px; }
+  .scard{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); }
+  .scard .ic{ width:38px; height:38px; border-radius:10px; display:grid; place-items:center; font-size:19px; margin-bottom:11px; }
+  .scard.one .ic{ background:var(--c-ok-weak); } .scard.two .ic{ background:var(--c-warn-weak); }
+  .scard h3{ font-size:16px; font-weight:750; letter-spacing:-.01em; margin-bottom:6px; }
+  .scard p{ margin:0; font-size:13.5px; color:var(--c-muted); }
+  .scard .k{ margin-top:11px; font-size:12px; font-weight:800; letter-spacing:.03em; }
+  .scard.one .k{ color:var(--c-ok-ink); } .scard.two .k{ color:var(--c-warn); }
+
+  .pitch{ background:linear-gradient(135deg,var(--c-brand-ink),var(--c-brand)); color:#fff; border-radius:var(--r); padding:clamp(22px,3vw,32px); box-shadow:var(--shadow-lg); }
+  .pitch .cap{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.8; }
+  .pitch p{ margin:10px 0 0; font-size:clamp(17px,2.2vw,22px); font-weight:700; letter-spacing:-.02em; line-height:1.35; text-wrap:balance; }
+  .pitch p b{ background:rgba(255,255,255,.16); padding:1px 7px; border-radius:6px; }
+
+  @media (max-width:800px){ .spots{ grid-template-columns:1fr; } .lstep{ grid-template-columns:36px minmax(0,1fr); } .spot{ grid-column:2; justify-self:start; margin-top:6px; } }
+  @media (prefers-reduced-motion:no-preference){
+    .board,.lstep,.scard,.pitch{ animation:rise .5s cubic-bezier(.2,.7,.3,1) both; }
+    .lstep:nth-child(2){animation-delay:.03s}.lstep:nth-child(3){animation-delay:.06s}.lstep:nth-child(4){animation-delay:.09s}.lstep:nth-child(5){animation-delay:.12s}.lstep:nth-child(6){animation-delay:.15s}
+    @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="brandrow"><div class="logo">X</div><b>Xorva</b><span>· Operating process</span></div>
+    <div class="eyebrow">Manpower supply — how we run it day to day</div>
+    <h1 class="title">Every labour, always accounted for.<br><em>Free, or earning.</em></h1>
+    <p class="lede">The way your team works this client: know where every worker is, deploy the free ones fast, and close the month — timesheet, invoice and payroll — in a few clicks.</p>
+  </header>
+
+  <!-- LABOUR BOARD -->
+  <div class="sec-h"><h2>The Labour Board</h2><p>One screen: who's free, who's engaged, where, and until when.</p></div>
+  <div class="board">
+    <div class="board-top">
+      <div class="lft"><h3>Workforce — June 2026</h3></div>
+      <div class="stats">
+        <span class="stat tot">180 total</span>
+        <span class="stat eng"><span class="d"></span>168 engaged</span>
+        <span class="stat free"><span class="d"></span>9 free</span>
+        <span class="stat lv"><span class="d"></span>3 on leave</span>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Worker</th><th>Category</th><th>Status</th><th>Where</th><th>Until</th></tr></thead>
+        <tbody>
+          <tr><td class="wname">MD Shahbaz</td><td class="wcat">Helper</td><td><span class="pill eng"><span class="d"></span>Engaged</span></td><td class="where">Bauer · <b>Ruwais</b></td><td class="until">30 Jun</td></tr>
+          <tr><td class="wname">Amir Shahzad</td><td class="wcat">Mason</td><td><span class="pill eng"><span class="d"></span>Engaged</span></td><td class="where">Bauer · <b>Kizad</b></td><td class="until">30 Jun</td></tr>
+          <tr><td class="wname">Kamal Abdur Rahman</td><td class="wcat">Helper</td><td><span class="pill free"><span class="d"></span>Free</span></td><td class="where">On the bench</td><td class="until">available now</td></tr>
+          <tr><td class="wname">Mubarak Kalu</td><td class="wcat">Helper</td><td><span class="pill eng"><span class="d"></span>Engaged</span></td><td class="where">Jihua Royal</td><td class="until">14 Jul</td></tr>
+          <tr><td class="wname">Jakir Hossain</td><td class="wcat">Helper</td><td><span class="pill eng"><span class="d"></span>Engaged</span></td><td class="where">Bauer · <b>Ruwais</b></td><td class="until">30 Jun</td></tr>
+          <tr><td class="wname">Abu Bakkar</td><td class="wcat">Helper</td><td><span class="pill lv"><span class="d"></span>On leave</span></td><td class="where">—</td><td class="until">back 05 Jul</td></tr>
+          <tr><td class="wname">Nazrul Abdul Malak</td><td class="wcat">Helper</td><td><span class="pill free"><span class="d"></span>Free</span></td><td class="where">On the bench</td><td class="until">available now</td></tr>
+          <tr><td class="wname">Jamal Abdul Rahman</td><td class="wcat">Labour</td><td><span class="pill eng"><span class="d"></span>Engaged</span></td><td class="where">Darkglobe</td><td class="until">20 Jul</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="idle-note">💸 <span><b>9 free workers</b> = salary paid, nothing earned. The board flags them so you deploy them to the next order fast.</span></div>
+  </div>
+  <div class="board-caption">Filter by <b>Free</b> + category the moment an order arrives → deploy in seconds.</div>
+
+  <!-- OPERATING LOOP -->
+  <div class="sec-h"><h2>The monthly operating loop</h2><p>Order → deploy → attendance → close. Repeat.</p></div>
+  <div class="loop">
+    <div class="lstep">
+      <div class="n">1</div>
+      <div class="t"><b>Order comes in</b><p>Bauer: “4 Helpers, 3 months, Ruwais.” Logged against the agreement.</p></div>
+    </div>
+    <div class="lstep avail">
+      <div class="n">2</div>
+      <div class="t"><b>Check the Labour Board</b><p>Filter <b>Free</b> Helpers → see exactly who's available right now.</p></div>
+      <span class="spot a">Know who's free</span>
+    </div>
+    <div class="lstep">
+      <div class="n">3</div>
+      <div class="t"><b>Deploy to the project</b><p class="flip">Assign 4 free helpers → Bauer/Ruwais + dates &nbsp; <span class="a">FREE</span> ▶ <span class="b2">ENGAGED</span></p></div>
+    </div>
+    <div class="lstep">
+      <div class="n">4</div>
+      <div class="t"><b>Daily attendance</b><p>Mark present / absent / OT at the site as the month runs.</p></div>
+    </div>
+    <div class="lstep hot">
+      <div class="n">5</div>
+      <div class="t"><b>Month-end timesheet — one click</b><p>Generate the sheet → import or AI-read the client's timesheet → reconcile → <b>Lock</b>. The headache, handled.</p></div>
+      <span class="spot b">Timesheet in one click</span>
+    </div>
+    <div class="lstep">
+      <div class="n">6</div>
+      <div class="t"><b>Close the month</b><p>One click → <b>Invoice the client</b> · one run → <b>WPS + Non-WPS payroll</b>. Both from the locked sheet.</p></div>
+    </div>
+    <div class="lstep">
+      <div class="n">7</div>
+      <div class="t"><b>Project ends</b><p class="flip">Worker demobilized &nbsp; <span class="b2">ENGAGED</span> ▶ <span class="a">FREE</span> &nbsp; → back on the board for the next client.</p></div>
+    </div>
+  </div>
+
+  <!-- SPOTLIGHTS -->
+  <div class="spots">
+    <div class="scard one">
+      <div class="ic">📍</div>
+      <h3>Always know where every labour is</h3>
+      <p>Free vs engaged, which client, which site, until when — one live board across all 180 workers and every customer.</p>
+      <div class="k">No more “who's available?” on WhatsApp</div>
+    </div>
+    <div class="scard two">
+      <div class="ic">🧾</div>
+      <h3>Timesheet → invoice + payroll in clicks</h3>
+      <p>The client's messy timesheet comes in any format; Xorva captures it once, reconciles, locks — then bills the client and pays the workers from that single source.</p>
+      <div class="k">The monthly headache, gone</div>
+    </div>
+  </div>
+
+  <div class="pitch">
+    <div class="cap">How we work this client, in one line</div>
+    <p>Xorva keeps <b>every worker on one live board</b> — free or engaged, and where — so you deploy idle labour fast, then close each month's <b>timesheet, invoice and payroll in a few clicks</b>.</p>
+  </div>
+
+</div>
+</html>

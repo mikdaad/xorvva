@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xorva — Onboarding Without Touching the Architecture</title>
+<style>
+  :root{
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+    --r:16px; --r-sm:11px;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+      --c-border:#262639; --c-border-strong:#33334B;
+      --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+      --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+      --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8; --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+      --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+    }
+  }
+  :root[data-theme="light"]{
+    --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
+    --c-border:#E7E7F1; --c-border-strong:#DADAE8;
+    --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
+    --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
+    --c-ok:#12A150; --c-ok-weak:#E4F6EC; --c-ok-ink:#0C7C3C; --c-warn:#B7791F; --c-warn-weak:#FBF1DE; --c-bad:#DA3B3B; --c-bad-weak:#FBEAEA;
+    --shadow: 0 1px 2px rgba(25,25,34,.04), 0 8px 24px -12px rgba(25,25,34,.14);
+    --shadow-lg: 0 2px 6px rgba(25,25,34,.05), 0 24px 60px -24px rgba(90,76,196,.30);
+  }
+  :root[data-theme="dark"]{
+    --c-ground:#090910; --c-surface:#12121B; --c-inset:#191925; --c-hover:#20202F;
+    --c-border:#262639; --c-border-strong:#33334B;
+    --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
+    --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
+    --c-ok:#3DDC87; --c-ok-weak:rgba(61,220,135,.14); --c-ok-ink:#6FE7A8; --c-warn:#F5C15A; --c-warn-weak:rgba(245,193,90,.14); --c-bad:#F26D6C; --c-bad-weak:rgba(242,109,108,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -16px rgba(0,0,0,.7);
+    --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--c-ground); color:var(--c-ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 64px; }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--c-brand-ink); }
+
+  .head{ display:flex; flex-direction:column; gap:16px; margin-bottom:32px; }
+  .brandrow{ display:flex; align-items:center; gap:11px; }
+  .logo{ width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--c-brand),var(--c-brand-2)); display:grid; place-items:center; color:#fff; font-weight:800; font-size:15px; box-shadow:var(--shadow); }
+  .brandrow b{ font-size:16px; } .brandrow span{ color:var(--c-faint); font-size:13px; }
+  .title{ font-size:clamp(27px,4.4vw,44px); font-weight:800; letter-spacing:-.025em; line-height:1.05; }
+  .title em{ font-style:normal; color:var(--c-brand-ink); }
+  .lede{ font-size:clamp(15px,1.7vw,18px); color:var(--c-muted); max-width:62ch; }
+
+  /* rule banner */
+  .rule{ display:flex; gap:14px; align-items:flex-start; background:var(--c-surface); border:1px solid var(--c-border); border-left:4px solid var(--c-brand); border-radius:var(--r); padding:16px 18px; box-shadow:var(--shadow); margin-bottom:34px; }
+  .rule .b{ font-size:22px; line-height:1; }
+  .rule p{ margin:0; font-size:clamp(15px,1.8vw,18px); font-weight:650; letter-spacing:-.01em; }
+  .rule p b{ color:var(--c-brand-ink); } .rule p .g{ color:var(--c-ok-ink); }
+
+  /* two worlds */
+  .worlds{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+  .world{ border-radius:var(--r); padding:18px 18px 16px; border:1.5px solid; box-shadow:var(--shadow); }
+  .world.engine{ background:var(--c-brand-weak); border-color:var(--c-brand); }
+  .world.config{ background:var(--c-ok-weak); border-color:var(--c-ok); }
+  .world .wh{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .world .sq{ width:14px; height:14px; border-radius:4px; }
+  .world.engine .sq{ background:var(--c-brand); } .world.config .sq{ background:var(--c-ok); }
+  .world .wh b{ font-size:16px; letter-spacing:-.01em; }
+  .world.engine .wh b{ color:var(--c-brand-ink); } .world.config .wh b{ color:var(--c-ok-ink); }
+  .world .sub{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--c-faint); margin-bottom:12px; }
+  .world ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .world li{ font-size:13.5px; color:var(--c-muted); padding-left:20px; position:relative; }
+  .world li b{ color:var(--c-ink); font-weight:650; }
+  .world.engine li::before{ content:"⬢"; position:absolute; left:0; color:var(--c-brand); font-size:11px; top:2px; }
+  .world.config li::before{ content:"▸"; position:absolute; left:2px; color:var(--c-ok); font-size:12px; top:1px; }
+  .world .foot{ margin-top:13px; font-size:12.5px; font-weight:700; padding-top:11px; border-top:1px dashed var(--c-border-strong); }
+  .world.engine .foot{ color:var(--c-brand-ink); } .world.config .foot{ color:var(--c-ok-ink); }
+  .worlds-note{ text-align:center; font-size:13px; color:var(--c-faint); margin-bottom:36px; }
+
+  /* onboarding steps */
+  .sec-h{ display:flex; align-items:baseline; gap:14px; margin:0 2px 16px; flex-wrap:wrap; }
+  .sec-h h2{ font-size:clamp(19px,2.4vw,24px); font-weight:800; letter-spacing:-.02em; }
+  .sec-h p{ margin:0; color:var(--c-muted); font-size:14px; }
+  .steps{ display:flex; flex-direction:column; gap:10px; margin-bottom:40px; }
+  .step{ display:grid; grid-template-columns:44px minmax(0,1fr) 118px; align-items:center; gap:6px; background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:14px 16px; box-shadow:var(--shadow); }
+  .step .n{ font-size:13px; font-weight:800; color:var(--c-brand-ink); font-variant-numeric:tabular-nums; }
+  .step .t{ min-width:0; } .step .t b{ font-size:15px; font-weight:700; letter-spacing:-.01em; }
+  .step .t p{ margin:3px 0 0; font-size:13px; color:var(--c-muted); }
+  .step .t code{ font-family:var(--mono); font-size:12px; background:var(--c-inset); padding:1px 6px; border-radius:5px; color:var(--c-brand-ink); }
+  .badge{ justify-self:end; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:5px 10px; border-radius:999px; white-space:nowrap; text-align:center; }
+  .badge.cfg{ background:var(--c-ok-weak); color:var(--c-ok-ink); border:1px solid var(--c-ok); }
+  .badge.eng{ background:var(--c-brand-weak); color:var(--c-brand-ink); border:1px solid var(--c-brand); }
+  .step.eng{ border-color:var(--c-brand); box-shadow:0 0 0 1px var(--c-brand), var(--shadow); }
+  .step .t .why{ color:var(--c-ok-ink); font-weight:650; }
+  .step.eng .t .why{ color:var(--c-brand-ink); }
+
+  /* guarantee */
+  .guar{ background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:clamp(18px,2.4vw,26px); box-shadow:var(--shadow-lg); margin-bottom:36px; }
+  .guar .cap{ font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--c-ok-ink); margin-bottom:14px; display:flex; align-items:center; gap:9px; }
+  .guar .cap .lk{ font-size:15px; }
+  .guar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .g{ } .g b{ font-size:14px; display:block; margin-bottom:5px; letter-spacing:-.01em; }
+  .g p{ margin:0; font-size:13px; color:var(--c-muted); }
+  .g code{ font-family:var(--mono); font-size:11.5px; background:var(--c-inset); padding:1px 5px; border-radius:5px; color:var(--c-brand-ink); }
+
+  /* wrong vs right */
+  .vs{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:38px; }
+  .vsc{ border-radius:var(--r); padding:16px 17px; border:1.5px solid; box-shadow:var(--shadow); }
+  .vsc.no{ background:var(--c-bad-weak); border-color:var(--c-bad); }
+  .vsc.yes{ background:var(--c-ok-weak); border-color:var(--c-ok); }
+  .vsc .h{ font-size:14px; font-weight:800; display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+  .vsc.no .h{ color:var(--c-bad); } .vsc.yes .h{ color:var(--c-ok-ink); }
+  .vsc p{ margin:0; font-size:13.5px; color:var(--c-muted); } .vsc p b{ color:var(--c-ink); }
+  .vsc .res{ margin-top:10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+  .vsc.no .res{ color:var(--c-bad); } .vsc.yes .res{ color:var(--c-ok-ink); }
+
+  .pitch{ background:linear-gradient(135deg,var(--c-brand-ink),var(--c-brand)); color:#fff; border-radius:var(--r); padding:clamp(22px,3vw,32px); box-shadow:var(--shadow-lg); }
+  .pitch .cap{ font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.8; }
+  .pitch p{ margin:10px 0 0; font-size:clamp(17px,2.2vw,22px); font-weight:700; letter-spacing:-.02em; line-height:1.35; text-wrap:balance; }
+  .pitch p b{ background:rgba(255,255,255,.16); padding:1px 7px; border-radius:6px; }
+
+  @media (max-width:800px){
+    .worlds,.guar-grid,.vs{ grid-template-columns:1fr; }
+    .step{ grid-template-columns:30px minmax(0,1fr); } .badge{ grid-column:2; justify-self:start; margin-top:8px; }
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .rule,.world,.step,.guar,.vsc,.pitch{ animation:rise .5s cubic-bezier(.2,.7,.3,1) both; }
+    .step:nth-child(2){animation-delay:.03s}.step:nth-child(3){animation-delay:.06s}.step:nth-child(4){animation-delay:.09s}.step:nth-child(5){animation-delay:.12s}
+    @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="brandrow"><div class="logo">X</div><b>Xorva</b><span>· Architecture playbook</span></div>
+    <div class="eyebrow">Onboarding a new client — manpower example</div>
+    <h1 class="title">Take on any client.<br><em>Never touch the architecture.</em></h1>
+    <p class="lede">How we set up the manpower client (Gulf Oasis) end-to-end — while the core code stays exactly the same for everyone.</p>
+  </header>
+
+  <div class="rule">
+    <span class="b">🔒</span>
+    <p>The one rule: a client is <span class="g">DATA (config)</span>, never <b>CODE</b>. The engine is <b>CODE</b>, built once — so no client can ever disturb your architecture.</p>
+  </div>
+
+  <!-- TWO WORLDS -->
+  <div class="worlds">
+    <div class="world engine">
+      <div class="wh"><span class="sq"></span><b>The Engine</b></div>
+      <div class="sub">Code · shared · built once</div>
+      <ul>
+        <li>Static core — <b>Accounting ✓ · HR ✓ · Payroll ✓</b></li>
+        <li>Entity engine · Document engine</li>
+        <li>Rules + reusable calc plugins</li>
+        <li>Multi-tenant platform ✓</li>
+      </ul>
+      <div class="foot">You touch it rarely — for everyone</div>
+    </div>
+    <div class="world config">
+      <div class="wh"><span class="sq"></span><b>The Client</b></div>
+      <div class="sub">Data · per client · isolated</div>
+      <ul>
+        <li>Their entities &amp; fields (<b>Worker, Site…</b>)</li>
+        <li>Their documents &amp; workflow</li>
+        <li>Their labels &amp; rate rules</li>
+        <li>Which modules are switched on</li>
+      </ul>
+      <div class="foot">You touch it daily — for one client, safely</div>
+    </div>
+  </div>
+  <div class="worlds-note">Onboarding a client moves only the <b style="color:var(--c-ok-ink)">green</b> side. The <b style="color:var(--c-brand-ink)">violet</b> side stays frozen.</div>
+
+  <!-- STEPS -->
+  <div class="sec-h"><h2>Setting up Gulf Oasis — step by step</h2><p>Watch the tag on each step.</p></div>
+  <div class="steps">
+    <div class="step">
+      <div class="n">01</div>
+      <div class="t"><b>Create tenant + company, switch on modules</b><p>Gulf Oasis → HR + Accounting + Manpower pack. <span class="why">Just rows.</span></p></div>
+      <span class="badge cfg">Config · no code</span>
+    </div>
+    <div class="step">
+      <div class="n">02</div>
+      <div class="t"><b>Apply the Manpower pack</b><p>Writes config: entities (Worker, Customer, Site), documents (Agreement, LPO, Timesheet, Invoice, Payroll), labels, OT &amp; WPS rules. <span class="why">Data written to config tables.</span></p></div>
+      <span class="badge cfg">Config · no code</span>
+    </div>
+    <div class="step">
+      <div class="n">03</div>
+      <div class="t"><b>Engine renders every screen from that config</b><p>No new C# entity, <b>no migration</b>, no new controller, no new React page. <span class="why">The architecture never changed.</span></p></div>
+      <span class="badge cfg">Config · no code</span>
+    </div>
+    <div class="step">
+      <div class="n">04</div>
+      <div class="t"><b>Load their real data</b><p>Workers, customers (Bauer), the agreement &amp; rate card. <span class="why">Ordinary data entry.</span></p></div>
+      <span class="badge cfg">Config · no code</span>
+    </div>
+    <div class="step eng">
+      <div class="n">05</div>
+      <div class="t"><b>WPS-split math needs real logic</b><p>Add a <b>reusable plugin to the engine — once, versioned</b>. Tadbeer &amp; others can use it too. <span class="why">Shared engine code, not client-specific.</span></p></div>
+      <span class="badge eng">Engine · reusable</span>
+    </div>
+  </div>
+
+  <!-- GUARANTEE -->
+  <div class="guar">
+    <div class="cap"><span class="lk">🔒</span>Why it physically can't disturb the architecture</div>
+    <div class="guar-grid">
+      <div class="g"><b>Isolated by design</b><p>Every config row is a <code>CompanyEntity</code> → the global query filters wall it off by <code>CompanyId</code>. One client's setup is invisible to all others.</p></div>
+      <div class="g"><b>Core is shared &amp; frozen</b><p>Accounting, HR, platform code is the same for everyone. No client edits it, so no client can break another.</p></div>
+      <div class="g"><b>Engine grows, never forks</b><p>The rare code change is a reusable, versioned engine feature — every client benefits. No per-client branches.</p></div>
+    </div>
+  </div>
+
+  <!-- VS -->
+  <div class="sec-h"><h2>The fork in the road</h2><p>The choice that decides whether you scale or drown.</p></div>
+  <div class="vs">
+    <div class="vsc no">
+      <div class="h">✕ The wrong way</div>
+      <p>Write a <b>ManpowerController</b>, custom tables, a client branch of code for every deal.</p>
+      <div class="res">→ 20 codebases · architecture rots · you drown</div>
+    </div>
+    <div class="vsc yes">
+      <div class="h">✓ The Xorva way</div>
+      <p>Config rows on <b>one shared engine</b>. New client = new data, not new code.</p>
+      <div class="res">→ one codebase · any client · you scale</div>
+    </div>
+  </div>
+
+  <div class="pitch">
+    <div class="cap">The line for the room</div>
+    <p>Every client we take on is <b>configuration on one engine</b> — walled off by tenant, rendered by the platform. We add clients as <b>data</b>, so the architecture stays the same at 1 client or 1,000.</p>
+  </div>
+
+</div>
+</html>
