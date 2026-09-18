@@ -268,8 +268,10 @@ public class SaveAndPostVoucherHandler : IRequestHandler<SaveAndPostVoucherComma
             line.VoucherId = voucher.Id;
             // Add explicitly: BaseEntity pre-generates the Guid key, so a line discovered only through the
             // navigation of an already-tracked (Unchanged) voucher would be attached as Modified, not Added.
+            // EF's relationship fix-up then puts the line into voucher.Lines itself (the voucher is tracked in
+            // both branches) — only append manually if it did not, or the in-memory list holds duplicates.
             _db.Set<VoucherLine>().Add(line);
-            voucher.Lines.Add(line);
+            if (!voucher.Lines.Contains(line)) voucher.Lines.Add(line);
         }
 
         await _db.SaveChangesAsync(ct);
