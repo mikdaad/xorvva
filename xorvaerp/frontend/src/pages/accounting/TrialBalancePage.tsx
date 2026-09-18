@@ -8,6 +8,7 @@ import { AppShell } from '../../components/AppShell';
 import { Card, Spinner } from '../../components/ui';
 import { Pill } from '../../components/dashboard-ui';
 import { useReportScope } from '../../components/accounting/useReportScope';
+import { ExportButtons } from '../../components/accounting/ExportButtons';
 
 const money = (n: number) => n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -40,6 +41,7 @@ export default function TrialBalancePage() {
         </div>
         <div className="flex flex-wrap items-end gap-3">
           {scopeControl}
+          <ExportButtons reportType="TrialBalance" companyId={companyId} disabled={!tb} />
           {tb && (
             tb.isBalanced
               ? <Pill tone="ok">Balanced</Pill>

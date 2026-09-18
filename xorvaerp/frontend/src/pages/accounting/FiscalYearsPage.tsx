@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IconPlus, IconCalendarStats, IconLock, IconLockOpen } from '@tabler/icons-react';
+import { IconPlus, IconCalendarStats, IconLock, IconLockOpen, IconShieldLock } from '@tabler/icons-react';
 import { AxiosError } from 'axios';
-import { accountingApi, type FiscalYear } from '../../api/accounting.api';
+import { accountingApi, type FiscalYear, type FiscalPeriod, type PeriodCloseStatus } from '../../api/accounting.api';
+import { ledgerApi } from '../../api/ledger.api';
 import type { ApiResponse } from '../../api/auth.api';
 import { useAuth } from '../../stores/AuthContext';
 import { useCompany } from '../../stores/CompanyContext';
@@ -35,9 +36,12 @@ export default function FiscalYearsPage() {
   }, [companyId, toast]);
   useEffect(() => { void load(); }, [load]);
 
-  const togglePeriod = async (id: string, isClosed: boolean) => {
-    setBusy(id);
-    try { await accountingApi.setPeriodClosed(id, isClosed, companyId); await load(); }
+  /** Open → Soft-closed → Hard-closed → Open. Soft close still lets company admins post adjustments. */
+  const cyclePeriod = async (p: FiscalPeriod) => {
+    const current: PeriodCloseStatus = p.closeStatus ?? (p.isClosed ? 'HardClosed' : 'Open');
+    const next: PeriodCloseStatus = current === 'Open' ? 'SoftClosed' : current === 'SoftClosed' ? 'HardClosed' : 'Open';
+    setBusy(p.id);
+    try { const r = await ledgerApi.setPeriodCloseStatus(p.id, next, companyId); toast.success(r.data.message ?? 'Period updated.'); await load(); }
     catch (e) { toast.error(err(e, 'Failed to update period.')); }
     finally { setBusy(null); }
   };
@@ -54,6 +58,11 @@ export default function FiscalYearsPage() {
         <div>
           <h1 className="text-3xl font-bold text-frost">Fiscal Years</h1>
           <p className="mt-1 text-sm text-frost-dim">Lock periods to freeze the books; year-end close rolls profit into retained earnings.</p>
+          <p className="mt-1 flex flex-wrap items-center gap-3 text-xs text-dim">
+            <span className="inline-flex items-center gap-1"><IconLockOpen size={12} className="text-primary" /> Open</span>
+            <span className="inline-flex items-center gap-1"><IconLock size={12} className="text-warning" /> Soft-closed (admins may adjust)</span>
+            <span className="inline-flex items-center gap-1"><IconShieldLock size={12} /> Hard-closed</span>
+          </p>
         </div>
         <Button onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New fiscal year</Button>
       </div>
@@ -81,17 +90,25 @@ export default function FiscalYearsPage() {
                 )}
               </div>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-                {y.periods.map((p) => (
-                  <button key={p.id} type="button" disabled={y.isClosed || busy === p.id}
-                    onClick={() => void togglePeriod(p.id, !p.isClosed)}
-                    className={`flex items-center justify-between rounded-lg border px-2.5 py-2 text-xs transition-colors disabled:opacity-60 ${
-                      p.isClosed ? 'border-border bg-surface text-dim' : 'border-primary/30 text-frost hover:bg-hover'
-                    }`}
-                    title={y.isClosed ? 'Year closed' : p.isClosed ? 'Click to re-open' : 'Click to close'}>
-                    <span>{shortMonth(p.startDate)}</span>
-                    {p.isClosed ? <IconLock size={13} stroke={1.6} /> : <IconLockOpen size={13} stroke={1.6} className="text-primary" />}
-                  </button>
-                ))}
+                {y.periods.map((p) => {
+                  const st: PeriodCloseStatus = p.closeStatus ?? (p.isClosed ? 'HardClosed' : 'Open');
+                  const cls = st === 'HardClosed' ? 'border-border bg-surface text-dim'
+                    : st === 'SoftClosed' ? 'border-warning/40 bg-warning/10 text-warning'
+                    : 'border-primary/30 text-frost hover:bg-hover';
+                  const hint = y.isClosed ? 'Year closed'
+                    : st === 'Open' ? 'Open — click to soft-close (admins can still adjust)'
+                    : st === 'SoftClosed' ? 'Soft-closed — click to hard-close (no further postings)'
+                    : 'Hard-closed — click to re-open';
+                  return (
+                    <button key={p.id} type="button" disabled={y.isClosed || busy === p.id}
+                      onClick={() => void cyclePeriod(p)}
+                      className={`flex items-center justify-between rounded-lg border px-2.5 py-2 text-xs transition-colors disabled:opacity-60 ${cls}`}
+                      title={hint}>
+                      <span>{shortMonth(p.startDate)}</span>
+                      {st === 'HardClosed' ? <IconShieldLock size={13} stroke={1.6} /> : st === 'SoftClosed' ? <IconLock size={13} stroke={1.6} /> : <IconLockOpen size={13} stroke={1.6} className="text-primary" />}
+                    </button>
+                  );
+                })}
               </div>
             </Card>
           ))}

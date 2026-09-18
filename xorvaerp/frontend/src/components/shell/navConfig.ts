@@ -5,7 +5,8 @@ import {
   IconBook, IconScale, IconFileInvoice, IconCash, IconReceiptTax, IconBuildingBank,
   IconTrendingUp, IconReportAnalytics, IconClockDollar, IconReceipt2, IconCashBanknote,
   IconAdjustments, IconBuildingWarehouse, IconArrowsExchange, IconArrowBackUp, IconArrowForwardUp,
-  IconFileTypeXml, IconCurrencyDollar, IconApps, type Icon,
+  IconFileTypeXml, IconCurrencyDollar, IconApps, IconKeyboard, IconListDetails, IconSitemap,
+  IconFileImport, IconSparkles, type Icon,
 } from '@tabler/icons-react';
 
 export type RoleName = 'SystemAdmin' | 'SuperAdmin' | 'CompanyAdmin' | 'Manager' | 'Employee';
@@ -107,6 +108,8 @@ export const NAV_GROUPS: NavGroup[] = [
       // model ships (Stage E1), which will also admit an Accounting-dept Manager.
       { to: '/accounting', label: 'Overview', icon: IconLayoutDashboard, roles: ADMINS },
       { to: '/accounting/accounts', label: 'Chart of Accounts', icon: IconBook2, roles: ADMINS },
+      { to: '/accounting/vouchers/new', label: 'Voucher Entry', icon: IconKeyboard, roles: ADMINS },
+      { to: '/accounting/vouchers', label: 'Voucher Register', icon: IconListDetails, roles: ADMINS },
       { to: '/accounting/journals', label: 'Journals', icon: IconBook, roles: ADMINS },
       { to: '/accounting/general-ledger', label: 'General Ledger', icon: IconBook2, roles: ADMINS },
       { to: '/accounting/profit-loss', label: 'Profit & Loss', icon: IconTrendingUp, roles: ADMINS },
@@ -118,6 +121,9 @@ export const NAV_GROUPS: NavGroup[] = [
       { to: '/accounting/exchange-rates', label: 'Exchange Rates', icon: IconCurrencyDollar, roles: ADMINS },
       { to: '/accounting/bank-accounts', label: 'Bank Accounts', icon: IconBuildingBank, roles: ADMINS },
       { to: '/accounting/bank-reconciliation', label: 'Bank Reconciliation', icon: IconChecklist, roles: ADMINS },
+      { to: '/accounting/bank-statements', label: 'Bank Statements', icon: IconFileImport, roles: ADMINS },
+      { to: '/accounting/cost-centres', label: 'Cost Centres', icon: IconSitemap, roles: ADMINS },
+      { to: '/accounting/inbox', label: 'Document Inbox', icon: IconSparkles, roles: ADMINS },
       { to: '/accounting/fiscal-years', label: 'Fiscal Years', icon: IconCalendarStats, roles: ADMINS },
       { to: '/accounting/opening-balances', label: 'Opening Balances', icon: IconAdjustments, roles: ADMINS },
       { to: '/accounting/fixed-assets', label: 'Fixed Assets', icon: IconBuildingWarehouse, roles: ADMINS },

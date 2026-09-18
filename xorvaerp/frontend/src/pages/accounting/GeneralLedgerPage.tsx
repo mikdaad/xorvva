@@ -8,6 +8,7 @@ import { useCompany } from '../../stores/CompanyContext';
 import { useToast } from '../../stores/ToastContext';
 import { AppShell } from '../../components/AppShell';
 import { Card, Field, SelectField, Spinner } from '../../components/ui';
+import { ExportButtons } from '../../components/accounting/ExportButtons';
 
 const money = (n: number) => n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const yearStart = () => `${new Date().getFullYear()}-01-01`;
@@ -60,6 +61,7 @@ export default function GeneralLedgerPage() {
         </div>
         <Field label="From" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
         <Field label="To" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+        <ExportButtons reportType="Ledger" companyId={companyId} accountId={accountId} from={from} to={to} disabled={!gl} />
       </div>
 
       {loading ? (

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IconCash, IconFileInvoice, IconTrendingUp, IconAlertTriangle, IconReportMoney } from '@tabler/icons-react';
+import { IconCash, IconFileInvoice, IconTrendingUp, IconAlertTriangle, IconReportMoney, IconKeyboard, IconListDetails, IconFileImport, IconSparkles, IconSitemap } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { accountingApi, type FinanceDashboard } from '../../api/accounting.api';
 import type { ApiResponse } from '../../api/auth.api';
@@ -11,6 +12,14 @@ import { useReportScope } from '../../components/accounting/useReportScope';
 
 const money = (n: number) => `AED ${n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const monthLabel = (ym: string) => new Date(`${ym}-01`).toLocaleDateString('en-AE', { month: 'short' });
+
+const QUICK = [
+  { to: '/accounting/vouchers/new', label: 'Voucher entry', hint: 'F4–F9 Tally-style screen', icon: IconKeyboard },
+  { to: '/accounting/vouchers', label: 'Voucher register', hint: 'All vouchers, export PDF/XLSX', icon: IconListDetails },
+  { to: '/accounting/bank-statements', label: 'Bank statements', hint: 'Import CSV & match', icon: IconFileImport },
+  { to: '/accounting/inbox', label: 'Document inbox', hint: 'AI-extract supplier invoices', icon: IconSparkles },
+  { to: '/accounting/cost-centres', label: 'Cost centres', hint: 'Departments, projects, budgets', icon: IconSitemap },
+];
 
 export default function AccountingHomePage() {
   const toast = useToast();
@@ -37,6 +46,15 @@ export default function AccountingHomePage() {
           <p className="mt-1 text-sm text-frost-dim">Your company's finances at a glance.</p>
         </div>
         {scopeControl}
+      </div>
+
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {QUICK.map((q) => (
+          <Link key={q.to} to={q.to} className="group flex items-center gap-3 rounded-xl border border-border bg-abyss px-4 py-3 shadow-soft-sm transition-colors hover:border-primary/40 hover:bg-hover">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-glow"><q.icon size={18} stroke={1.7} /></span>
+            <span className="min-w-0"><span className="block text-sm font-semibold text-frost">{q.label}</span><span className="block truncate text-xs text-dim">{q.hint}</span></span>
+          </Link>
+        ))}
       </div>
 
       {loading ? (

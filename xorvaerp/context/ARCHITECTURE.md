@@ -196,6 +196,12 @@ in C# (`PeriodGuard`, `JournalPoster` balance/leaf/cost-centre checks) and in DB
 - **Session context:** `TenantSessionInterceptor` runs `app.set_session_context(user, tenant, company,
   role, crossCompany)` on every opened connection; RLS policies (`app.install_company_rls`) and RPCs
   read it via `app.current_*()`. EF global filters remain — RLS is defence in depth.
+  **Supabase notes (target DB since Sept 2026):** connect through the *session* pooler (port 5432) or
+  direct — never the transaction pooler (6543): the context is session-scoped (`set_config(..., false)`)
+  and EF migrations need real sessions. The `postgres` role Supabase hands out owns the tables and has
+  `BYPASSRLS`, so the policies do not filter the API's own connection — isolation for the API is the EF
+  global query filter (as before); RLS becomes active for any restricted role (PostgREST, read-only
+  analytics users). Schemas `app`/`accounting` are outside `public`, so PostgREST does not expose the RPCs.
 - **RPC facade:** `IAccountingRpc` (module `Common/`) implemented by `Infrastructure/Services/AccountingRpc`
   on the DbContext's own connection, so EF writes + RPC run in one Npgsql session/transaction scope.
 - **Module boundary:** Accounting must not reference Commerce. Voucher entry / AI inbox need
@@ -247,3 +253,14 @@ Exception → RequestLogging → Swagger(dev) → CORS → Authentication → Te
 - Client validation mirrors backend FluentValidation exactly (`src/utils/validation.ts`).
 - RBAC helpers mirror the backend hierarchy (`src/utils/roles.ts`).
 - Dev proxy: vite.config.ts `/api` → `http://localhost:5270` (must match launchSettings.json).
+- **TrueLedge-port screens (Phase 3)** live beside the older accounting pages and follow the same
+  patterns (`AppShell`, `useAuth`/`useCompany` company scoping, `useReportScope` for reports,
+  `useToast`, `components/ui` primitives, `Pill`/`StatTile` from `dashboard-ui`). Their API client is
+  `src/api/ledger.api.ts` (types mirror the C# DTOs 1:1; enums are string unions because the API
+  serialises enums as strings). Shared helpers: `fmtMoney`, `fmtDate`, `todayIso`, `VOUCHER_STATUS_TONE`.
+- `SearchSelect` (`components/accounting/`) is the keyboard combobox for the voucher grid — it swallows
+  Enter only while its list is open so the grid's "Enter = next field" handler keeps working.
+- File downloads (`exportReport`) and file previews (inbox) go through the axios client with
+  `responseType: 'blob'` so the JWT header is attached; never link to `/api/...` directly.
+- Inbox → voucher hand-off uses router state (`navigate('/accounting/vouchers/new', { state: { prefill } })`),
+  and the entry page calls `acceptDocument` after a successful post to link the document.

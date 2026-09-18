@@ -1,4 +1,4 @@
-# Xorva ERP — Database Schema (Neon PostgreSQL)
+# Xorva ERP — Database Schema (PostgreSQL — Supabase since Sept 2026; previously Neon)
 
 **Migrations applied to Neon: 25 (0 pending)** — auto-applied at API startup by `DbInitializer`.
 - Phase 1: `InitialCreate`, `UsersEmailUniqueNullsNotDistinct`, `TenancyFoundation`, `ApprovalEngine`,
@@ -68,8 +68,11 @@ Note: no `xmin`/array columns — concurrency is a plain int Version, ApproverRo
 
 ## TrueLedge port (Phase 2b, Sept 2026) — SQL-defined objects
 
-Defined in `Xorva.Infrastructure/Sql/Accounting/0001–0007` (applied by migration
-`20260917120000_AccountingSqlPort`; **pending on Neon until `dotnet ef database update` is run locally**).
+Defined in `Xorva.Infrastructure/Sql/Accounting/0001–0007`, applied by migration
+`20260917120000_AccountingSqlPort`; the EF read-model is registered by the empty-bodied
+`20260918054345_AccountingReadModel`. Both applied to **Supabase** (Sept 18, 2026) via `DbInitializer`
+on API startup. `Sql/Tests/verify_readmodel.mjs` diffs the EF snapshot against the SQL DDL
+(expected noise documented in its header).
 All tables: `public`, PascalCase quoted, `TenantId`+`CompanyId`+audit columns, RLS installed,
 enums as varchar + CHECK (mirrored 1:1 in `Xorva.Modules.Accounting.Enums`).
 

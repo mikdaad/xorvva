@@ -213,7 +213,7 @@ boundary: with no foreign bank exposure yet, the AR/AP revaluation above is comp
 
 ---
 
-# TRUELEDGE PORT — Phase 2b backend (Sept 17–18, 2026) ⚠️ WRITTEN, AWAITING LOCAL `dotnet build` / `dotnet test`
+# TRUELEDGE PORT — Phase 2b backend (Sept 17–18, 2026) ✅ BUILD + 166 TESTS GREEN, MIGRATED TO SUPABASE
 
 Gap-fill port of the standalone **TrueLedge** app (Next.js + Supabase) into the accounting module.
 Strategy A (approved): keep Xorva's `JournalPoster`, entities, approvals and tests; add TrueLedge's
@@ -265,18 +265,42 @@ migration wrapper; RPCs write into Xorva's existing `JournalEntries`/`JournalLin
 `FakeAccountingRpc`: draft/post/repost, compensation on post failure, hard/soft close by role),
 `CostCentreHandlerTests`. Fake RPC lives in `TestHelpers/FakeAccountingRpc.cs`.
 
-### ⚠️ Local steps the agent could not run (no .NET / no network in sandbox)
-1. `dotnet build` — expect small fixes (property names, usings). Watch: SQLite mapping of
-   `AccountingDocument.Tags` (`List<string>` → Postgres `text[]`; may need a value converter for the
-   SQLite test provider) and the `AmountDue` computed column.
-2. EF model catch-up: the hand-written migration deliberately has a Designer that reproduces the
-   *previous* model. Run `dotnet ef migrations add AccountingReadModel -p Xorva.Infrastructure -s Xorva.API`,
-   **empty its Up()/Down()** (the SQL scripts already created everything; keep the regenerated snapshot),
-   verify with `migrations add Probe` (must be empty) → `migrations remove`, then `database update`.
-3. `dotnet test` — new + existing suites must be green before Phase 3 (UI).
-4. Add `Gemini:ApiKey` to user-secrets to enable the inbox (extractor reports `IsConfigured=false` otherwise).
+### Local verification (Sept 18) — done
+- `dotnet build` green after 3 fixes (LINQ `from` keyword collision, duplicate `[Migration]` attribute,
+  voucher re-post attaching new lines as Modified). `dotnet test`: **166/166**.
+- EF catch-up: `20260918054345_AccountingReadModel` (empty Up/Down) registers the read-model; verified
+  against the SQL DDL with `Sql/Tests/verify_readmodel.mjs` (no real disagreements). Applied to
+  **Supabase** together with `AccountingSqlPort` (target DB moved from Neon to Supabase; use the
+  session pooler, port 5432).
+- `Gemini:ApiKey` user-secret enables the inbox (extractor reports `IsConfigured=false` otherwise).
 
-### Phase 3 (UI) and Phase 4 (wiring + E2E) — not started; check in with user first.
+### Phase 3 (UI) — code written Sept 18, awaiting local `npm run build`. Phase 4 (wiring + E2E) — not started.
+
+Written blind (no `node_modules` in the sandbox — run `npm run build` in `frontend/` and paste errors):
+- `src/api/ledger.api.ts` — typed client for the Phase 2b surface (vouchers, cost centres, bank
+  statements, document inbox, SQL ledger reports, `exportReport` blob download, graded period close,
+  products). Kept separate from `accounting.api.ts` on purpose; `FiscalPeriod` gained `closeStatus`.
+- `components/accounting/SearchSelect.tsx` — keyboard-first combobox (type-to-filter, ↑/↓, Enter picks;
+  Enter on a closed picker bubbles to the grid). `components/accounting/ExportButtons.tsx` — PDF/Excel pair.
+- Pages under `pages/accounting/`: `VoucherEntryPage` (F4–F9 switcher, Ctrl+A post, Enter = next cell,
+  settlement/journal Dr-Cr grid vs invoice item grid, cost-centre column when centres exist, mandatory
+  dimension check, live totals mirroring `VoucherEngine`, save draft / save & post, edit-draft route,
+  inbox prefill via router state + auto-link on post), `VoucherRegisterPage` (filters, paging, detail
+  modal, reverse w/ reason, cancel draft, PDF/XLSX export), `CostCentresPage` (dimension list + tree +
+  spend report tab), `BankImportPage` (statement list w/ reconciliation bar, CSV upload → server preview
+  → import, line matching with candidates / suggest / ignore / unmatch, rules CRUD),
+  `DocumentInboxPage` (status tabs + counts, drag-drop upload, PDF/image preview, header + totals field
+  override, line items, accept → link voucher / create voucher from extraction, reject, 3 s polling while
+  Processing).
+- Existing pages touched: `FiscalYearsPage` (Open → Soft → Hard cycle), `TrialBalance` / `BalanceSheet` /
+  `GeneralLedger` (export buttons), `AccountingHomePage` (quick-action strip).
+- Routing: `/accounting/vouchers`, `/vouchers/new`, `/vouchers/:id/edit`, `/cost-centres`,
+  `/bank-statements`, `/inbox` in `App.tsx`; nav items in `navConfig.ts` (ADMINS, `accounting` group).
+
+Phase 4 checklist (after the build is green): smoke each screen against Supabase, post one voucher of
+every type and confirm `JournalEntries` rows + trial balance, import a real bank CSV, exercise the inbox
+with `Gemini:ApiKey` set, verify approvals interception (`pendingApproval`) on post/reverse, verify
+period-close guard messages, then update API_CONTRACTS/DAILY_LOG.
 
 ---
 
