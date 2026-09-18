@@ -56,7 +56,8 @@ public class ReportExportTests
         text.Should().EndWith("%%EOF\n");
         text.Should().Contain("/Type /Catalog").And.Contain("/Type /Pages").And.Contain("Helvetica-Bold");
         text.Should().Contain("(Xorva Demo LLC) Tj");
-        text.Should().Contain("Rent \\(March\\) & DEWA <tax>", "PDF string delimiters are escaped");
+        // The Reference column is narrow, so the long value is ellipsised — assert on the escaped prefix only.
+        text.Should().Contain("(Rent \\(March\\) &", "PDF string delimiters are escaped");
 
         var pageCount = System.Text.RegularExpressions.Regex.Matches(text, "/Type /Page ").Count;
         pageCount.Should().BeGreaterThan(2);
