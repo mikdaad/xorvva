@@ -52,8 +52,6 @@ namespace Xorva.Infrastructure.Migrations
     /// If the generated Up() contains anything OTHER than the accounting tables/columns listed
     /// in context/DATABASE_SCHEMA.md, a mapping drifted — fix the configuration, don't keep it.
     /// </summary>
-    [DbContext(typeof(XorvaDbContext))]
-    [Migration("20260917120000_AccountingSqlPort")]
     public partial class AccountingSqlPort : Migration
     {
         private const string Npgsql = "Npgsql.EntityFrameworkCore.PostgreSQL";
