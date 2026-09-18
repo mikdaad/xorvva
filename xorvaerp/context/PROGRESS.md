@@ -213,6 +213,73 @@ boundary: with no foreign bank exposure yet, the AR/AP revaluation above is comp
 
 ---
 
+# TRUELEDGE PORT — Phase 2b backend (Sept 17–18, 2026) ⚠️ WRITTEN, AWAITING LOCAL `dotnet build` / `dotnet test`
+
+Gap-fill port of the standalone **TrueLedge** app (Next.js + Supabase) into the accounting module.
+Strategy A (approved): keep Xorva's `JournalPoster`, entities, approvals and tests; add TrueLedge's
+missing capabilities additively. TrueLedge's Postgres/RPC/RLS layer is ported **as SQL**
+(`Xorva.Infrastructure/Sql/Accounting/000{1..7}_*.sql` — source of truth), applied by a thin EF
+migration wrapper; RPCs write into Xorva's existing `JournalEntries`/`JournalLines` (one ledger).
+
+### SQL layer — DONE, 155 tests green against real Postgres 18
+- `0001` schemas `app`/`accounting`, session context (`app.set_session_context`, `app.current_*`),
+  `app.install_company_rls(regclass)` · `0002` RLS on every accounting table · `0003` vouchers
+  (`Vouchers`, `VoucherLines`, `VoucherSequences`; `generate_voucher_number`, `post_voucher_atomic`,
+  `reverse_voucher`, immutability + balance triggers) + cost centres (`CostCentreDimensions`,
+  `CostCentres`, `JournalLines.CostCentreId`, hierarchy/level/leaf triggers) · `0004` bank statement
+  import (`BankStatements`, `BankStatementLines`, `BankMatchRules`; `import_bank_statement`,
+  `suggest_bank_matches`, confirm/unmatch/ignore) · `0005` master enrichment (Arabic names, FTA
+  fields, control accounts, item purchase side, soft/hard period close `FiscalPeriods.CloseStatus`,
+  `assert_period_open`, `set_period_close_status`) · `0006` AI document inbox (`AccountingDocumentFiles`,
+  `AccountingDocuments`, `DocumentExtractions`, `DocumentFieldSuggestions` + upload/begin/complete/fail/
+  override/accept/reject RPCs) · `0007` report RPCs (`get_balance_sheet`, `get_ledger_statement`,
+  `get_transaction_register`, `get_trial_balance`, `get_cost_centre_report`,
+  `get_bank_reconciliation_summary`) — JSONB shapes identical to TrueLedge `reports/types.ts`.
+- Harness: `Sql/Tests/run.mjs` (Node + pg; regenerates the EF baseline from the model snapshot via
+  `snapshot2sql.mjs`, applies 0001–0007, runs `test_000N_*.mjs`). Run instructions in `Sql/Tests/`.
+
+### .NET plumbing — WRITTEN (uncompiled here; sandbox has no .NET SDK)
+- Infrastructure: `SqlScript` (embedded `.sql` runner), `TenantSessionInterceptor` (sets the Postgres
+  session context per connection so RLS/RPC see user/tenant/company/role), `AccountingRpc`
+  (`IAccountingRpc` over Npgsql, same connection as EF), `GeminiDocumentExtractor`
+  (`IDocumentExtractor`; gemini-2.5-flash, response schema, 12-rule prompt, masters context),
+  EF configurations for all ported tables/columns, migration `20260917120000_AccountingSqlPort`
+  (+ Designer) that runs 0001–0007.
+- Accounting module slices: **Vouchers** (F4–F9 `VoucherEngine` + `VoucherTypes`, SaveAndPost /
+  Reverse / Cancel, Get / List / Types), **CostCentres** (dimensions + centres CRUD, report; manual
+  journal lines accept `CostCentreId`, `JournalPoster` validates leaf/active), **Banking import**
+  (`BankCsvParser` port for ENBD/ADCB/FAB/Mashreq/RAK/DIB, preview/import/suggest/confirm/unmatch/
+  ignore, match rules), **Documents** (upload → Gemini extract → review/override → accept-as-voucher /
+  reject), **LedgerReports** (RPC reports + **PDF/XLSX export** via dependency-free `PdfWriter` /
+  `XlsxWriter` over a renderer-neutral `ReportTable`), soft/hard **period close**
+  (`SetFiscalPeriodClosedCommand.CloseStatus`; `PeriodGuard` is role-aware).
+- Module boundary kept: Accounting reads Contacts/Products through the new `IPartyDirectory` port;
+  Commerce registers the adapter (`PartyDirectory`) — mirror image of `IJournalPoster`.
+- Controllers: `/api/accounting/vouchers`, `/cost-centres`, `/bank-statements`, `/documents`,
+  `/ledger-reports` (+ `/export`). Existing endpoints untouched.
+- Approvable action added: `Accounting.PostVoucher` (amount = base grand total).
+
+### Tests written (run locally): `Tests/Xorva.Tests.Unit/Accounting/`
+`VoucherEngineTests` (pure F4–F9 maths, FX rounding), `BankCsvParserTests`, `ReportExportTests`
+(XLSX package validity, PDF xref/pagination, builders), `VoucherEntryHandlerTests` (SQLite +
+`FakeAccountingRpc`: draft/post/repost, compensation on post failure, hard/soft close by role),
+`CostCentreHandlerTests`. Fake RPC lives in `TestHelpers/FakeAccountingRpc.cs`.
+
+### ⚠️ Local steps the agent could not run (no .NET / no network in sandbox)
+1. `dotnet build` — expect small fixes (property names, usings). Watch: SQLite mapping of
+   `AccountingDocument.Tags` (`List<string>` → Postgres `text[]`; may need a value converter for the
+   SQLite test provider) and the `AmountDue` computed column.
+2. EF model catch-up: the hand-written migration deliberately has a Designer that reproduces the
+   *previous* model. Run `dotnet ef migrations add AccountingReadModel -p Xorva.Infrastructure -s Xorva.API`,
+   **empty its Up()/Down()** (the SQL scripts already created everything; keep the regenerated snapshot),
+   verify with `migrations add Probe` (must be empty) → `migrations remove`, then `database update`.
+3. `dotnet test` — new + existing suites must be green before Phase 3 (UI).
+4. Add `Gemini:ApiKey` to user-secrets to enable the inbox (extractor reports `IsConfigured=false` otherwise).
+
+### Phase 3 (UI) and Phase 4 (wiring + E2E) — not started; check in with user first.
+
+---
+
 ## Known deferred items (Phase 1)
 - TanStack Query installed but not wired (adopt when list pages arrive)
 - i18next installed but not initialized (Day 5)

@@ -15,4 +15,13 @@ public class TaxRate : CompanyEntity
     public Guid? OutputAccountId { get; set; }          // VAT payable (on sales)
     public Guid? InputAccountId { get; set; }           // VAT recoverable (on purchases)
     public bool IsActive { get; set; } = true;
+
+    // ── FTA attributes (ported from TrueLedge, Sql/Accounting/0005) ──
+    /// <summary>Short code shown in the entry grid (SR5, ZR, EX, RC …).</summary>
+    public string? Code { get; set; }
+    public TaxScope TaxScope { get; set; } = TaxScope.VAT;
+    /// <summary>VAT-return box / e-invoicing category (SR, ZR, EX, RC, OS).</summary>
+    public string? FtaCode { get; set; }
+    /// <summary>Pre-selected on new voucher lines when the item/party has no default.</summary>
+    public bool IsDefault { get; set; }
 }

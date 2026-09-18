@@ -96,3 +96,117 @@ public enum DocumentStatus
     Paid = 3,
     Voided = 4
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Ported from TrueLedge (Sql/Accounting/0002–0006). String-converted in EF; the
+// literal names MUST match the CHECK constraints in the SQL scripts exactly.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// <summary>Tally-style voucher families. Prefixes: SI PB CN DN RV PV JV CT OB (accounting.voucher_prefix).</summary>
+public enum VoucherType
+{
+    SalesInvoice = 0,
+    PurchaseBill = 1,
+    CreditNote = 2,
+    DebitNote = 3,
+    Receipt = 4,        // F6 — money in
+    Payment = 5,        // F5 — money out
+    Journal = 6,        // F7 — free Dr/Cr grid
+    Contra = 7,         // F4 — bank ↔ cash / bank ↔ bank
+    OpeningBalance = 8
+}
+
+public enum VoucherStatus
+{
+    Draft = 0,
+    Submitted = 1,
+    Posted = 2,
+    Reversed = 3,
+    Cancelled = 4
+}
+
+public enum CostCentreDimensionType
+{
+    Project = 0,
+    Department = 1,
+    Location = 2,
+    Activity = 3,
+    Segment = 4,
+    Custom = 5
+}
+
+/// <summary>Soft close = only Company Admin+ may post adjustments; hard close = nobody.</summary>
+public enum PeriodCloseStatus
+{
+    Open = 0,
+    SoftClosed = 1,
+    HardClosed = 2
+}
+
+public enum TaxTreatment
+{
+    Registered = 0,
+    Unregistered = 1,
+    DesignatedZone = 2,
+    Exempt = 3,
+    ReverseCharge = 4
+}
+
+public enum ItemType
+{
+    Inventory = 0,
+    Service = 1,
+    Expense = 2,
+    FixedAsset = 3
+}
+
+public enum TaxScope
+{
+    VAT = 0,
+    CorporateTax = 1,
+    Excise = 2,
+    Withholding = 3
+}
+
+public enum BankImportStatus
+{
+    Pending = 0,
+    Processing = 1,
+    Completed = 2,
+    Failed = 3,
+    PartiallyCompleted = 4
+}
+
+public enum BankMatchStatus
+{
+    Unmatched = 0,
+    Suggested = 1,
+    Matched = 2,
+    Ignored = 3
+}
+
+public enum BankMatchPatternField
+{
+    Description = 0,
+    Reference = 1,
+    ChequeNumber = 2
+}
+
+/// <summary>AI inbox document lifecycle (AccountingDocuments.Status CHECK literals). Distinct from the trade-document <see cref="DocumentStatus"/>.</summary>
+public enum InboxDocumentStatus
+{
+    Pending = 0,
+    Processing = 1,
+    Extracted = 2,
+    Accepted = 3,
+    Rejected = 4,
+    Failed = 5
+}
+
+public enum DocumentKind
+{
+    PurchaseInvoice = 0,
+    SalesInvoice = 1,
+    Receipt = 2,
+    Other = 3
+}

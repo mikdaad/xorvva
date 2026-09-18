@@ -150,3 +150,30 @@ Updated `docs/HOW_TO_RUN_AND_TEST.md` + `docs/Xorva_Test_Tracker.xlsx` + these c
 
 **State today:** Accounting Phase 2 complete + verified. 110 tests green; Neon live; frontend builds.
 Only deferred accounting item: foreign-currency bank-account cash tracking.
+
+---
+
+## Sept 17–18, 2026 — TrueLedge → Xorva accounting port, Phase 2 (backend)
+
+- **Phase 1 (mapping) approved:** Strategy A gap-fill; scope = everything (vouchers F4–F9, cost
+  centres, bank CSV import + matching, register, master enrichment, PDF/XLSX export, Gemini inbox).
+  User correction: TrueLedge is Postgres/Supabase RPC + RLS, **not** .NET — port the SQL as SQL.
+- **SQL port** `Xorva.Infrastructure/Sql/Accounting/0001–0007` written and tested against an embedded
+  Postgres 18 in the sandbox (`Sql/Tests/`, 155 assertions green). RPCs write Xorva's own journal
+  tables; report RPCs read `Status IN ('Posted','Voided')` to match the C# reports' void-by-reversal.
+- **.NET plumbing** written blind (no SDK in sandbox): session interceptor, RPC facade, Gemini
+  extractor, configs, migration wrapper, five feature slices + controllers, `IPartyDirectory` port so
+  Accounting never references Commerce, role-aware `PeriodGuard`, cost centres on manual journals,
+  dependency-free PDF/XLSX writers, unit tests + `FakeAccountingRpc`.
+- **Gotchas learned:**
+  - Trigger row comparisons need `IS NOT DISTINCT FROM` (NULL columns); header-vs-line insert ordering
+    guarded with `xmin = pg_current_xact_id()::xid`.
+  - `RETURNS TABLE` plpgsql needs exact column types (`smallint`→`::int`, `sum(count(*))`→`::bigint`).
+  - Don't guess baseline column names (Contacts has `TaxNumber`/`PaymentTermDays`) — dump the EF
+    snapshot with `snapshot2sql.mjs`.
+  - Hand-written EF migrations: don't hand-edit the snapshot; add an empty follow-up migration locally.
+  - The sandbox wipes `/tmp` and processes between turns; the Postgres test bed is rebuilt from
+    `npm pack @embedded-postgres/linux-x64` when missing.
+- **State:** SQL green; .NET awaiting the user's local `dotnet build/test/ef` (steps in PROGRESS.md).
+  Next: fix build feedback → Phase 3 UI after check-in.
+

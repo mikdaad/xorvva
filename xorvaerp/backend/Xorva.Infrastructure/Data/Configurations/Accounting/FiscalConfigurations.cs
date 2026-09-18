@@ -23,6 +23,8 @@ public class FiscalPeriodConfiguration : IEntityTypeConfiguration<FiscalPeriod>
         b.ToTable("FiscalPeriods");
         b.HasKey(p => p.Id);
         b.Property(p => p.Name).IsRequired().HasMaxLength(50);
+        // Soft/hard close (Sql/Accounting/0005). varchar(12) to match the script.
+        b.Property(p => p.CloseStatus).HasConversion<string>().HasMaxLength(12).IsRequired();
         b.HasIndex(p => new { p.CompanyId, p.FiscalYearId })
             .HasDatabaseName("IX_FiscalPeriods_CompanyId_FiscalYearId");
     }

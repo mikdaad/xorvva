@@ -180,6 +180,43 @@ toggle (`useReportScope` hook) on those pages, CEO-only.
 (reverse, never edit/delete); closed periods reject posting; document + journal in one unit of work;
 reports read posted lines, not the cache.
 
+## Accounting — TrueLedge port (Phase 2b, Sept 2026)
+
+Two engines, one ledger. Xorva's `JournalPoster` (C#) and the ported PostgreSQL RPCs
+(`accounting.post_voucher_atomic`, `reverse_voucher`, bank matching, document inbox) both write the
+same `JournalEntries`/`JournalLines`/`Accounts.CurrentBalance`, and the same rules are enforced twice:
+in C# (`PeriodGuard`, `JournalPoster` balance/leaf/cost-centre checks) and in DB triggers
+(`trg_journal_entries_period`, balance, immutability, cost-centre leaf). They can never disagree.
+
+- **SQL is source of truth** for the ported schema: `Xorva.Infrastructure/Sql/Accounting/000N_*.sql`
+  (embedded resources) run by `SqlScript` inside EF migration `20260917120000_AccountingSqlPort`.
+  Idempotent (`IF NOT EXISTS` / `CREATE OR REPLACE`), so re-running is safe. EF entities for the new
+  tables are **read-model mappings** of SQL-created tables; the EF snapshot is caught up with an empty
+  follow-up migration (see PROGRESS.md).
+- **Session context:** `TenantSessionInterceptor` runs `app.set_session_context(user, tenant, company,
+  role, crossCompany)` on every opened connection; RLS policies (`app.install_company_rls`) and RPCs
+  read it via `app.current_*()`. EF global filters remain — RLS is defence in depth.
+- **RPC facade:** `IAccountingRpc` (module `Common/`) implemented by `Infrastructure/Services/AccountingRpc`
+  on the DbContext's own connection, so EF writes + RPC run in one Npgsql session/transaction scope.
+- **Module boundary:** Accounting must not reference Commerce. Voucher entry / AI inbox need
+  customers, suppliers and items, so Accounting declares `IPartyDirectory` and Commerce registers
+  `PartyDirectory` in `AddCommerceModule` — the mirror of `IJournalPoster` (Core port, Accounting adapter).
+- **Voucher maths** live in the pure `VoucherEngine` (no I/O): compute totals, persisted lines and
+  base-currency ledger lines; reject unbalanced/zero entries **before** any write; FX rounding residue
+  is absorbed on the balancing line. Handler: validate masters from DB → engine → save draft →
+  `post_voucher_atomic`; if posting fails, a voucher created by this call is deleted (TrueLedge
+  compensation), an existing draft is left intact.
+- **Period close is graded:** `FiscalPeriods.CloseStatus` Open/SoftClosed/HardClosed (legacy
+  `IsClosed` kept in step by trigger + handler). SoftClosed: CompanyAdmin+ may post; HardClosed: nobody.
+- **AI inbox:** `IDocumentExtractor` (Gemini) is an infrastructure service; the flow is state-machined
+  in SQL (`begin/complete/fail_document_extraction`, `accept_document_extraction` links the voucher).
+  Files are stored in `AccountingDocumentFiles.Data` (bytea) — no object storage dependency.
+- **Report export:** `ReportTable` (renderer-neutral) → `XlsxWriter` (raw SpreadsheetML) / `PdfWriter`
+  (raw PDF 1.4, Helvetica). No NuGet additions. Latin-only PDFs; swap `PdfWriter` for QuestPDF + a
+  font when Arabic output is needed.
+- **Tests:** SQL suite (`Sql/Tests`, Node + pg, real Postgres) covers RPC/trigger semantics; .NET unit
+  tests use SQLite + `FakeAccountingRpc` and cover handler logic only.
+
 ## Integration testing pattern
 `XorvaApiFactory` (Tests.Integration) boots the REAL pipeline with environment **Testing**:
 Program skips DbInitializer, InfrastructureExtensions skips Npgsql (empty conn string),

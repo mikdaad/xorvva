@@ -66,6 +66,52 @@ Order, RequiredRole, Status (Pending/Approved/Rejected/Skipped), ActedByUserId?,
 
 Note: no `xmin`/array columns — concurrency is a plain int Version, ApproverRoles is a string, both for SQLite-test parity.
 
+## TrueLedge port (Phase 2b, Sept 2026) — SQL-defined objects
+
+Defined in `Xorva.Infrastructure/Sql/Accounting/0001–0007` (applied by migration
+`20260917120000_AccountingSqlPort`; **pending on Neon until `dotnet ef database update` is run locally**).
+All tables: `public`, PascalCase quoted, `TenantId`+`CompanyId`+audit columns, RLS installed,
+enums as varchar + CHECK (mirrored 1:1 in `Xorva.Modules.Accounting.Enums`).
+
+Schemas: `app` (session context helpers, RLS installer) · `accounting` (RPCs, triggers, report functions).
+
+New tables
+- **Vouchers** (VoucherType, VoucherNumber `PREFIX-YEAR-NNNNN`, Status Draft/Submitted/Posted/Reversed/
+  Cancelled, ContactId?, dates, Currency/ExchangeRate, Sub/Discount/Tax/Total + Base* mirrors,
+  AmountPaid, AmountDue *stored generated*, Reference, Narration, PlaceOfSupply, Seller/BuyerTrn,
+  JournalEntryId?, ReversedById?, ReversalReason) · **VoucherLines** (LineNumber, ProductId?, AccountId,
+  DrCr, Quantity/UnitPrice/DiscountPct, LineAmount, TaxRateId?/TaxRatePercent/TaxAmount, LineTotal,
+  Base*, CostCentreId?) · **VoucherSequences** (Company, Type, Year → LastNumber; no EF entity).
+- **CostCentreDimensions** (Type Department/Project/Branch/Custom…, Code, Name, IsMandatory) ·
+  **CostCentres** (DimensionId, Code, Name, ParentId?, Level *trigger-derived*, IsGroup, Budget, dates).
+- **BankStatements** (BankAccountId, dates, balances, totals, LineCount, SourceFile/Format,
+  ImportStatus, ImportErrors jsonb) · **BankStatementLines** (LineDate, Description, Reference, Cheque,
+  Debit/Credit/Balance, RawData jsonb, MatchStatus Unmatched/Suggested/Matched/Ignored,
+  MatchedJournalLineId?, MatchedVoucherId?, MatchRuleId?, Suggested{Account,Contact}Id?) ·
+  **BankMatchRules** (Pattern regex, PatternField, Target{Account,Contact}Id, TargetVoucherType,
+  Priority, TimesUsed).
+- **AccountingDocumentFiles** (bytea Data, Sha256, size, content type) · **AccountingDocuments**
+  (FileId, Kind SalesInvoice/PurchaseBill/…, Status Uploaded/Extracting/Extracted/Failed/Accepted/
+  Rejected, Tags text[], VoucherId?) · **DocumentExtractions** (ExtractedData jsonb, RawResponse,
+  ConfidenceScore, model info, timings) · **DocumentFieldSuggestions** (FieldName, ExtractedValue,
+  UserOverride, FinalValue, Confidence).
+
+Columns added to existing tables
+- JournalLines.CostCentreId · JournalEntries.VoucherId, ReversedById
+- FiscalPeriods.CloseStatus (Open/SoftClosed/HardClosed), ClosedAt, ClosedBy (kept in step with IsClosed by trigger)
+- Accounts: NameAr, IsGroup, IsControl, IsBank, PartyTrn, PlaceOfSupply, DefaultTaxRateId
+- Contacts: NameAr, TaxTreatment, ControlAccountId, DefaultTaxRateId, CreditLimit, ContactPerson, AddressLine1/2, City, Country
+- Products: NameAr, ItemType, UnitOfMeasure, PurchaseAccountId, PurchasePrice, PurchaseTaxRateId, HsnCode
+- TaxRates: Code, TaxScope, FtaCode, IsDefault
+- AccountingSettings: MailingName, CorporateTaxTrn, IsFreeZone, FreeZoneName, BooksBeginDate, DecimalPlaces, CoaTemplate, DefaultCostCentreDimensionId
+
+Key functions (schema `accounting`): `generate_voucher_number`, `post_voucher_atomic(voucher, lines jsonb)`,
+`reverse_voucher`, `import_bank_statement`, `suggest_bank_matches`, `confirm_bank_match`,
+`unmatch_bank_line`, `ignore_bank_line`, `assert_period_open`, `set_period_close_status`,
+`upload_document`, `begin/complete/fail_document_extraction`, `override_document_field`,
+`accept_document_extraction`, `reject_document`, `get_balance_sheet`, `get_ledger_statement`,
+`get_transaction_register`, `get_trial_balance`, `get_cost_centre_report`, `get_bank_reconciliation_summary`.
+
 ## Tenants
 | Column | Type | Notes |
 |--------|------|-------|

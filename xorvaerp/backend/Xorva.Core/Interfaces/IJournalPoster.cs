@@ -47,5 +47,7 @@ public sealed record JournalLineDraft
     public decimal Credit { get; init; }
     public Guid? ContactId { get; init; }
     public Guid? TaxRateId { get; init; }
+    /// <summary>Optional leaf cost centre (Accounting cost-centre dimensions). Groups are rejected by the database.</summary>
+    public Guid? CostCentreId { get; init; }
     public string? Description { get; init; }
 }

@@ -26,6 +26,14 @@ public class AccountingSettingsConfiguration : IEntityTypeConfiguration<Accounti
         builder.Property(s => s.PaymentPrefix).IsRequired().HasMaxLength(10);
 
         // Exactly one settings row per company.
+        // Company profile extras (Sql/Accounting/0005)
+        builder.Property(s => s.MailingName).HasMaxLength(200);
+        builder.Property(s => s.CorporateTaxTrn).HasMaxLength(20);
+        builder.Property(s => s.FreeZoneName).HasMaxLength(100);
+        builder.Property(s => s.BooksBeginDate).HasColumnType("date");
+        builder.Property(s => s.DecimalPlaces).HasColumnType("smallint");
+        builder.Property(s => s.CoaTemplate).HasMaxLength(30);
+
         builder.HasIndex(s => s.CompanyId).IsUnique()
             .HasDatabaseName("IX_AccountingSettings_CompanyId");
     }

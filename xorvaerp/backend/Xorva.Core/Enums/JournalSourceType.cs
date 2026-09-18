@@ -18,5 +18,11 @@ public enum JournalSourceType
     Fx = 9,
     Depreciation = 10,
     YearEndClose = 11,
-    Reversal = 12
+    Reversal = 12,
+
+    /// <summary>
+    /// Posted from the unified voucher entry (Contra/Payment/Receipt/Journal…) by the
+    /// SQL RPC <c>accounting.post_voucher_atomic</c>. SourceId = Vouchers.Id.
+    /// </summary>
+    Voucher = 13
 }

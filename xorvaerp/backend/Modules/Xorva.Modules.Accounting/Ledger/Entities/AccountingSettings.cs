@@ -46,4 +46,17 @@ public class AccountingSettings : CompanyEntity
     public int NextBillNumber { get; set; } = 1;
     public int NextJournalNumber { get; set; } = 1;
     public int NextPaymentNumber { get; set; } = 1;
+
+    // ── Company profile extras (ported from TrueLedge entity defaults, Sql/Accounting/0005) ──
+    /// <summary>Name printed on invoices/statements when it differs from the legal name.</summary>
+    public string? MailingName { get; set; }
+    public string? CorporateTaxTrn { get; set; }
+    public bool IsFreeZone { get; set; }
+    public string? FreeZoneName { get; set; }
+    /// <summary>Tally "books beginning from" — the first date vouchers may carry.</summary>
+    public DateOnly? BooksBeginDate { get; set; }
+    /// <summary>Display precision for the entry grid (2 or 4). The ledger is always 2 dp.</summary>
+    public short DecimalPlaces { get; set; } = 2;
+    public string? CoaTemplate { get; set; }
+    public Guid? DefaultCostCentreDimensionId { get; set; }
 }

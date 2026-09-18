@@ -38,4 +38,16 @@ public class Account : CompanyEntity
 
     public bool IsActive { get; set; } = true;
     public int SortOrder { get; set; }
+
+    // ── Tally ledger attributes (ported from TrueLedge, Sql/Accounting/0005) ──
+    public string? NameAr { get; set; }
+    /// <summary>Group ledgers organise the chart and cannot be posted to (DB trigger).</summary>
+    public bool IsGroup { get; set; }
+    /// <summary>AR/AP control account — derived from the sub-type by trigger, kept for the UI.</summary>
+    public bool IsControl { get; set; }
+    /// <summary>Reconcilable bank ledger — derived from the sub-type by trigger.</summary>
+    public bool IsBank { get; set; }
+    public string? PartyTrn { get; set; }
+    public string? PlaceOfSupply { get; set; }
+    public Guid? DefaultTaxRateId { get; set; }
 }

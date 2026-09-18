@@ -172,6 +172,46 @@ are approvable → HTTP **202** `{ pendingApproval, approvalRequestId }` when a 
 draft creation.) `ApprovalRuleDto` gained `amountThreshold?: number|null`; the registry's action DTO
 gained `supportsAmountThreshold`.
 
+## Accounting — TrueLedge port (Phase 2b) — all Bearer + `[RequireAccountingAccess]`; company-scoped (`companyId` optional for CompanyAdmin↑ / CEO)
+
+Responses are the usual `ApiResponse<T>` envelope; enums serialise as strings; dates as `yyyy-MM-dd`.
+
+### Vouchers — /api/accounting/vouchers
+- `GET types` → `VoucherTypeDto[]` (F4 Contra, F5 Payment, F6 Receipt, F7 Journal, F8 Sales, F9 Purchase; prefix, mode, requiresParty)
+- `GET ?from&to&voucherType&status&contactId&search&limit&offset` → `VoucherRegisterDto` (rows + totalCount + totalBaseAmount)
+- `GET {id}` → `VoucherDto` (header, lines with account/cost-centre names, journal link)
+- `POST` `SaveAndPostVoucherCommand` `{ voucherType, voucherDate, contactId?, currency?, exchangeRate?, reference?, narration?, placeOfSupply?, dueDate?, supplyDate?, saveAsDraft?, lines:[{ accountId, drCr?, amount?, quantity?, unitPrice?, discountPct?, taxRateId?, productId?, costCentreId?, description? }] }`
+  → 200 `VoucherDto` (Posted, or Draft when `saveAsDraft`) · 202 when an approval rule (`Accounting.PostVoucher`) intercepts
+- `PUT {id}` same body — update-and-post an existing Draft/Submitted voucher in place
+- `POST {id}/reverse` `{ reason, reversalDate? }` → voucher Reversed + reversal journal · `POST {id}/cancel` (Draft only)
+
+### Cost centres — /api/accounting/cost-centres
+- `GET dimensions` · `POST dimensions` · `PUT dimensions/{id}` (`UpsertCostCentreDimensionCommand`)
+- `GET ?dimensionId&includeInactive` → tree-ready list · `POST` · `PUT {id}` (`UpsertCostCentreCommand`) · `DELETE {id}` (409 when children/journal lines exist)
+- `GET report?dimensionId&from&to` → per-centre debit/credit/net/lineCount
+
+### Bank statements — /api/accounting/bank-statements
+- `GET ?bankAccountId` · `GET {id}` (statement + lines + match state)
+- `POST preview` (multipart `file`) → parsed lines, detected bank, totals, skipped rows — nothing stored
+- `POST import` (multipart `file` + `bankAccountId`, optional `statementDate/openingBalance/closingBalance`) → statement (duplicates by fingerprint skipped) + auto-suggest
+- `POST {id}/suggest` · `GET lines/{lineId}/candidates` · `POST lines/{lineId}/confirm {journalLineId}` · `POST lines/{lineId}/unmatch` · `POST lines/{lineId}/ignore`
+- `GET rules` · `POST rules` · `PUT rules/{id}` · `DELETE rules/{id}` (`UpsertBankMatchRuleCommand`: pattern regex, patternField, targetAccountId?, targetContactId?, priority)
+
+### AI document inbox — /api/accounting/documents (requires `Gemini:ApiKey`; otherwise `extractionAvailable=false`)
+- `GET ?status&kind&search&limit&offset` · `GET {id}` (`InboxDocumentDetailDto`: file meta, extraction JSON, field suggestions) · `GET {id}/file` (bytes)
+- `POST` (multipart `file`, `kind`, `tags?`, `extractNow?`) · `POST {id}/extract`
+- `PUT {id}/fields` `{ fieldName, value }` (one user override per call; `finalValue` recomputed) · `POST {id}/accept` `{ voucherId }` — links the voucher the UI created from the suggestions via `POST /vouchers`; document → Accepted · `POST {id}/reject { reason? }`
+
+### Ledger reports (SQL) — /api/accounting/ledger-reports (CEO may omit companyId)
+- `GET balance-sheet?asOf` · `GET trial-balance?from&to` · `GET ledger-statement/{accountId}?from&to&costCentreId` · `GET bank-reconciliation/{bankAccountId}?asOf`
+  — payloads are TrueLedge's camelCase report shapes (`BalanceSheetResult`, `LedgerStatement`, …)
+- `GET export?reportType=BalanceSheet|Ledger|Transactions|TrialBalance&format=Pdf|Xlsx&asOf&accountId&from&to&voucherType&status&contactId&costCentreId&search`
+  → file download (`Content-Disposition: attachment`)
+
+### Periods (extended) — `PUT /api/accounting/fiscal-years/periods/{id}`
+Body now accepts `closeStatus: Open|SoftClosed|HardClosed` in addition to legacy `isClosed`. CompanyAdmin↑ only;
+hard-closing via `closeStatus` requires earlier periods of the year to be closed.
+
 ## UserDto
 `{ id, email, firstName, lastName, fullName, role (string name, e.g. "CompanyAdmin"), tenantId?, companyId?, isActive, lastLoginAt?, createdAt }`
 

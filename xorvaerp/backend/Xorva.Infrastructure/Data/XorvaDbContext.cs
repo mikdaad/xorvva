@@ -11,6 +11,9 @@ using Xorva.Modules.Accounting.Tax.Entities;
 using Xorva.Modules.Accounting.Purchases.Entities;
 using Xorva.Modules.Accounting.Assets.Entities;
 using Xorva.Modules.Accounting.Currency.Entities;
+using Xorva.Modules.Accounting.Vouchers.Entities;
+using Xorva.Modules.Accounting.CostCentres.Entities;
+using Xorva.Modules.Accounting.Documents.Entities;
 using Xorva.Modules.Platform.Entities;
 
 namespace Xorva.Infrastructure.Data;
@@ -106,6 +109,19 @@ public class XorvaDbContext : DbContext, IXorvaDbContext
     public DbSet<DebitNote> DebitNotes => Set<DebitNote>();
     public DbSet<DebitNoteLine> DebitNoteLines => Set<DebitNoteLine>();
     public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
+
+    // ── Ported from TrueLedge (tables owned by Sql/Accounting/*.sql; EF = read model + drafts) ──
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<VoucherLine> VoucherLines => Set<VoucherLine>();
+    public DbSet<CostCentreDimension> CostCentreDimensions => Set<CostCentreDimension>();
+    public DbSet<CostCentre> CostCentres => Set<CostCentre>();
+    public DbSet<BankStatement> BankStatements => Set<BankStatement>();
+    public DbSet<BankStatementLine> BankStatementLines => Set<BankStatementLine>();
+    public DbSet<BankMatchRule> BankMatchRules => Set<BankMatchRule>();
+    public DbSet<AccountingDocumentFile> AccountingDocumentFiles => Set<AccountingDocumentFile>();
+    public DbSet<AccountingDocument> AccountingDocuments => Set<AccountingDocument>();
+    public DbSet<DocumentExtraction> DocumentExtractions => Set<DocumentExtraction>();
+    public DbSet<DocumentFieldSuggestion> DocumentFieldSuggestions => Set<DocumentFieldSuggestion>();
 
     // ═══════════════════════════════════════════════════════════
     // PLATFORM MODULE (dynamic entities — admin-defined sub-modules)
