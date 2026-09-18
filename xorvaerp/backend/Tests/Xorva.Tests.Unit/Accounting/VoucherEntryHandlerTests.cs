@@ -29,7 +29,7 @@ namespace Xorva.Tests.Unit.Accounting;
 public class VoucherEntryHandlerTests : AuthHandlerTestBase
 {
     private readonly Company _company;
-    private readonly FakeAccountingRpc _rpc = new();
+    private readonly FakeAccountingRpc _rpc;
     private static readonly DateOnly When = new(2026, 3, 10);
 
     public VoucherEntryHandlerTests()
@@ -38,6 +38,7 @@ public class VoucherEntryHandlerTests : AuthHandlerTestBase
         _company = SeedCompany(tenant.Id, "Voucher Co");
         _company.ActiveModules = [ModuleCatalog.Sales, ModuleCatalog.Accounting];
         Db.SaveChanges();
+        _rpc = new FakeAccountingRpc(Db);
         ActAs(SeedUser("vch@co.test", role: SystemRole.CompanyAdmin, tenantId: tenant.Id, companyId: _company.Id));
         new SeedChartOfAccountsHandler(Db, TenantService)
             .Handle(new SeedChartOfAccountsCommand { Industry = "General" }, CancellationToken.None).GetAwaiter().GetResult();
@@ -75,6 +76,7 @@ public class VoucherEntryHandlerTests : AuthHandlerTestBase
 
         res.Success.Should().BeTrue();
         res.Data!.VoucherNumber.Should().Be("PV-2026-00001");
+        res.Data.Status.Should().Be(VoucherStatus.Posted);
         res.Data.TotalAmount.Should().Be(1200m);
 
         var voucher = await Db.Set<Voucher>().Include(v => v.Lines).SingleAsync();

@@ -1,6 +1,9 @@
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Xorva.Core.Interfaces;
 using Xorva.Modules.Accounting.Common;
 using Xorva.Modules.Accounting.Enums;
+using Xorva.Modules.Accounting.Vouchers.Entities;
 
 namespace Xorva.Tests.Unit.TestHelpers;
 
@@ -11,6 +14,13 @@ namespace Xorva.Tests.Unit.TestHelpers;
 /// </summary>
 public sealed class FakeAccountingRpc : IAccountingRpc
 {
+    private readonly IXorvaDbContext? _db;
+
+    /// <param name="db">When supplied, PostVoucherAsync / ReverseVoucherAsync replay the status side-effects of
+    /// <c>post_voucher_atomic</c> / <c>reverse_voucher</c> on the voucher row (Posted / Reversed), so handlers that
+    /// re-read the voucher afterwards see what they would see on Postgres.</param>
+    public FakeAccountingRpc(IXorvaDbContext? db = null) => _db = db;
+
     public List<(Guid VoucherId, IReadOnlyList<RpcLedgerLine> Lines)> Posted { get; } = [];
     public List<(Guid VoucherId, string Reason, DateOnly? Date)> Reversed { get; } = [];
     public List<(Guid BankLineId, Guid JournalLineId)> ConfirmedMatches { get; } = [];
@@ -40,17 +50,26 @@ public sealed class FakeAccountingRpc : IAccountingRpc
         return Task.FromResult($"{prefix}-{fiscalYear}-{_sequences[key]:00000}");
     }
 
-    public Task<Guid> PostVoucherAsync(Guid voucherId, IReadOnlyList<RpcLedgerLine> lines, CancellationToken ct)
+    public async Task<Guid> PostVoucherAsync(Guid voucherId, IReadOnlyList<RpcLedgerLine> lines, CancellationToken ct)
     {
         if (PostFailure is not null) throw PostFailure;
         Posted.Add((voucherId, lines));
-        return Task.FromResult(Guid.CreateVersion7());
+        var journalId = Guid.CreateVersion7();
+        if (_db is not null)
+            await _db.Set<Voucher>().Where(v => v.Id == voucherId).ExecuteUpdateAsync(u => u
+                .SetProperty(v => v.Status, VoucherStatus.Posted)
+                .SetProperty(v => v.PostedAt, DateTime.UtcNow), ct);
+        return journalId;
     }
 
-    public Task<Guid> ReverseVoucherAsync(Guid voucherId, string reason, DateOnly? reversalDate, CancellationToken ct)
+    public async Task<Guid> ReverseVoucherAsync(Guid voucherId, string reason, DateOnly? reversalDate, CancellationToken ct)
     {
         Reversed.Add((voucherId, reason, reversalDate));
-        return Task.FromResult(Guid.CreateVersion7());
+        if (_db is not null)
+            await _db.Set<Voucher>().Where(v => v.Id == voucherId).ExecuteUpdateAsync(u => u
+                .SetProperty(v => v.Status, VoucherStatus.Reversed)
+                .SetProperty(v => v.ReversalReason, reason), ct);
+        return Guid.CreateVersion7();
     }
 
     public Task<RpcBankImportResult> ImportBankStatementAsync(Guid bankAccountId, string sourceFile, string sourceFormat, string linesJson,
