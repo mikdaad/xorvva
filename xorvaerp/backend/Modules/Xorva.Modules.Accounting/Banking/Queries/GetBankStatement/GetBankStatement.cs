@@ -118,15 +118,15 @@ public class GetBankMatchCandidatesHandler : IRequestHandler<GetBankMatchCandida
         var glAccountId = await _db.Set<BankAccount>().AsNoTracking().Where(b => b.Id == line.BankAccountId).Select(b => b.AccountId).FirstAsync(ct);
 
         var days = Math.Clamp(request.WindowDays, 1, 365);
-        var from = line.LineDate.AddDays(-days).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var to = line.LineDate.AddDays(days + 1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fromDate = line.LineDate.AddDays(-days).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var toDate = line.LineDate.AddDays(days + 1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
 
         var taken = _db.Set<BankStatementLine>().Where(x => x.MatchedJournalLineId != null && x.Id != line.Id).Select(x => x.MatchedJournalLineId);
 
         var q = from l in _db.Set<JournalLine>().AsNoTracking()
                 join e in _db.Set<JournalEntry>().AsNoTracking() on l.JournalEntryId equals e.Id
                 where l.AccountId == glAccountId && l.CompanyId == companyId && !l.IsReconciled
-                      && e.Status == JournalStatus.Posted && e.Date >= from && e.Date < to
+                      && e.Status == JournalStatus.Posted && e.Date >= fromDate && e.Date < toDate
                       && !taken.Contains(l.Id)
                 select new BankMatchCandidateDto
                 {
