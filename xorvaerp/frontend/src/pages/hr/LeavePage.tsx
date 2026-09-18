@@ -52,7 +52,7 @@ export default function LeavePage() {
     <AppShell>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">My Leave</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">My Leave</h1>
           <p className="mt-1 text-sm text-frost-dim">Balances and requests for this year.</p>
         </div>
         <Button onClick={() => setApplyOpen(true)} disabled={!linked}>
@@ -69,7 +69,7 @@ export default function LeavePage() {
           <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-warn-weak)] text-warning">
             <IconUserExclamation size={28} stroke={1.6} />
           </span>
-          <div className="text-lg font-bold text-frost">No employee profile yet</div>
+          <div className="font-heading text-lg font-semibold text-frost">No employee profile yet</div>
           <p className="max-w-md text-sm text-frost-dim">
             Leave is for employees. Your login isn't linked to an employee record, so there's nothing
             to request against. Ask an admin to add you under <b>HR → Employees → New Employee</b> —
@@ -81,8 +81,8 @@ export default function LeavePage() {
           <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
             {balances.map((b) => (
               <Card key={b.leaveTypeId}>
-                <div className="text-xs font-medium uppercase tracking-wide text-dim">{b.leaveTypeName}</div>
-                <div className="mt-2 text-2xl font-bold text-frost">
+                <div className="label-mono text-dim">{b.leaveTypeName}</div>
+                <div className="mt-2 font-heading text-2xl font-semibold tracking-tight text-frost">
                   {b.remainingDays}<span className="text-sm font-normal text-dim"> / {b.totalDays}</span>
                 </div>
                 <div className="mt-1 text-xs text-frost-dim">{b.usedDays} used</div>

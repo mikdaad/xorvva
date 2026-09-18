@@ -71,7 +71,7 @@ export default function OpeningBalancesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Opening Balances</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Opening Balances</h1>
           <p className="mt-1 text-sm text-frost-dim">One-time starting balances when migrating in. The difference posts to Retained Earnings.</p>
         </div>
         {!posted && <Field label="As at" type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} />}

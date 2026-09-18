@@ -89,9 +89,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   let lastGroup = '';
 
   return (
-    <div className="animate-fade fixed inset-0 z-[60] flex items-start justify-center bg-[rgba(10,10,20,.45)] p-4 pt-[12vh] backdrop-blur-[2px]" onClick={onClose}>
+    <div className="animate-fade fixed inset-0 z-[60] flex items-start justify-center bg-[rgba(6,8,12,.5)] p-4 pt-[12vh] backdrop-blur-[3px]" onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-label="Command palette"
-        className="animate-pop w-full max-w-xl overflow-hidden rounded-xl border border-border bg-abyss shadow-soft-lg"
+        className="animate-pop panel-strong w-full max-w-xl overflow-hidden rounded-2xl border border-border shadow-soft-lg"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-border px-4">
           <IconSearch size={18} stroke={2} className="shrink-0 text-dim" />
@@ -113,7 +113,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             const Icon = c.icon;
             return (
               <div key={c.id}>
-                {showGroup && <p className="px-2.5 pb-1 pt-2.5 text-[10.5px] font-semibold uppercase tracking-wider text-dim">{c.group}</p>}
+                {showGroup && <p className="label-mono px-2.5 pb-1 pt-2.5 text-dim">{c.group}</p>}
                 <button
                   type="button"
                   data-i={i}
@@ -130,7 +130,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             );
           })}
         </div>
-        <div className="flex items-center gap-4 border-t border-border px-4 py-2 text-[11px] text-dim">
+        <div className="flex items-center gap-4 border-t border-border px-4 py-2 font-mono text-[10.5px] text-dim">
           <span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span>
           <span><kbd>↵</kbd> open</span>
         </div>

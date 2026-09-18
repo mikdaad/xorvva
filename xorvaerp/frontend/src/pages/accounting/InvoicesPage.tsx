@@ -70,7 +70,7 @@ export default function InvoicesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Invoices</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Invoices</h1>
           <p className="mt-1 text-sm text-frost-dim">Bill customers. Posting an invoice creates its journal automatically.</p>
         </div>
         <Button disabled={customers.length === 0} onClick={() => setCreateOpen(true)}>

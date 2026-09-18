@@ -56,7 +56,7 @@ export default function FiscalYearsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Fiscal Years</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Fiscal Years</h1>
           <p className="mt-1 text-sm text-frost-dim">Lock periods to freeze the books; year-end close rolls profit into retained earnings.</p>
           <p className="mt-1 flex flex-wrap items-center gap-3 text-xs text-dim">
             <span className="inline-flex items-center gap-1"><IconLockOpen size={12} className="text-primary" /> Open</span>
@@ -80,7 +80,7 @@ export default function FiscalYearsPage() {
             <Card key={y.id}>
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-frost">{y.name}</span>
+                  <span className="font-heading text-lg font-semibold text-frost">{y.name}</span>
                   {y.isClosed ? <Pill tone="neutral">Closed</Pill> : <Pill tone="ok">Open</Pill>}
                 </div>
                 {!y.isClosed && (

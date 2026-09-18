@@ -1,32 +1,37 @@
 /* ═══════════════════════════════════════════════════════════════
    XORVA ERP — Global Design System (Tailwind CSS v4)
-   Quiet-violet, minimalist. Dual theme (light + dark).
+   "Technical minimalist": graphite + one signal-blue accent,
+   glass panels over a faint engineered backdrop, physical
+   (3D) controls, crisp type. Dual theme (light + dark).
 
    Principles
-   · One accent (violet) used sparingly: primary actions, active nav,
-     focus rings, links. Everything else is neutral ink on calm paper.
-   · Depth comes from tone, not shadows: ground → surface → inset.
-     Shadows are whisper-light and reserved for floating layers.
-   · Hairlines, 12–14px radii, 4px spacing grid, tabular numerals.
-   · Motion is short (150–220ms) and only confirms an action.
+   · Surfaces are glass: translucent panels, blur, a 1px top
+     highlight — depth by light, not by heavy shadow.
+   · One accent (signal blue) for action, focus, selection.
+     Everything else is graphite ink on cool paper.
+   · Controls feel physical: a press moves them 1px, a hover
+     lifts them 1px. Cards may tilt ≤5°. Nothing bounces.
+   · Type: Inter for UI, Space Grotesk for headings, JetBrains
+     Mono for labels, codes and numbers — the "engineered" cue.
+   · Motion 120–240ms, ease-out. Reduced-motion turns it off.
 
-   The app's colour names (void/abyss/surface/frost/primary…) are
-   mapped to runtime, theme-aware variables so every utility
-   re-resolves when <html data-theme> flips.
+   The app's colour names (void/abyss/surface/frost/primary…) map
+   to runtime, theme-aware variables so every utility re-resolves
+   when <html data-theme> flips.
    ═══════════════════════════════════════════════════════════════ */
 
 @import "tailwindcss";
 
 @theme inline {
   --color-void:       var(--c-ground);    /* page background            */
-  --color-abyss:      var(--c-surface);   /* cards, modals, popovers    */
-  --color-surface:    var(--c-inset);     /* inputs, secondary buttons  */
+  --color-abyss:      var(--c-surface);   /* solid surface (inputs, menus) */
+  --color-surface:    var(--c-inset);     /* inset / secondary          */
   --color-elevated:   var(--c-elevated);  /* nested surface             */
   --color-hover:      var(--c-hover);
 
   --color-primary:    var(--c-brand);     /* buttons, active            */
-  --color-glow:       var(--c-brand-ink); /* hover, focus, links        */
-  --color-brand-2:    var(--c-brand-2);   /* gradient partner (landing) */
+  --color-glow:       var(--c-brand-ink); /* brand text, links          */
+  --color-brand-2:    var(--c-brand-2);   /* cyan partner (gradients)   */
   --color-brand-weak: var(--c-brand-weak);/* badges, active nav fill    */
 
   --color-frost:      var(--c-ink);       /* primary text               */
@@ -39,42 +44,47 @@
   --color-success:    var(--c-ok);
   --color-warning:    var(--c-warn);
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Consolas", monospace;
+  --font-sans:    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", "Consolas", monospace;
 
-  --radius-xl:  0.875rem;   /* 14px — cards, modals                */
-  --radius-2xl: 1rem;       /* 16px — hero surfaces                 */
+  --radius-xl:  0.875rem;   /* 14px — panels                        */
+  --radius-2xl: 1.125rem;   /* 18px — dialogs, hero surfaces        */
 
   --ease-out-soft: cubic-bezier(.22,.61,.36,1);
 }
 
 /* ─── Runtime palette — LIGHT is the base ─────────────────────── */
 :root {
-  --c-ground:#F6F6F9; --c-surface:#FFFFFF; --c-elevated:#FFFFFF; --c-inset:#F2F2F6; --c-hover:#F5F4FA;
-  --c-border:#E8E8EF; --c-border-strong:#D9D9E3;
-  --c-ink:#15151C; --c-muted:#5B5B6E; --c-faint:#8E8EA0;
-  --c-brand:#6D5DE7; --c-brand-ink:#5546CF; --c-brand-weak:#EFEDFD; --c-brand-2:#8F7BF7;
-  --c-ok:#15934B; --c-warn:#A66A12; --c-bad:#D63A3A;
-  --c-ok-weak:rgba(21,147,75,.10); --c-warn-weak:rgba(166,106,18,.11); --c-bad-weak:rgba(214,58,58,.10);
-  --c-shadow-sm: 0 1px 1px rgba(18,18,35,.04), 0 1px 3px rgba(18,18,35,.04);
-  --c-shadow:    0 1px 2px rgba(18,18,35,.04), 0 6px 20px -4px rgba(18,18,35,.08);
-  --c-shadow-lg: 0 2px 6px rgba(18,18,35,.06), 0 24px 48px -12px rgba(18,18,35,.18);
-  --c-ring: rgba(109,93,231,.28);
+  --c-ground:#EEF1F6; --c-surface:#FFFFFF; --c-elevated:#FFFFFF; --c-inset:#F3F5F9; --c-hover:#E9EDF4;
+  --c-glass: rgba(255,255,255,.66); --c-glass-strong: rgba(255,255,255,.82); --c-glass-hi: rgba(255,255,255,.9);
+  --c-border:#DCE1EA; --c-border-strong:#C4CCD8;
+  --c-ink:#0E1116; --c-muted:#4F5866; --c-faint:#8A93A2;
+  --c-brand:#1F6FEB; --c-brand-ink:#1557C0; --c-brand-weak:rgba(31,111,235,.10); --c-brand-2:#22B8E8;
+  --c-ok:#178A4C; --c-warn:#B2660D; --c-bad:#D5382F;
+  --c-ok-weak:rgba(23,138,76,.10); --c-warn-weak:rgba(178,102,13,.11); --c-bad-weak:rgba(213,56,47,.10);
+  --c-shadow-sm: 0 1px 1px rgba(14,17,22,.04), 0 1px 3px rgba(14,17,22,.05);
+  --c-shadow:    0 1px 2px rgba(14,17,22,.05), 0 8px 24px -6px rgba(14,17,22,.10);
+  --c-shadow-lg: 0 2px 6px rgba(14,17,22,.06), 0 28px 56px -14px rgba(14,17,22,.22);
+  --c-ring: rgba(31,111,235,.35);
+  --c-press: rgba(14,17,22,.22);
   color-scheme: light;
 }
 
 /* ─── Dark override ────────────────────────────────────────────── */
 :root[data-theme="dark"] {
-  --c-ground:#0B0B11; --c-surface:#13131B; --c-elevated:#1A1A24; --c-inset:#1B1B26; --c-hover:#20202C;
-  --c-border:#23232F; --c-border-strong:#2F2F3E;
-  --c-ink:#ECECF4; --c-muted:#A3A3B8; --c-faint:#6E6E85;
-  --c-brand:#8B7CF2; --c-brand-ink:#B1A3FB; --c-brand-weak:rgba(139,124,242,.14); --c-brand-2:#6E5FDC;
-  --c-ok:#3FD98A; --c-warn:#F2BE57; --c-bad:#F27272;
-  --c-ok-weak:rgba(63,217,138,.12); --c-warn-weak:rgba(242,190,87,.12); --c-bad-weak:rgba(242,114,114,.12);
-  --c-shadow-sm: 0 1px 2px rgba(0,0,0,.35);
-  --c-shadow:    0 1px 2px rgba(0,0,0,.35), 0 8px 24px -6px rgba(0,0,0,.45);
-  --c-shadow-lg: 0 2px 6px rgba(0,0,0,.4), 0 28px 56px -12px rgba(0,0,0,.6);
-  --c-ring: rgba(139,124,242,.35);
+  --c-ground:#090B0F; --c-surface:#12151C; --c-elevated:#181C25; --c-inset:#161A22; --c-hover:#1D222C;
+  --c-glass: rgba(18,21,28,.58); --c-glass-strong: rgba(18,21,28,.82); --c-glass-hi: rgba(255,255,255,.06);
+  --c-border:#232A36; --c-border-strong:#303948;
+  --c-ink:#E8ECF2; --c-muted:#A0A9B8; --c-faint:#6B7484;
+  --c-brand:#4D8DFF; --c-brand-ink:#8AB4FF; --c-brand-weak:rgba(77,141,255,.14); --c-brand-2:#22D3EE;
+  --c-ok:#34D27B; --c-warn:#F0B44A; --c-bad:#F26B5E;
+  --c-ok-weak:rgba(52,210,123,.12); --c-warn-weak:rgba(240,180,74,.12); --c-bad-weak:rgba(242,107,94,.12);
+  --c-shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --c-shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 28px -8px rgba(0,0,0,.55);
+  --c-shadow-lg: 0 2px 6px rgba(0,0,0,.45), 0 32px 64px -16px rgba(0,0,0,.7);
+  --c-ring: rgba(77,141,255,.45);
+  --c-press: rgba(0,0,0,.55);
   color-scheme: dark;
 }
 
@@ -83,6 +93,7 @@
   html, body, #root { height: 100%; }
 
   body {
+    position: relative;
     background-color: var(--c-ground);
     color: var(--c-ink);
     font-family: var(--font-sans);
@@ -91,17 +102,36 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "cv11", "ss01";
+    font-feature-settings: "cv11", "ss01", "ss03", "calt";
     transition: background-color .2s ease, color .2s ease;
+  }
+
+  /* Engineered backdrop: two soft light sources + a fine blueprint grid.
+     Fixed, behind everything, so glass panels always have something to refract. */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 8% 0%,   color-mix(in srgb, var(--c-brand)   14%, transparent), transparent 70%),
+      radial-gradient(50% 45% at 100% 10%, color-mix(in srgb, var(--c-brand-2) 10%, transparent), transparent 70%),
+      radial-gradient(50% 40% at 60% 110%, color-mix(in srgb, var(--c-brand)    8%, transparent), transparent 70%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .55;
+    background-image:
+      linear-gradient(var(--c-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 20%, transparent 80%);
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 20%, transparent 80%);
   }
 
   ::selection { background: var(--c-brand-weak); color: var(--c-brand-ink); }
 
-  h1, h2, h3, h4 { letter-spacing: -0.015em; text-wrap: balance; }
-  h1 { font-size: 1.625rem; line-height: 1.2; font-weight: 700; }
-  h2 { font-size: 1.125rem; line-height: 1.3; font-weight: 700; }
+  h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.02em; text-wrap: balance; }
+  h1 { font-size: 1.625rem; line-height: 1.2; font-weight: 600; }
+  h2 { font-size: 1.125rem; line-height: 1.3; font-weight: 600; }
 
-  /* Every control gets the same quiet focus ring. */
+  /* Every control gets the same crisp focus ring. */
   :where(button, [role="button"], a, input, select, textarea, summary):focus-visible {
     outline: 2px solid var(--c-ring);
     outline-offset: 2px;
@@ -116,20 +146,20 @@
   input::placeholder, textarea::placeholder { color: var(--c-faint); }
 
   /* Tables — applied globally so every list screen gets the same rhythm.
-     Utilities on the elements still win (this lives in @layer base). */
+     Column heads are mono: the "instrument panel" cue. */
   main table { border-collapse: separate; border-spacing: 0; }
   main thead th {
-    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--c-faint); background: color-mix(in srgb, var(--c-inset) 55%, transparent);
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--c-faint); background: color-mix(in srgb, var(--c-inset) 50%, transparent);
     white-space: nowrap;
   }
   main tbody td { font-variant-numeric: tabular-nums; }
   main tbody tr { transition: background-color .12s ease; }
-  main tfoot td { background: color-mix(in srgb, var(--c-inset) 45%, transparent); }
+  main tfoot td { background: color-mix(in srgb, var(--c-inset) 45%, transparent); font-variant-numeric: tabular-nums; }
 
   code, kbd { font-family: var(--font-mono); }
   kbd {
-    font-size: 11px; line-height: 1; padding: 3px 6px; border-radius: 6px;
+    font-size: 10.5px; line-height: 1; padding: 3px 6px; border-radius: 5px;
     border: 1px solid var(--c-border-strong); background: var(--c-inset); color: var(--c-muted);
     box-shadow: inset 0 -1px 0 var(--c-border-strong);
   }
@@ -142,22 +172,96 @@
 ::-webkit-scrollbar-thumb:hover { background: var(--c-faint); background-clip: padding-box; border: 3px solid transparent; }
 * { scrollbar-width: thin; scrollbar-color: var(--c-border-strong) transparent; }
 
-/* ─── Elevation utilities ─────────────────────────────────────── */
-.shadow-soft-sm { box-shadow: var(--c-shadow-sm); }
-.shadow-soft    { box-shadow: var(--c-shadow); }
-.shadow-soft-lg { box-shadow: var(--c-shadow-lg); }
+/* ─── Component-level classes (utilities still win) ───────────── */
+@layer components {
+  /* Elevation */
+  .shadow-soft-sm { box-shadow: var(--c-shadow-sm); }
+  .shadow-soft    { box-shadow: var(--c-shadow); }
+  .shadow-soft-lg { box-shadow: var(--c-shadow-lg); }
 
-/* ─── Surfaces ────────────────────────────────────────────────── */
-/* Floating layers (dropdowns, popovers, toasts). */
-.popover {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 0.75rem;
-  box-shadow: var(--c-shadow-lg);
+  /* Glass panel — the default card. Translucent fill, blur, hairline, 1px top light. */
+  .panel {
+    background: var(--c-glass);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+            backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--c-border);
+    box-shadow: inset 0 1px 0 var(--c-glass-hi), var(--c-shadow-sm);
+  }
+  /* Denser glass for chrome (sidebar, header) and dialogs. */
+  .panel-strong {
+    background: var(--c-glass-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+            backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 1px 0 var(--c-glass-hi);
+  }
+  /* Floating layers (dropdowns, popovers, toasts). */
+  .popover {
+    background: var(--c-glass-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+            backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--c-border);
+    border-radius: 0.75rem;
+    box-shadow: inset 0 1px 0 var(--c-glass-hi), var(--c-shadow-lg);
+  }
+
+  /* Physical controls. A hover lifts 1px, a press sinks 1px into an inset shadow. */
+  .btn-3d {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 0 var(--c-press), 0 2px 6px -2px var(--c-press);
+    transition: transform .12s var(--ease-out-soft), box-shadow .12s var(--ease-out-soft), filter .12s ease;
+  }
+  .btn-3d:hover  { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.26), 0 2px 0 var(--c-press), 0 6px 14px -4px var(--c-press); }
+  .btn-3d:active { transform: translateY(1px);  box-shadow: inset 0 2px 4px rgba(0,0,0,.28), 0 0 0 var(--c-press); }
+  .btn-3d:disabled { transform: none; }
+  /* Same physics for glass/neutral controls. */
+  .btn-3d-soft {
+    box-shadow: inset 0 1px 0 var(--c-glass-hi), 0 1px 0 color-mix(in srgb, var(--c-press) 45%, transparent), var(--c-shadow-sm);
+    transition: transform .12s var(--ease-out-soft), box-shadow .12s var(--ease-out-soft), border-color .12s ease, background-color .12s ease;
+  }
+  .btn-3d-soft:hover  { transform: translateY(-1px); box-shadow: inset 0 1px 0 var(--c-glass-hi), 0 2px 0 color-mix(in srgb, var(--c-press) 45%, transparent), var(--c-shadow); }
+  .btn-3d-soft:active { transform: translateY(1px);  box-shadow: inset 0 2px 4px color-mix(in srgb, var(--c-press) 55%, transparent); }
+  .btn-3d-soft:disabled { transform: none; }
+
+  /* Brand gradient fill with a top light: used by the primary button, logo tile, icon chips. */
+  .fill-brand {
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--c-brand) 84%, white) 0%, var(--c-brand) 100%);
+    color: #fff;
+  }
+  .chip-3d {
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--c-brand) 80%, white), var(--c-brand));
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 1px 2px var(--c-press);
+  }
+
+  /* Tilt host (see components/Tilt.tsx). Children lift on the Z axis. */
+  .tilt {
+    transform-style: preserve-3d;
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+    transition: transform .18s var(--ease-out-soft), box-shadow .18s var(--ease-out-soft), border-color .18s ease;
+    will-change: transform;
+  }
+  .tilt[data-tilting="true"] { transition-duration: .06s; }
+  .tilt-z { transform: translateZ(18px); }
+  /* Specular highlight that follows the pointer. */
+  .tilt-glare::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--c-glass-hi) 70%, transparent), transparent 60%);
+    opacity: 0; transition: opacity .2s ease;
+  }
+  .tilt-glare:hover::after { opacity: 1; }
+
+  /* Interactive card lift — restrained. */
+  .lift { transition: transform .18s var(--ease-out-soft), box-shadow .18s var(--ease-out-soft), border-color .18s ease; }
+  .lift:hover { transform: translateY(-1px); box-shadow: var(--c-shadow); border-color: var(--c-border-strong); }
+
+  /* Mono micro-label: eyebrows, column heads, status chips. */
+  .label-mono { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+  .font-heading { font-family: var(--font-heading); }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--c-inset) 25%, var(--c-hover) 50%, var(--c-inset) 75%);
+    background-size: 200% 100%; animation: xorva-shimmer 1.4s linear infinite; border-radius: .5rem;
+  }
 }
-/* Interactive card lift — restrained. */
-.lift { transition: transform .18s var(--ease-out-soft), box-shadow .18s var(--ease-out-soft), border-color .18s ease; }
-.lift:hover { transform: translateY(-1px); box-shadow: var(--c-shadow); border-color: var(--c-border-strong); }
 
 /* ─── Motion ──────────────────────────────────────────────────── */
 @keyframes xorva-fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -166,19 +270,18 @@
 @keyframes xorva-menu    { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
 @keyframes xorva-toast-in { from { opacity: 0; transform: translateX(16px) scale(.98); } to { opacity: 1; transform: none; } }
 @keyframes xorva-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@keyframes xorva-pulse-dot { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-ok) 45%, transparent); } 70% { box-shadow: 0 0 0 6px transparent; } }
 
-.animate-page   { animation: xorva-fade-up .28s var(--ease-out-soft) both; }
+.animate-page   { animation: xorva-fade-up .26s var(--ease-out-soft) both; }
 .animate-fade   { animation: xorva-fade-in .18s ease-out both; }
 .animate-pop    { animation: xorva-pop .22s var(--ease-out-soft) both; }
 .animate-menu   { animation: xorva-menu .14s var(--ease-out-soft) both; transform-origin: top; }
-.skeleton {
-  background: linear-gradient(90deg, var(--c-inset) 25%, var(--c-hover) 50%, var(--c-inset) 75%);
-  background-size: 200% 100%; animation: xorva-shimmer 1.4s linear infinite; border-radius: .5rem;
-}
+.live-dot       { animation: xorva-pulse-dot 2.4s ease-out infinite; }
 
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .tilt { transform: none !important; }
 }
 
 /* ─── Landing-page effects (unchanged API) ────────────────────── */
@@ -186,18 +289,19 @@
 .animate-float { animation: xorva-float 9s ease-in-out infinite; }
 @keyframes xorva-float-slow { 0%, 100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(22px) translateX(-14px); } }
 .animate-float-slow { animation: xorva-float-slow 13s ease-in-out infinite; }
-.font-display { font-family: "Instrument Serif", Georgia, "Times New Roman", serif; font-weight: 400; }
+.font-display { font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.03em; }
 .glass {
-  background: color-mix(in srgb, var(--c-surface) 66%, transparent);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid color-mix(in srgb, var(--c-border) 85%, transparent);
+  background: var(--c-glass);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--c-border);
+  box-shadow: inset 0 1px 0 var(--c-glass-hi);
 }
 .mesh {
   background:
-    radial-gradient(45% 45% at 18% 12%,  color-mix(in srgb, var(--c-brand)    34%, transparent), transparent 70%),
-    radial-gradient(42% 42% at 85% 18%,  color-mix(in srgb, var(--c-brand-ink) 30%, transparent), transparent 70%),
-    radial-gradient(55% 55% at 55% 105%, color-mix(in srgb, var(--c-brand-2)   22%, transparent), transparent 72%);
+    radial-gradient(45% 45% at 18% 12%,  color-mix(in srgb, var(--c-brand)    30%, transparent), transparent 70%),
+    radial-gradient(42% 42% at 85% 18%,  color-mix(in srgb, var(--c-brand-2)  26%, transparent), transparent 70%),
+    radial-gradient(55% 55% at 55% 105%, color-mix(in srgb, var(--c-brand-ink) 20%, transparent), transparent 72%);
 }
 .text-gradient {
   background: linear-gradient(100deg, var(--c-brand-2), var(--c-brand-ink));

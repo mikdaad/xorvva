@@ -74,7 +74,7 @@ export default function ExchangeRatesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">Exchange Rates</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Exchange Rates</h1>
         <p className="mt-1 text-sm text-frost-dim">
           Base-currency value of 1 unit of each foreign currency. Invoices, bills and payments use the
           latest rate on or before their date (you can also override the rate on a document).

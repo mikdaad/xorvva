@@ -144,7 +144,7 @@ export function SearchSelect({
             id={`${id}-list`}
             ref={listRef}
             role="listbox"
-            className="absolute left-0 z-40 mt-1 max-h-64 w-full min-w-[16rem] overflow-auto rounded-lg border border-border bg-abyss py-1 shadow-soft"
+            className="absolute left-0 z-40 mt-1 max-h-64 w-full min-w-[16rem] overflow-auto popover rounded-lg py-1"
           >
             {filtered.length === 0 && <li className="px-3 py-2 text-xs text-dim">{emptyMessage}</li>}
             {filtered.map((o, i) => (

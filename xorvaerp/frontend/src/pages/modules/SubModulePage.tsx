@@ -105,7 +105,7 @@ export default function SubModulePage() {
         <>
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="text-[26px] font-bold tracking-tight text-frost">{def.pluralLabel}</h1>
+              <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">{def.pluralLabel}</h1>
               {def.description && <p className="mt-1 text-sm text-frost-dim">{def.description}</p>}
             </div>
             <Button onClick={() => setCreating(true)}><IconPlus size={18} stroke={1.5} /> Add {def.label}</Button>

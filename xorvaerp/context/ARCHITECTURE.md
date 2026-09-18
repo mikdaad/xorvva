@@ -245,19 +245,28 @@ because with minimal hosting those sources load BEFORE appsettings.json and get 
 Exception → RequestLogging → Swagger(dev) → CORS → Authentication → TenantResolver → Authorization → Controllers
 
 ## Frontend conventions
-- Tailwind v4: the design system lives in `src/index.css`. Raw values are `--c-*` custom properties
-  scoped by `:root[data-theme="light|dark"]` (set pre-paint by `index.html` from
+- Tailwind v4: the design system lives in `src/index.css` — **"technical minimalist"**: graphite +
+  one signal-blue accent, glass panels, physical controls, crisp type. Raw values are `--c-*` custom
+  properties scoped by `:root[data-theme="light|dark"]` (set pre-paint by `index.html` from
   `localStorage['xorva.theme']`, owned at runtime by `stores/ThemeContext`); `@theme` maps them to
   utilities so `bg-abyss` / `text-frost` etc. re-resolve on theme flip. Tokens: surfaces `void`
-  (page) → `abyss` (cards) → `elevated` (popovers), `surface` (inputs/secondary), `hover`; hairlines
+  (page) → `abyss` (solid: inputs, menus) → `elevated`, `surface` (inset), `hover`; hairlines
   `border` / `border-strong`; text `frost` / `frost-dim` / `dim`; brand `primary` (fills), `glow`
-  (brand text), `brand-weak` (active/selected tint — always this, never `bg-primary/15`); semantic
-  `success|warning|danger` with `--c-*-weak` tints. Shadows `shadow-soft-sm|soft|soft-lg`; radii:
-  buttons/inputs `rounded-lg`, cards `rounded-xl`, dialogs `rounded-2xl`. Global rules in `@layer base`
-  style every `main table` (sticky-friendly uppercase 11px thead, row hairlines, hover) so pages only
-  set cell padding. Helpers: `.popover` (menus/toasts), `.lift`, `.skeleton`, `.dots-bg`,
-  `.animate-page|fade|pop|menu`, `kbd`. Fonts: Plus Jakarta Sans (UI), JetBrains Mono (numbers),
-  Instrument Serif (`.font-display`, marketing only).
+  (brand text), `brand-2` (cyan), `brand-weak` (active/selected tint — always this, never
+  `bg-primary/15`); semantic `success|warning|danger` with `--c-*-weak` tints.
+  **Surfaces:** `.panel` = glass card (translucent `--c-glass`, blur, hairline, 1px top light) — the
+  default for `Card`, `SectionCard`, `StatTile`; `.panel-strong` = denser glass for chrome (sidebar,
+  header, dialogs, palette); `.popover` = floating glass. The `body::before/::after` backdrop (two
+  soft light sources + a fine 40px grid) is what the glass refracts — never paint `bg-void` on
+  full-screen wrappers. **3D:** `.btn-3d` (brand/danger buttons) and `.btn-3d-soft` (glass/secondary
+  controls) lift 1px on hover and sink 1px into an inset shadow on press; `.chip-3d` is the lit brand
+  tile for logo/avatars/icon chips; `components/Tilt.tsx` tilts a card ≤5° toward the pointer with an
+  optional specular glare (`glare`), children with `.tilt-z` float 18px above — used on dashboard
+  module cards, accounting quick actions and `StatTile`; inert on touch / reduced-motion.
+  **Type:** Inter (UI), Space Grotesk (`font-heading` — h1–h4, section titles, wordmark),
+  JetBrains Mono (`label-mono` eyebrows, table heads, chips, kbd, counts). Radii: controls
+  `rounded-lg`, panels `rounded-xl`, dialogs `rounded-2xl`. Global rules in `@layer base` style every
+  `main table` (mono uppercase thead, row hairlines) so pages only set cell padding.
 - Shell: `AppShell` = 248 px `Sidebar` (grouped by module, role/module gated by `navConfig.ts`,
   active = `bg-brand-weak text-glow`) + 56 px `Header` (breadcrumb derived from `navConfig`, company
   switcher for SuperAdmin, theme toggle, approvals bell fed by `approvalsApi.pending()`, user menu) +

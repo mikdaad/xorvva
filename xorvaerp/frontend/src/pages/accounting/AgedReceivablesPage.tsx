@@ -33,7 +33,7 @@ export default function AgedReceivablesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">Aged Receivables</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Aged Receivables</h1>
         <p className="mt-1 text-sm text-frost-dim">Who owes you, and how overdue — bucketed by days past due.</p>
       </div>
 

@@ -50,7 +50,7 @@ export default function GeneralLedgerPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">General Ledger</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">General Ledger</h1>
         <p className="mt-1 text-sm text-frost-dim">Every movement on an account, with a running balance.</p>
       </div>
 

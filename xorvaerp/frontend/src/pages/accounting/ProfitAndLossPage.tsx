@@ -31,7 +31,7 @@ export default function ProfitAndLossPage() {
 
   const Section = ({ title, rows, total }: { title: string; rows: StatementRow[]; total: number }) => (
     <div>
-      <div className="border-b border-border px-4 py-2 text-xs font-semibold uppercase text-dim">{title}</div>
+      <div className="border-b border-border px-4 py-2 label-mono text-dim">{title}</div>
       {rows.length === 0 ? <div className="px-4 py-3 text-sm text-dim">No activity</div> : rows.map((r) => (
         <div key={r.code} className="flex justify-between px-4 py-2 text-sm">
           <span className="text-frost-dim"><span className="mr-2 font-mono text-xs text-dim">{r.code}</span>{r.name}</span>
@@ -48,7 +48,7 @@ export default function ProfitAndLossPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Profit &amp; Loss</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Profit &amp; Loss</h1>
           <p className="mt-1 text-sm text-frost-dim">Revenue minus expenses over a period.</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">

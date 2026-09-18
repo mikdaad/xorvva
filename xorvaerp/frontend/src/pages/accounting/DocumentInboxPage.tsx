@@ -183,7 +183,7 @@ export default function DocumentInboxPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Document inbox</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Document inbox</h1>
           <p className="mt-1 text-sm text-frost-dim">Drop supplier invoices and receipts — Gemini extracts the fields, you review, and a voucher is one click away.</p>
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -282,7 +282,7 @@ export default function DocumentInboxPage() {
             {extraction && (
               <>
                 <Card className="overflow-hidden p-0">
-                  <p className="border-b border-border px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-dim">Header & totals — click a value to correct it</p>
+                  <p className="border-b border-border px-4 py-2 label-mono text-dim">Header & totals — click a value to correct it</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2">
                     {HEADER_FIELDS.map((f) => {
                       const s = fieldMap[f.name];
@@ -304,7 +304,7 @@ export default function DocumentInboxPage() {
                 </Card>
 
                 <Card className="overflow-hidden p-0">
-                  <p className="border-b border-border px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-dim">Line items ({data.line_items?.length ?? 0})</p>
+                  <p className="border-b border-border px-4 py-2 label-mono text-dim">Line items ({data.line_items?.length ?? 0})</p>
                   {(data.line_items ?? []).length === 0 ? <EmptyHint>No line items detected.</EmptyHint> : (
                     <table className="w-full text-left text-sm">
                       <thead className="border-b border-border"><tr><th className="px-4 py-2">Description</th><th className="px-4 py-2 text-right">Qty</th><th className="px-4 py-2 text-right">Rate</th><th className="px-4 py-2 text-right">VAT %</th><th className="px-4 py-2 text-right">Amount</th><th className="px-4 py-2">Match</th></tr></thead>

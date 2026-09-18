@@ -48,7 +48,7 @@ export default function DebitNotesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Debit Notes</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Debit Notes</h1>
           <p className="mt-1 text-sm text-frost-dim">Supplier returns &amp; adjustments — posts the reverse of a purchase.</p>
         </div>
         <Button disabled={suppliers.length === 0} onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New debit note</Button>
@@ -138,7 +138,7 @@ function CreateModal({ companyId, suppliers, taxRates, onClose, onDone }: {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="grid grid-cols-[1fr_4rem_6rem_7rem_6rem_1.5rem] gap-2 text-xs uppercase text-dim">
+          <div className="grid grid-cols-[1fr_4rem_6rem_7rem_6rem_1.5rem] gap-2 label-mono text-dim">
             <span>Description</span><span className="text-right">Qty</span><span className="text-right">Price</span><span>Tax</span><span className="text-right">Amount</span><span />
           </div>
           {lines.map((l, i) => (

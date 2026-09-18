@@ -129,7 +129,7 @@ export default function CostCentresPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Cost centres</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Cost centres</h1>
           <p className="mt-1 text-sm text-frost-dim">Departments, projects, locations — tag any voucher line and report spend by dimension.</p>
         </div>
         <div className="flex gap-2">
@@ -148,7 +148,7 @@ export default function CostCentresPage() {
         <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
           {/* Dimension list */}
           <Card className="p-3">
-            <p className="mb-2 px-2 text-[11px] font-bold uppercase tracking-wider text-dim">Dimensions</p>
+            <p className="mb-2 px-2 label-mono text-dim">Dimensions</p>
             <ul className="space-y-1">
               {[...dimensions].sort((a, b) => a.sortOrder - b.sortOrder).map((d) => (
                 <li key={d.id}>

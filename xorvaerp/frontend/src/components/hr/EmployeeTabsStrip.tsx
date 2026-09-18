@@ -249,7 +249,7 @@ function TabDesignerModal({
         )}
 
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wide text-dim">Fields</span>
+          <span className="label-mono text-dim">Fields</span>
           <Button variant="ghost" onClick={addField}><IconPlus size={15} stroke={1.8} /> Add field</Button>
         </div>
 
@@ -295,7 +295,7 @@ function TabDesignerModal({
 
         {/* Live preview of the resulting table */}
         <div>
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-dim">Table preview</span>
+          <span className="mb-1.5 block label-mono text-dim">Table preview</span>
           <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-left text-xs">
               <thead className="border-b border-border uppercase text-dim">

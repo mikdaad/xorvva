@@ -67,7 +67,7 @@ export function Sidebar({ open, onClose, onSearch }: { open: boolean; onClose: (
       {open && <div className="animate-fade fixed inset-0 z-30 bg-black/40 backdrop-blur-[1px] md:hidden" onClick={onClose} />}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex ${SIDEBAR_WIDTH} flex-col border-r border-border bg-abyss
+        className={`panel-strong fixed inset-y-0 left-0 z-40 flex ${SIDEBAR_WIDTH} flex-col border-r border-border
           transition-transform duration-200 md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Brand */}
@@ -84,7 +84,7 @@ export function Sidebar({ open, onClose, onSearch }: { open: boolean; onClose: (
             <button
               type="button"
               onClick={() => { onSearch(); onClose(); }}
-              className="flex h-9 w-full items-center gap-2 rounded-lg border border-border bg-surface px-2.5 text-[13px] text-dim transition-colors hover:border-border-strong hover:text-frost-dim"
+              className="btn-3d-soft flex h-9 w-full items-center gap-2 rounded-lg border border-border bg-abyss/60 px-2.5 text-[13px] text-dim hover:border-border-strong hover:text-frost-dim"
             >
               <IconSearch size={15} stroke={2} />
               <span className="flex-1 text-left">Search…</span>
@@ -119,8 +119,11 @@ export function Sidebar({ open, onClose, onSearch }: { open: boolean; onClose: (
         {/* Footer: active company */}
         {activeCompany && (
           <div className="border-t border-border px-4 py-3">
-            <p className="text-[10.5px] font-semibold uppercase tracking-wider text-dim">Company</p>
-            <p className="truncate text-[13px] font-medium text-frost" title={activeCompany.name}>{activeCompany.name}</p>
+            <p className="label-mono text-dim">Company</p>
+            <p className="mt-0.5 flex items-center gap-2 truncate text-[13px] font-medium text-frost" title={activeCompany.name}>
+              <span className="live-dot h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+              <span className="truncate">{activeCompany.name}</span>
+            </p>
           </div>
         )}
       </aside>
@@ -138,8 +141,9 @@ function NavLink({ to, active, icon, children, onClick, nested }: {
       aria-current={active ? 'page' : undefined}
       className={`group relative flex items-center gap-2.5 rounded-lg py-[7px] text-[13.5px] transition-colors duration-100
         ${nested ? 'pl-3 pr-2.5' : 'px-2.5'}
-        ${active ? 'bg-brand-weak font-semibold text-glow' : 'font-medium text-frost-dim hover:bg-hover hover:text-frost'}`}
+        ${active ? 'bg-brand-weak font-medium text-glow shadow-[inset_0_1px_0_var(--c-glass-hi)]' : 'font-medium text-frost-dim hover:bg-hover hover:text-frost'}`}
     >
+      {active && <span aria-hidden className="absolute -left-[9px] top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-full bg-primary" />}
       <span className={`shrink-0 transition-colors ${active ? 'text-glow' : 'text-dim group-hover:text-frost-dim'}`}>{icon}</span>
       <span className="truncate">{children}</span>
     </Link>
@@ -170,7 +174,7 @@ function ModuleGroup({
         <Link
           to={overviewPath}
           onClick={() => { onOpen(); onNavigate(); }}
-          className="flex flex-1 items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13.5px] font-semibold text-frost hover:bg-hover"
+          className="flex flex-1 items-center gap-2.5 rounded-lg px-2.5 py-[7px] font-heading text-[13.5px] font-semibold text-frost hover:bg-hover"
         >
           <Icon size={17} stroke={1.75} className={groupActive ? 'text-glow' : 'text-dim'} />
           <span>{group.heading}</span>

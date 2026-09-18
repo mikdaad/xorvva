@@ -26,7 +26,7 @@ export default function ApprovalHistoryPage() {
   return (
     <AppShell>
       <div className="mb-8">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">Approval History</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Approval History</h1>
         <p className="mt-1 text-sm text-frost-dim">Full audit trail of every approval request.</p>
       </div>
 

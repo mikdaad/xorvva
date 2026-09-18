@@ -43,7 +43,7 @@ export default function PendingApprovalsPage() {
   return (
     <AppShell>
       <div className="mb-8">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">Pending Approvals</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Pending Approvals</h1>
         <p className="mt-1 text-sm text-frost-dim">Requests awaiting your decision.</p>
       </div>
 
@@ -67,7 +67,7 @@ export default function PendingApprovalsPage() {
                       <Pill tone="brand"><IconTag size={13} /> {actionLabel(req.actionKey)}</Pill>
                       {role && <span className="text-xs text-dim">waiting on <b className="text-frost-dim">{ROLE_LABELS[role] ?? role}</b></span>}
                     </div>
-                    <div className="text-lg font-bold text-frost">{req.title}</div>
+                    <div className="font-heading text-lg font-semibold text-frost">{req.title}</div>
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-dim">
                       <span className="flex items-center gap-1.5"><IconUser size={13} /> {req.requesterEmail}</span>
                       <span className="flex items-center gap-1.5"><IconClock size={13} /> {fmtDate(req.createdAt)}</span>

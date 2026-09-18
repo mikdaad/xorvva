@@ -74,7 +74,7 @@ export default function DepartmentsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Departments</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Departments</h1>
           <p className="mt-1 text-sm text-frost-dim">{items.length} department(s) · organizational structure & rules.</p>
         </div>
         {canManage && <Button onClick={() => setCreating(true)}><IconPlus size={18} stroke={1.5} /> New Department</Button>}
@@ -225,7 +225,7 @@ function DepartmentModal({ companyId, department, employees, onClose, onDone }: 
         {/* Dynamic rules — the department defines its own */}
         <div className="flex items-center justify-between border-t border-border pt-3">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wide text-dim">Department rules</span>
+            <span className="label-mono text-dim">Department rules</span>
             <p className="text-xs text-dim">Anything this department sets for itself (e.g. overtime x1.5, site allowance 500).</p>
           </div>
           <Button variant="ghost" onClick={addRule}><IconPlus size={15} stroke={1.8} /> Add rule</Button>

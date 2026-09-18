@@ -276,6 +276,12 @@ migration wrapper; RPCs write into Xorva's existing `JournalEntries`/`JournalLin
 
 ### Phase 3 (UI) — ✅ `tsc` + `vite build` green in the sandbox (Sept 18). Phase 4 (wiring + E2E) — not started.
 
+**UI redesign v2 — technical minimalist (Sept 18, later):** graphite + signal-blue, glass `.panel`
+surfaces over an engineered backdrop, `.btn-3d` / `.btn-3d-soft` physical controls, `Tilt`
+(pointer-tracking ≤5° tilt + glare) on module cards / quick actions / stat tiles, Inter + Space
+Grotesk + JetBrains Mono. Same token names, so the codemod touched 52 pages mechanically. `tsc` +
+`vite build` green; all routes render in the jsdom harness; Tilt math verified (move → ±max°, leave → 0°).
+
 **UI upgrade (Sept 18, same day):** full visual refresh to a quiet, minimalist violet system —
 see ARCHITECTURE.md → Frontend conventions. New tokens (`border-strong`, `brand-weak`, `--c-*-weak`,
 soft shadows), rewritten `ui.tsx` (same exports; `Button size`, `Field hint`, Modal Esc/scroll-lock/

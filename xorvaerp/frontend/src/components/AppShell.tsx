@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-void">
+    <div className="min-h-screen">
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} onSearch={openPalette} />
       <div className="md:pl-[248px]">
         <Header onMenu={() => setMenuOpen(true)} onSearch={openPalette} />

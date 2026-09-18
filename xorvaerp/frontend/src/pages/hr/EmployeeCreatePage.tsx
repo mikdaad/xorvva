@@ -160,7 +160,7 @@ export default function EmployeeCreatePage() {
       </Link>
 
       <div className="mb-5">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">New Employee</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">New Employee</h1>
         <p className="mt-1 text-sm text-frost-dim">Fill the Basic tab to create the employee, then the other tabs — or add them later.</p>
       </div>
 
@@ -187,7 +187,7 @@ export default function EmployeeCreatePage() {
           {active === 'basic' && (
             <Card className="max-w-5xl">
               <div className="flex flex-col gap-4">
-                <div className="text-xs font-semibold uppercase tracking-wide text-dim">Personal</div>
+                <div className="label-mono text-dim">Personal</div>
                 <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
                   <Field label="First name" value={f.firstName} onChange={(e) => set('firstName', e.target.value)} />
                   <Field label="Last name" value={f.lastName} onChange={(e) => set('lastName', e.target.value)} />
@@ -197,7 +197,7 @@ export default function EmployeeCreatePage() {
                   <Field label="Phone" value={f.phone} onChange={(e) => set('phone', e.target.value)} />
                 </div>
 
-                <div className="text-xs font-semibold uppercase tracking-wide text-dim">Employment</div>
+                <div className="label-mono text-dim">Employment</div>
                 <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
                   <SelectField label="Department" options={departments.map((d) => ({ value: d.id, label: d.name }))}
                     value={f.departmentId} onChange={(e) => set('departmentId', e.target.value)} />
@@ -209,13 +209,13 @@ export default function EmployeeCreatePage() {
                   <Field label="Basic salary" type="number" value={f.basicSalary} onChange={(e) => set('basicSalary', e.target.value)} />
                 </div>
 
-                <div className="text-xs font-semibold uppercase tracking-wide text-dim">Emergency contact</div>
+                <div className="label-mono text-dim">Emergency contact</div>
                 <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
                   <Field label="Name" value={f.emergencyContactName} onChange={(e) => set('emergencyContactName', e.target.value)} />
                   <Field label="Phone" value={f.emergencyContactPhone} onChange={(e) => set('emergencyContactPhone', e.target.value)} />
                 </div>
 
-                <div className="text-xs font-semibold uppercase tracking-wide text-dim">System access</div>
+                <div className="label-mono text-dim">System access</div>
                 <label className="flex items-start gap-3 rounded-lg border border-border bg-surface p-3.5 cursor-pointer">
                   <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary"
                     checked={f.grantAccess} onChange={(e) => set('grantAccess', e.target.checked)} />
@@ -255,7 +255,7 @@ export default function EmployeeCreatePage() {
               {(lists[activeTab.id] ?? []).map((row, i) => (
                 <Card key={i}>
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-dim">{activeTab.label} #{i + 1}</span>
+                    <span className="label-mono text-dim">{activeTab.label} #{i + 1}</span>
                     <button onClick={() => removeRow(activeTab.id, i)} aria-label="Remove row"
                       className="text-dim hover:text-danger"><IconTrash size={16} stroke={1.6} /></button>
                   </div>

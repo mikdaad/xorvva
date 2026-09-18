@@ -43,29 +43,36 @@ export default function LoginPage() {
       <ThemeToggle className="absolute right-4 top-4 z-10" />
 
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden border-r border-border bg-abyss lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div className="mesh pointer-events-none absolute inset-0 opacity-40" />
-        <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
+      <aside className="relative hidden overflow-hidden border-r border-border lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div className="mesh pointer-events-none absolute inset-0 opacity-50" />
         <Link to="/" className="relative"><Logo /></Link>
         <div className="relative max-w-md">
-          <p className="text-[11px] font-semibold uppercase tracking-[.14em] text-glow">Xorva ERP</p>
-          <h2 className="mt-3 text-[34px] font-bold leading-[1.15] tracking-tight text-frost">
-            One calm workspace for people, money and approvals.
+          <p className="label-mono text-glow">Xorva ERP · v2</p>
+          <h2 className="mt-3 font-heading text-[36px] font-semibold leading-[1.12] tracking-tight text-frost">
+            Engineered for the people who run the numbers.
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-frost-dim">
             HR, accounting and sales on a single ledger — with the controls a growing UAE business actually needs.
           </p>
+          <dl className="mt-8 grid max-w-sm grid-cols-3 gap-3">
+            {[['1', 'ledger'], ['F4–F9', 'vouchers'], ['5%', 'VAT-ready']].map(([v, k]) => (
+              <div key={k} className="panel rounded-lg px-3 py-2.5">
+                <dt className="label-mono text-dim">{k}</dt>
+                <dd className="mt-1 font-heading text-lg font-semibold text-frost">{v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <p className="relative text-xs text-dim">© {new Date().getFullYear()} Xorva</p>
+        <p className="relative font-mono text-[11px] text-dim">© {new Date().getFullYear()} Xorva</p>
       </aside>
 
       {/* Form */}
-      <div className="dots-bg relative flex items-center justify-center p-6">
-      <Card className="animate-pop relative w-full max-w-[400px] p-8">
+      <div className="relative flex items-center justify-center p-6">
+      <Card className="animate-pop panel-strong relative w-full max-w-[400px] p-8 shadow-soft-lg">
         <div className="mb-8 flex flex-col gap-5">
           <span className="lg:hidden"><Logo /></span>
           <div>
-            <h1 className="text-[22px] font-bold tracking-tight text-frost">Welcome back</h1>
+            <h1 className="font-heading text-[22px] font-semibold tracking-tight text-frost">Welcome back</h1>
             <p className="mt-1 text-sm text-frost-dim">Sign in to your workspace</p>
           </div>
         </div>

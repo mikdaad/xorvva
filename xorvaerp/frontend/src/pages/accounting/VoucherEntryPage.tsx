@@ -331,7 +331,7 @@ export default function VoucherEntryPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">{editing ? `Edit draft ${editing.voucherNumber}` : 'Voucher entry'}</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">{editing ? `Edit draft ${editing.voucherNumber}` : 'Voucher entry'}</h1>
           <p className="mt-1 text-sm text-frost-dim">Tally-style single screen for contra, payment, receipt, journal, sales and purchase vouchers.</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-dim">
@@ -352,8 +352,8 @@ export default function VoucherEntryPage() {
             type="button"
             disabled={!!editing && editing.voucherType !== t.type}
             onClick={() => switchType(t.type)}
-            className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors disabled:opacity-40
-              ${t.type === voucherType ? 'border-primary bg-brand-weak text-frost' : 'border-border bg-abyss text-frost-dim hover:bg-hover'}`}
+            className={`btn-3d-soft flex items-center gap-2 rounded-lg border px-3 py-2 text-sm disabled:opacity-40
+              ${t.type === voucherType ? 'border-primary bg-brand-weak text-frost ring-[3px] ring-primary/15' : 'panel text-frost-dim hover:border-border-strong'}`}
           >
             <Kbd>{t.shortcut}</Kbd>
             <span className="font-medium">{t.label}</span>
@@ -532,5 +532,5 @@ export default function VoucherEntryPage() {
 const cell = 'w-full rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-frost placeholder:text-dim focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25';
 
 function Kbd({ children }: { children: ReactNode }) {
-  return <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[11px] text-frost-dim">{children}</kbd>;
+  return <kbd>{children}</kbd>;
 }

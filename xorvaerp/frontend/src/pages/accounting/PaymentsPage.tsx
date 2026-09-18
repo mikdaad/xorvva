@@ -57,7 +57,7 @@ export default function PaymentsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Payments</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Payments</h1>
           <p className="mt-1 text-sm text-frost-dim">Record money received and settle customer invoices.</p>
         </div>
         <Button disabled={!canRecord} onClick={() => setCreateOpen(true)}>
@@ -197,7 +197,7 @@ function RecordPaymentModal({ companyId, customers, banks, invoices, onClose, on
             <p className="text-sm text-frost-dim">This customer has no open invoices.</p>
           ) : (
             <div className="flex flex-col gap-2">
-              <div className="grid grid-cols-[1fr_7rem_7rem] gap-2 text-xs uppercase text-dim">
+              <div className="grid grid-cols-[1fr_7rem_7rem] gap-2 label-mono text-dim">
                 <span>Invoice</span><span className="text-right">Balance</span><span className="text-right">Pay</span>
               </div>
               {openInvoices.map((i) => (

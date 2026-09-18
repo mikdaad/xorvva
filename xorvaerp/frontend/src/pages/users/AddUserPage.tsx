@@ -120,7 +120,7 @@ function AddUserForm() {
   return (
     <AppShell>
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-2xl font-bold text-frost">Add Company Admin</h1>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight text-frost">Add Company Admin</h1>
         <p className="mt-1 mb-4 text-sm text-frost-dim">
           Assign an admin (GM) to run one of your companies. They'll manage that company's people,
           structure and approvals.

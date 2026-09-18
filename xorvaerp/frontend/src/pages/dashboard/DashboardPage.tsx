@@ -11,6 +11,7 @@ import { useCompany } from '../../stores/CompanyContext';
 import { dashboardApi, type AdminOverview, type Dashboard } from '../../api/dashboard.api';
 import { AppShell } from '../../components/AppShell';
 import { Button, Card, Spinner } from '../../components/ui';
+import { Tilt } from '../../components/Tilt';
 import {
   Avatar, BarList, EmptyHint, PageHeader, Pill, SectionCard, StatRing, StatTile,
 } from '../../components/dashboard-ui';
@@ -113,20 +114,20 @@ function ModuleCard({ to, label, desc, icon: Ico, accent = false }: {
   to: string; label: string; desc: string; icon: Icon; accent?: boolean;
 }) {
   return (
-    <Link to={to}
-      className="lift group flex items-start gap-3 rounded-xl border border-border bg-abyss p-4 shadow-soft-sm">
-      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-        accent ? 'bg-surface text-frost-dim' : 'bg-brand-weak text-glow'}`}>
+    <Tilt as={Link} to={to} max={5} glare
+      className="panel group flex items-start gap-3 rounded-xl p-4 hover:border-border-strong">
+      <span className={`tilt-z flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+        accent ? 'bg-surface text-frost-dim' : 'chip-3d'}`}>
         <Ico size={20} stroke={1.7} />
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-semibold text-frost">{label}</span>
+          <span className="font-heading font-semibold text-frost">{label}</span>
           <IconArrowRight size={16} className="shrink-0 text-dim transition-transform group-hover:translate-x-0.5 group-hover:text-glow" />
         </div>
         <p className="mt-0.5 text-xs text-frost-dim">{desc}</p>
       </div>
-    </Link>
+    </Tilt>
   );
 }
 
@@ -251,7 +252,7 @@ function RoleView({ data }: { data: Dashboard }) {
         <Card className="flex flex-wrap items-center gap-4">
           <Avatar initials={initials(data.profile.fullName)} size="lg" gradient />
           <div className="flex-1">
-            <div className="text-lg font-bold text-frost">{data.profile.fullName}</div>
+            <div className="font-heading text-lg font-semibold text-frost">{data.profile.fullName}</div>
             <div className="text-sm text-frost-dim">
               {data.profile.designationTitle} · {data.profile.departmentName}
             </div>

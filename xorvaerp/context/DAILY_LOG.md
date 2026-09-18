@@ -212,3 +212,17 @@ errors, the palette filters + navigates + closes, the user menu opens, the theme
 (`primary/glow/frost`) stable and swap only the raw `--c-*` values; audit which ui exports pages use
 before rewriting a primitives file; a design pass over 60 pages is best done as tokens → primitives →
 shell → sed, in that order, so most pages improve without being opened.
+
+**Sept 18 (cont.) — redesign v2: technical minimalist.** The user asked for a different direction
+than the quiet-violet pass: glassmorphism, subtle 3D, engineered feel. Kept the token *names* (so
+`bg-abyss`/`text-frost` keep working everywhere) and swapped the raw values to graphite + signal
+blue; added `--c-glass*` and `--c-press`. New CSS classes live in `@layer components` so utilities
+still override them: `.panel`/`.panel-strong`/`.popover` (glass), `.btn-3d`/`.btn-3d-soft`/`.chip-3d`
+(press physics), `.tilt`/`.tilt-z`/`.tilt-glare` (3D), `.label-mono`/`.font-heading` (type).
+`components/Tilt.tsx` is a 50-line polymorphic wrapper that writes `--rx/--ry/--mx/--my` on pointer
+move — no library, no layout thrash, and the CSS handles reduced-motion. Order of work again: tokens
+→ primitives → shell → codemod (52 files) → hand-tune dashboard, accounting home, voucher type
+switcher, login. Verified with the jsdom harness against the mock API: every route renders, zero
+console errors, tilt vars set on move and cleared on leave. Lesson: `body::before` for the backdrop
+means pages must stop painting `bg-void` on wrappers, otherwise glass sits on a flat colour and
+loses the effect — grep for it after any new full-screen layout.

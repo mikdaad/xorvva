@@ -64,20 +64,20 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
   const iconBtn = 'flex h-9 w-9 items-center justify-center rounded-lg text-frost-dim transition-colors hover:bg-hover hover:text-frost';
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-border bg-void/80 px-4 backdrop-blur-md md:px-8">
+    <header className="panel-strong sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-border px-4 md:px-8">
       <div className="flex min-w-0 items-center gap-2">
         <button className={`${iconBtn} -ml-2 md:hidden`} onClick={onMenu} aria-label="Open menu">
           <IconMenu2 size={20} />
         </button>
 
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-[13px] sm:flex">
+        <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-2 text-[13px] sm:flex">
           {crumbs.map((c, i) => (
-            <span key={c.to} className="flex min-w-0 items-center gap-1.5">
-              {i > 0 && <span className="text-border-strong">/</span>}
+            <span key={c.to} className="flex min-w-0 items-center gap-2">
+              {i > 0 && <span className="font-mono text-[11px] text-border-strong">/</span>}
               {i === crumbs.length - 1
-                ? <span className="truncate font-semibold text-frost">{c.label}</span>
-                : <Link to={c.to} className="truncate text-frost-dim hover:text-frost">{c.label}</Link>}
+                ? <span className="truncate font-heading font-semibold text-frost">{c.label}</span>
+                : <Link to={c.to} className="truncate font-mono text-[12px] uppercase tracking-wider text-dim hover:text-frost">{c.label}</Link>}
             </span>
           ))}
         </nav>
@@ -91,9 +91,9 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
               onClick={() => setCompanyOpen((o) => !o)}
               aria-haspopup="listbox"
               aria-expanded={companyOpen}
-              className="flex h-9 items-center gap-2 rounded-lg border border-border bg-abyss px-2.5 text-[13px] font-medium text-frost shadow-soft-sm transition-colors hover:border-border-strong"
+              className="btn-3d-soft flex h-9 items-center gap-2 rounded-lg border border-border bg-abyss/60 px-2.5 text-[13px] font-medium text-frost hover:border-border-strong"
             >
-              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-brand-weak text-[10px] font-bold text-glow">
+              <span className="chip-3d flex h-5 w-5 items-center justify-center rounded-md font-mono text-[10px] font-semibold">
                 {(activeCompany?.name ?? '?').slice(0, 1).toUpperCase()}
               </span>
               <span className="hidden max-w-[11rem] truncate sm:block">{activeCompany?.name ?? 'Select company'}</span>
@@ -101,7 +101,7 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
             </button>
             {companyOpen && (
               <div className="popover animate-menu absolute right-0 mt-1.5 w-64 p-1.5">
-                <div className="px-2.5 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-dim">Switch company</div>
+                <div className="label-mono px-2.5 pb-1 pt-1.5 text-dim">Switch company</div>
                 {companies.map((c) => (
                   <button
                     key={c.id}
@@ -134,7 +134,7 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
           <Link to="/approvals/pending" className={`${iconBtn} relative`} aria-label="Pending approvals">
             <IconBell size={19} stroke={1.75} />
             {pending > 0 && (
-              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-white ring-2 ring-void">
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 font-mono text-[10px] font-semibold leading-none text-white ring-2 ring-void">
                 {pending > 9 ? '9+' : pending}
               </span>
             )}
@@ -149,7 +149,7 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
             aria-expanded={userOpen}
             className="flex h-9 items-center gap-2 rounded-lg pl-1 pr-1.5 transition-colors hover:bg-hover"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-white">
+            <span className="chip-3d flex h-7 w-7 items-center justify-center rounded-full font-mono text-[11px] font-semibold">
               {initials || 'U'}
             </span>
             <IconChevronDown size={14} className="hidden text-dim sm:block" />
@@ -159,7 +159,7 @@ export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () 
               <div className="px-2.5 py-2">
                 <div className="truncate text-[13px] font-semibold text-frost">{user.fullName}</div>
                 <div className="truncate text-xs text-dim">{user.email}</div>
-                <span className="mt-1.5 inline-block rounded-md bg-surface px-1.5 py-0.5 text-[10.5px] font-semibold text-frost-dim">{ROLE_LABELS[user.role] ?? user.role}</span>
+                <span className="label-mono mt-1.5 inline-block rounded-md bg-surface px-1.5 py-0.5 text-frost-dim">{ROLE_LABELS[user.role] ?? user.role}</span>
               </div>
               <div className="my-1 border-t border-border" />
               {isSelfService && (

@@ -185,7 +185,7 @@ export default function BankImportPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Bank statements</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Bank statements</h1>
           <p className="mt-1 text-sm text-frost-dim">Import CSV statements from UAE banks, auto-suggest matches against the ledger and reconcile line by line.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -469,7 +469,7 @@ export default function BankImportPage() {
 }
 
 function Mini({ label, value }: { label: string; value: string }) {
-  return <div><p className="text-[11px] font-bold uppercase tracking-wider text-dim">{label}</p><p className="mt-0.5 text-sm text-frost">{value}</p></div>;
+  return <div><p className="label-mono text-dim">{label}</p><p className="mt-0.5 text-sm text-frost">{value}</p></div>;
 }
 function IconBtn({ title, onClick, danger, children }: { title: string; onClick: () => void; danger?: boolean; children: ReactNode }) {
   return <button type="button" title={title} aria-label={title} onClick={onClick} className={`rounded p-1.5 text-dim hover:bg-hover ${danger ? 'hover:text-danger' : 'hover:text-frost'}`}>{children}</button>;

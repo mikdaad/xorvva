@@ -3,8 +3,8 @@ import { IconChevronDown, IconX, IconAlertCircle, IconCircleCheck } from '@table
 
 /* ═══════════════════════════════════════════════════════════════
    Xorva UI primitives — no component library, pure Tailwind.
-   Quiet-violet, minimalist: hairline borders, tonal depth, one
-   accent used only for primary actions / focus / active states.
+   Technical minimalist: glass panels (.panel), physical buttons
+   (.btn-3d / .btn-3d-soft), one signal-blue accent, mono labels.
    Same exported API as before so every page keeps working.
    ═══════════════════════════════════════════════════════════════ */
 
@@ -28,13 +28,10 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const variants: Record<string, string> = {
-    primary:
-      'bg-primary text-white shadow-soft-sm hover:bg-glow active:translate-y-px ' +
-      'dark:shadow-[inset_0_1px_0_rgba(255,255,255,.08)]',
-    secondary:
-      'bg-abyss text-frost border border-border shadow-soft-sm hover:border-border-strong hover:bg-hover active:translate-y-px',
-    ghost: 'bg-transparent text-frost-dim hover:bg-hover hover:text-frost',
-    danger: 'bg-danger text-white shadow-soft-sm hover:brightness-95 active:translate-y-px',
+    primary: 'btn-3d fill-brand text-white hover:brightness-[1.06]',
+    secondary: 'btn-3d-soft panel text-frost hover:border-border-strong',
+    ghost: 'bg-transparent text-frost-dim hover:bg-hover hover:text-frost active:translate-y-px',
+    danger: 'btn-3d bg-danger text-white hover:brightness-[1.06]',
   };
   const sizes = size === 'sm' ? 'h-8 px-3 text-[13px] gap-1.5' : 'h-10 px-4 text-sm gap-2';
 
@@ -56,14 +53,14 @@ export function Button({
 // ─── Shared control styling ─────────────────────────────────────
 
 const control =
-  'w-full rounded-lg border bg-abyss text-sm text-frost shadow-soft-sm ' +
+  'w-full rounded-lg border bg-abyss/70 text-sm text-frost shadow-[inset_0_1px_2px_rgba(0,0,0,.05)] ' +
   'transition-[border-color,box-shadow,background-color] duration-150 ' +
-  'hover:border-border-strong focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15 ' +
+  'hover:border-border-strong focus:outline-none focus:bg-abyss focus:border-primary focus:ring-[3px] focus:ring-primary/15 ' +
   'disabled:cursor-not-allowed disabled:bg-surface disabled:opacity-70';
 
 function Label({ children, required }: { children: ReactNode; required?: boolean }) {
   return (
-    <label className="text-[12.5px] font-semibold text-frost-dim">
+    <label className="text-[12.5px] font-medium text-frost-dim">
       {children}
       {required && <span className="ml-0.5 text-danger">*</span>}
     </label>
@@ -151,7 +148,7 @@ export function Alert({ kind, children }: { kind: 'error' | 'success'; children:
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-xl border border-border bg-abyss p-5 shadow-soft-sm ${className}`}>
+    <div className={`panel rounded-xl p-5 ${className}`}>
       {children}
     </div>
   );
@@ -190,18 +187,18 @@ export function Modal({ open, title, onClose, children, size = 'lg' }: ModalProp
 
   return (
     <div
-      className="animate-fade fixed inset-0 z-50 flex items-end justify-center bg-[rgba(10,10,20,.45)] p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="animate-fade fixed inset-0 z-50 flex items-end justify-center bg-[rgba(6,8,12,.5)] p-0 backdrop-blur-[3px] sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`animate-pop flex max-h-[92vh] w-full ${MODAL_WIDTHS[size]} flex-col rounded-t-2xl border border-border bg-abyss shadow-soft-lg sm:rounded-xl`}
+        className={`animate-pop panel-strong flex max-h-[92vh] w-full ${MODAL_WIDTHS[size]} flex-col rounded-t-2xl border border-border shadow-soft-lg sm:rounded-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
-          <h2 className="text-[15px] font-bold text-frost">{title}</h2>
+          <h2 className="text-[15px] font-semibold text-frost">{title}</h2>
           <button
             onClick={onClose}
             aria-label="Close"
@@ -232,7 +229,7 @@ export function Spinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 
 export function FullPageSpinner() {
   return (
-    <div className="flex h-screen items-center justify-center bg-void">
+    <div className="flex h-screen items-center justify-center">
       <Spinner size="lg" />
     </div>
   );
@@ -246,12 +243,12 @@ export function Logo({ size = 'md' }: { size?: 'md' | 'lg' }) {
   const text = size === 'lg' ? 'text-2xl' : 'text-[17px]';
   return (
     <div className="flex items-center gap-2.5">
-      <span className={`flex items-center justify-center bg-primary text-white shadow-soft-sm ${box}`}>
+      <span className={`chip-3d flex items-center justify-center ${box}`}>
         <svg width={glyph} height={glyph} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 5l12 14M18 5L6 19" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+          <path d="M6 5l12 14M18 5L6 19" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
         </svg>
       </span>
-      <span className={`font-bold tracking-tight text-frost ${text}`}>Xorva</span>
+      <span className={`font-heading font-semibold tracking-tight text-frost ${text}`}>Xorva</span>
     </div>
   );
 }

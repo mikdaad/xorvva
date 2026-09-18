@@ -1,4 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
+import { Tilt } from './Tilt';
 
 /* ═══════════════════════════════════════════════════════════════
    Dashboard building blocks — the refined-violet, soft-flat kit.
@@ -11,8 +12,8 @@ export function PageHeader({ title, subtitle, action, eyebrow }: { title: string
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-dim">{eyebrow}</p>}
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">{title}</h1>
+        {eyebrow && <p className="label-mono mb-1.5 text-glow">{eyebrow}</p>}
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">{title}</h1>
         {subtitle && <p className="mt-1 max-w-2xl text-sm text-frost-dim">{subtitle}</p>}
       </div>
       {action && <div className="flex flex-wrap items-center gap-2">{action}</div>}
@@ -23,7 +24,7 @@ export function PageHeader({ title, subtitle, action, eyebrow }: { title: string
 type Tone = 'default' | 'primary' | 'warning' | 'success' | 'danger';
 const ICON_TONE: Record<Tone, string> = {
   default: 'bg-surface text-frost-dim',
-  primary: 'bg-brand-weak text-glow',
+  primary: 'chip-3d',
   warning: 'bg-[var(--c-warn-weak)] text-warning',
   success: 'bg-[var(--c-ok-weak)] text-success',
   danger: 'bg-[var(--c-bad-weak)] text-danger',
@@ -35,18 +36,18 @@ export function StatTile({
   label: string; value: ReactNode; hint?: string; delta?: string; icon?: ReactNode; tone?: Tone;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-abyss p-4 shadow-soft-sm">
+    <Tilt max={4} glare className="panel rounded-xl p-4">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-dim">{label}</span>
+        <span className="label-mono text-dim">{label}</span>
         {icon && <span className={`flex h-7 w-7 items-center justify-center rounded-md ${ICON_TONE[tone]}`}>{icon}</span>}
       </div>
-      <div className="mt-2 text-[26px] font-bold leading-none tracking-tight text-frost tabular-nums">{value}</div>
+      <div className="mt-2.5 font-heading text-[26px] font-semibold leading-none tracking-tight text-frost tabular-nums">{value}</div>
       {(hint || delta) && (
         <div className="mt-2 text-xs text-frost-dim">
-          {delta && <span className="font-semibold text-success">{delta} </span>}{hint}
+          {delta && <span className="font-mono font-medium text-success">{delta} </span>}{hint}
         </div>
       )}
-    </div>
+    </Tilt>
   );
 }
 
@@ -54,10 +55,10 @@ export function SectionCard({ title, icon, action, children, className = '' }: {
   title: string; icon?: ReactNode; action?: ReactNode; children: ReactNode; className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-border bg-abyss shadow-soft-sm ${className}`}>
+    <div className={`panel rounded-xl ${className}`}>
       <div className="flex items-center gap-2.5 border-b border-border px-5 py-3">
         {icon && <span className="flex h-7 w-7 items-center justify-center rounded-md bg-surface text-frost-dim">{icon}</span>}
-        <h3 className="text-[13.5px] font-semibold text-frost">{title}</h3>
+        <h3 className="font-heading text-[13.5px] font-semibold text-frost">{title}</h3>
         {action && <div className="ml-auto">{action}</div>}
       </div>
       <div className="p-5">{children}</div>
@@ -160,7 +161,7 @@ export function Pill({ children, tone = 'neutral' }: { children: ReactNode; tone
   };
   const dot: Record<string, string> = { neutral: 'bg-dim', brand: 'bg-primary', ok: 'bg-success', warn: 'bg-warning', bad: 'bg-danger' };
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-[3px] text-[11.5px] font-semibold ring-1 ring-inset ${cls[tone]}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-[3px] font-mono text-[11px] font-medium ring-1 ring-inset ${cls[tone]}`}>
       <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot[tone]}`} />
       {children}
     </span>
@@ -171,7 +172,7 @@ export function Avatar({ initials, size = 'md', gradient = false }: {
   initials: string; size?: 'sm' | 'md' | 'lg'; gradient?: boolean;
 }) {
   const s = size === 'lg' ? 'h-12 w-12 text-base' : size === 'sm' ? 'h-8 w-8 text-[11px]' : 'h-9 w-9 text-[13px]';
-  const skin = gradient ? 'bg-primary text-white' : 'bg-brand-weak text-glow';
+  const skin = gradient ? 'chip-3d' : 'bg-brand-weak text-glow';
   return <span className={`flex ${s} items-center justify-center rounded-full font-bold ${skin}`}>{initials}</span>;
 }
 

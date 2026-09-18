@@ -53,7 +53,7 @@ export default function BankReconciliationPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Bank Reconciliation</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Bank Reconciliation</h1>
           <p className="mt-1 text-sm text-frost-dim">Tick the ledger movements that appear on your bank statement.</p>
         </div>
         <div className="min-w-64">
@@ -72,9 +72,9 @@ export default function BankReconciliationPage() {
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-4">
-            <Card className="p-4"><div className="text-[11px] font-bold uppercase tracking-wider text-dim">Ledger balance</div><div className="mt-1 text-xl font-extrabold tabular-nums text-frost">{money(data.ledgerBalance)}</div></Card>
-            <Card className="p-4"><div className="text-[11px] font-bold uppercase tracking-wider text-dim">Reconciled</div><div className="mt-1 text-xl font-extrabold tabular-nums text-success">{money(data.reconciledBalance)}</div></Card>
-            <Card className="p-4"><div className="text-[11px] font-bold uppercase tracking-wider text-dim">Unreconciled</div><div className="mt-1 text-xl font-extrabold tabular-nums text-warning">{money(data.unreconciledBalance)}</div></Card>
+            <Card className="p-4"><div className="label-mono text-dim">Ledger balance</div><div className="mt-1 text-xl font-extrabold tabular-nums text-frost">{money(data.ledgerBalance)}</div></Card>
+            <Card className="p-4"><div className="label-mono text-dim">Reconciled</div><div className="mt-1 text-xl font-extrabold tabular-nums text-success">{money(data.reconciledBalance)}</div></Card>
+            <Card className="p-4"><div className="label-mono text-dim">Unreconciled</div><div className="mt-1 text-xl font-extrabold tabular-nums text-warning">{money(data.unreconciledBalance)}</div></Card>
             <Card className="p-4">
               <Field label="Statement balance" type="number" value={statement} onChange={(e) => setStatement(e.target.value)} placeholder="0.00" />
               {diff !== null && <div className={`mt-1 text-xs font-semibold ${diff === 0 ? 'text-success' : 'text-danger'}`}>{diff === 0 ? 'Matches reconciled ✓' : `Off by ${money(Math.abs(diff))}`}</div>}

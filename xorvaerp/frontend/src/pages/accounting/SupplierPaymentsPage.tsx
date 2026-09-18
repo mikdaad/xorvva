@@ -54,7 +54,7 @@ export default function SupplierPaymentsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Supplier Payments</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Supplier Payments</h1>
           <p className="mt-1 text-sm text-frost-dim">Pay suppliers and settle open bills.</p>
         </div>
         <Button disabled={!canRecord} onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> Record payment</Button>
@@ -172,7 +172,7 @@ function RecordModal({ companyId, suppliers, banks, bills, onClose, onDone }: {
           <p className="text-sm text-frost-dim">This supplier has no open bills.</p>
         ) : (
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-[1fr_7rem_7rem] gap-2 text-xs uppercase text-dim"><span>Bill</span><span className="text-right">Balance</span><span className="text-right">Pay</span></div>
+            <div className="grid grid-cols-[1fr_7rem_7rem] gap-2 label-mono text-dim"><span>Bill</span><span className="text-right">Balance</span><span className="text-right">Pay</span></div>
             {openBills.map((b) => (
               <div key={b.id} className="grid grid-cols-[1fr_7rem_7rem] items-center gap-2">
                 <span className="text-sm text-frost">{b.number}</span>

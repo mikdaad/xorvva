@@ -92,7 +92,7 @@ export default function EmployeeProfilePage() {
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-frost">{emp.fullName}</h1>
+                  <h1 className="font-heading text-2xl font-semibold tracking-tight text-frost">{emp.fullName}</h1>
                   <span className={`rounded-md px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[emp.employmentStatus] ?? ''}`}>
                     {emp.employmentStatus}
                   </span>
@@ -295,7 +295,7 @@ function BasicEditModal({ employee, companyId, onClose, onDone }: {
     <Modal open title={`Edit — ${employee.fullName}`} size="2xl" onClose={onClose}>
       <div className="flex max-h-[72vh] flex-col gap-4 overflow-y-auto pr-1">
         {error && <Alert kind="error">{error}</Alert>}
-        <div className="text-xs font-semibold uppercase tracking-wide text-dim">Personal</div>
+        <div className="label-mono text-dim">Personal</div>
         <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="First name" value={f.firstName} onChange={(e) => set('firstName', e.target.value)} />
           <Field label="Last name" value={f.lastName} onChange={(e) => set('lastName', e.target.value)} />
@@ -308,13 +308,13 @@ function BasicEditModal({ employee, companyId, onClose, onDone }: {
           <SelectField label="Marital status" options={[{ value: '', label: '—' }, ...MARITAL_STATUSES.map((m) => ({ value: m, label: m }))]}
             value={f.maritalStatus} onChange={(e) => set('maritalStatus', e.target.value)} />
         </div>
-        <div className="text-xs font-semibold uppercase tracking-wide text-dim">Employment</div>
+        <div className="label-mono text-dim">Employment</div>
         <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
           <SelectField label="Department" options={departments.map((d) => ({ value: d.id, label: d.name }))} value={f.departmentId} onChange={(e) => set('departmentId', e.target.value)} />
           <SelectField label="Designation" options={designations.map((d) => ({ value: d.id, label: d.title }))} value={f.designationId} onChange={(e) => set('designationId', e.target.value)} />
           <SelectField label="Type" options={EMPLOYMENT_TYPES.map((t) => ({ value: t, label: t }))} value={f.employmentType} onChange={(e) => set('employmentType', e.target.value)} />
         </div>
-        <div className="text-xs font-semibold uppercase tracking-wide text-dim">Emergency contact</div>
+        <div className="label-mono text-dim">Emergency contact</div>
         <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Name" value={f.emergencyContactName} onChange={(e) => set('emergencyContactName', e.target.value)} />
           <Field label="Phone" value={f.emergencyContactPhone} onChange={(e) => set('emergencyContactPhone', e.target.value)} />
@@ -490,7 +490,7 @@ function DynamicTab({ tab, employeeId, canManage, companyId }: {
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-y border-border text-xs uppercase text-dim">
+            <thead className="border-y border-border label-mono text-dim">
               <tr>
                 {tab.fields.map((f) => <th key={f.key} className="px-4 py-3">{f.label}</th>)}
                 {canManage && <th className="px-4 py-3" />}

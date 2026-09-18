@@ -118,7 +118,7 @@ export default function VoucherRegisterPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Voucher register</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Voucher register</h1>
           <p className="mt-1 text-sm text-frost-dim">Every voucher across all types — drill into lines, reverse, or export.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

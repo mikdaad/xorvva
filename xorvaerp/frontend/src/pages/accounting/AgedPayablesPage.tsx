@@ -31,7 +31,7 @@ export default function AgedPayablesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-tight text-frost">Aged Payables</h1>
+        <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Aged Payables</h1>
         <p className="mt-1 text-sm text-frost-dim">What you owe suppliers, bucketed by days past due.</p>
       </div>
 

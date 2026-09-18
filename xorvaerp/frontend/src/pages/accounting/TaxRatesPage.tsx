@@ -45,7 +45,7 @@ export default function TaxRatesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Tax Rates</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Tax Rates</h1>
           <p className="mt-1 text-sm text-frost-dim">VAT rates used on invoices and bills.</p>
         </div>
         {rows.length > 0 && <Button onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New rate</Button>}

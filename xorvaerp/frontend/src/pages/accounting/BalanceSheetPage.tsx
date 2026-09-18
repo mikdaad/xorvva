@@ -42,7 +42,7 @@ export default function BalanceSheetPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Balance Sheet</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Balance Sheet</h1>
           <p className="mt-1 text-sm text-frost-dim">What the company owns vs. owes, as at a date.</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
@@ -62,7 +62,7 @@ export default function BalanceSheetPage() {
       ) : (
         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
           <Card className="overflow-hidden p-0">
-            <div className="border-b border-border px-4 py-2 text-xs font-semibold uppercase text-dim">Assets</div>
+            <div className="border-b border-border px-4 py-2 label-mono text-dim">Assets</div>
             <Rows rows={data.assets} />
             <div className="flex justify-between border-t-2 border-border px-4 py-3 font-bold text-frost">
               <span>Total Assets</span><span className="font-mono tabular-nums">{money(data.totalAssets)}</span>
@@ -71,14 +71,14 @@ export default function BalanceSheetPage() {
 
           <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
-              <div className="border-b border-border px-4 py-2 text-xs font-semibold uppercase text-dim">Liabilities</div>
+              <div className="border-b border-border px-4 py-2 label-mono text-dim">Liabilities</div>
               <Rows rows={data.liabilities} />
               <div className="flex justify-between border-t border-border px-4 py-2 font-semibold text-frost">
                 <span>Total Liabilities</span><span className="font-mono tabular-nums">{money(data.totalLiabilities)}</span>
               </div>
             </Card>
             <Card className="overflow-hidden p-0">
-              <div className="border-b border-border px-4 py-2 text-xs font-semibold uppercase text-dim">Equity</div>
+              <div className="border-b border-border px-4 py-2 label-mono text-dim">Equity</div>
               <Rows rows={data.equity} />
               <div className="flex justify-between px-4 py-2 text-sm">
                 <span className="text-frost-dim">Current Year Earnings</span>

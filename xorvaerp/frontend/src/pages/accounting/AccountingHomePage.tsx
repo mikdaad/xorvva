@@ -7,6 +7,7 @@ import type { ApiResponse } from '../../api/auth.api';
 import { useToast } from '../../stores/ToastContext';
 import { AppShell } from '../../components/AppShell';
 import { Card, Spinner } from '../../components/ui';
+import { Tilt } from '../../components/Tilt';
 import { StatTile, SectionCard, Sparkline } from '../../components/dashboard-ui';
 import { useReportScope } from '../../components/accounting/useReportScope';
 
@@ -42,7 +43,7 @@ export default function AccountingHomePage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-bold tracking-tight text-frost">Accounting</h1>
+          <h1 className="font-heading text-[26px] font-semibold tracking-tight text-frost">Accounting</h1>
           <p className="mt-1 text-sm text-frost-dim">Your company's finances at a glance.</p>
         </div>
         {scopeControl}
@@ -50,10 +51,10 @@ export default function AccountingHomePage() {
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {QUICK.map((q) => (
-          <Link key={q.to} to={q.to} className="group flex items-center gap-3 rounded-xl border border-border bg-abyss px-4 py-3 shadow-soft-sm transition-colors hover:border-border-strong hover:bg-hover">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-weak text-glow"><q.icon size={18} stroke={1.7} /></span>
-            <span className="min-w-0"><span className="block text-sm font-semibold text-frost">{q.label}</span><span className="block truncate text-xs text-dim">{q.hint}</span></span>
-          </Link>
+          <Tilt key={q.to} as={Link} to={q.to} max={5} glare className="panel group flex items-center gap-3 rounded-xl px-4 py-3 hover:border-border-strong">
+            <span className="tilt-z chip-3d flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"><q.icon size={18} stroke={1.7} /></span>
+            <span className="min-w-0"><span className="block font-heading text-sm font-semibold text-frost">{q.label}</span><span className="block truncate text-xs text-dim">{q.hint}</span></span>
+          </Tilt>
         ))}
       </div>
 

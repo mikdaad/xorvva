@@ -34,12 +34,12 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-void">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-3xl px-4 py-10">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           <Logo size="lg" />
           <div>
-            <h1 className="text-[22px] font-bold tracking-tight text-frost">Let's set up your organization</h1>
+            <h1 className="font-heading text-[22px] font-semibold tracking-tight text-frost">Let's set up your organization</h1>
             <p className="mt-1 text-sm text-frost-dim">
               Confirm your companies and choose which modules each one uses. You can change this anytime.
             </p>
@@ -105,7 +105,7 @@ function CompanyCard({ company, index, onChange }: { company: CompanyDto; index:
         <span className="text-xs text-dim">{company.currency} · {company.timezone}</span>
         {saving && <Spinner size="sm" />}
       </div>
-      <div className="text-xs font-medium uppercase tracking-wide text-dim">Active modules</div>
+      <div className="label-mono text-dim">Active modules</div>
       <div className="mt-2">
         <ModulePicker selected={modules} onToggle={(m) => void toggle(m)} />
       </div>
@@ -145,7 +145,7 @@ function AddCompanyForm({ onDone, onCancel }: { onDone: () => void; onCancel: ()
           <Field label="Timezone (IANA)" value={timezone} onChange={(e) => setTimezone(e.target.value)} />
         </div>
         <div>
-          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-dim">Modules</div>
+          <div className="mb-2 label-mono text-dim">Modules</div>
           <ModulePicker selected={modules} onToggle={toggle} />
         </div>
         <div className="flex justify-end gap-2">
