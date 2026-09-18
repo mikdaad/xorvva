@@ -266,6 +266,9 @@ public class SaveAndPostVoucherHandler : IRequestHandler<SaveAndPostVoucherComma
             line.TenantId = _tenant.TenantId;
             line.CompanyId = companyId;
             line.VoucherId = voucher.Id;
+            // Add explicitly: BaseEntity pre-generates the Guid key, so a line discovered only through the
+            // navigation of an already-tracked (Unchanged) voucher would be attached as Modified, not Added.
+            _db.Set<VoucherLine>().Add(line);
             voucher.Lines.Add(line);
         }
 
