@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 import type { ApprovalStep } from '../../api/approvals.api';
 
 const STEP_STYLE: Record<ApprovalStep['status'], string> = {
-  Approved: 'bg-success/15 text-success border-success/40',
-  Rejected: 'bg-danger/15 text-danger border-danger/40',
+  Approved: 'bg-[var(--c-ok-weak)] text-success border-success/40',
+  Rejected: 'bg-[var(--c-bad-weak)] text-danger border-danger/40',
   Skipped: 'bg-frost-dim/15 text-frost-dim border-frost-dim/40',
-  Pending: 'bg-warning/15 text-warning border-warning/40',
+  Pending: 'bg-[var(--c-warn-weak)] text-warning border-warning/40',
 };
 
 const STEP_MARK: Record<ApprovalStep['status'], ReactNode> = {

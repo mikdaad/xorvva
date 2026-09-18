@@ -71,7 +71,7 @@ export default function OpeningBalancesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Opening Balances</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Opening Balances</h1>
           <p className="mt-1 text-sm text-frost-dim">One-time starting balances when migrating in. The difference posts to Retained Earnings.</p>
         </div>
         {!posted && <Field label="As at" type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} />}
@@ -94,7 +94,7 @@ export default function OpeningBalancesPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr><th className="px-4 py-3 w-24">Code</th><th className="px-4 py-3">Account</th><th className="px-4 py-3 text-right w-40">Debit</th><th className="px-4 py-3 text-right w-40">Credit</th></tr>
               </thead>
               <tbody className="divide-y divide-border">

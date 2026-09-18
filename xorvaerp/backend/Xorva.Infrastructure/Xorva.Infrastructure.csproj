@@ -13,12 +13,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SQL-owned accounting schema (RPCs, RLS, triggers) ported from TrueLedge.
+         Each file is applied by a thin EF migration wrapper via SqlScript.Read(). -->
+    <EmbeddedResource Include="Sql\**\*.sql" />
   </ItemGroup>
 
   <PropertyGroup>

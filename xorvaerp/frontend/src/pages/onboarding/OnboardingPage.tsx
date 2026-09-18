@@ -39,7 +39,7 @@ export default function OnboardingPage() {
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           <Logo size="lg" />
           <div>
-            <h1 className="text-2xl font-bold text-frost">Let's set up your organization</h1>
+            <h1 className="text-[22px] font-bold tracking-tight text-frost">Let's set up your organization</h1>
             <p className="mt-1 text-sm text-frost-dim">
               Confirm your companies and choose which modules each one uses. You can change this anytime.
             </p>
@@ -100,7 +100,7 @@ function CompanyCard({ company, index, onChange }: { company: CompanyDto; index:
   return (
     <Card>
       <div className="mb-3 flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-glow">{index}</span>
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-weak text-xs font-bold text-glow">{index}</span>
         <span className="font-semibold text-frost">{company.name}</span>
         <span className="text-xs text-dim">{company.currency} · {company.timezone}</span>
         {saving && <Spinner size="sm" />}
@@ -136,7 +136,7 @@ function AddCompanyForm({ onDone, onCancel }: { onDone: () => void; onCancel: ()
   };
 
   return (
-    <Card className="border-primary/40">
+    <Card className="border-primary/40 ring-[3px] ring-primary/10">
       <div className="flex flex-col gap-4">
         {error && <Alert kind="error">{error}</Alert>}
         <Field label="Company name" placeholder="e.g. RightSource IT" value={name} onChange={(e) => setName(e.target.value)} />

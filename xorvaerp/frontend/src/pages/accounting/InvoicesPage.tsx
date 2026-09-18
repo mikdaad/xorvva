@@ -70,7 +70,7 @@ export default function InvoicesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Invoices</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Invoices</h1>
           <p className="mt-1 text-sm text-frost-dim">Bill customers. Posting an invoice creates its journal automatically.</p>
         </div>
         <Button disabled={customers.length === 0} onClick={() => setCreateOpen(true)}>
@@ -91,7 +91,7 @@ export default function InvoicesPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Number</th><th className="px-4 py-3">Customer</th>
                   <th className="px-4 py-3">Date</th><th className="px-4 py-3">Due</th>
@@ -102,14 +102,14 @@ export default function InvoicesPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((i) => (
                   <tr key={i.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost">{i.number}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{i.contactName}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(i.date).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(i.dueDate).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{i.currency !== 'AED' ? `${i.currency} ` : ''}{money(i.total)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{i.currency !== 'AED' ? `${i.currency} ` : ''}{money(i.balanceDue)}</td>
-                    <td className="px-4 py-2.5"><Pill tone={STATUS_TONE[i.status] ?? 'neutral'}>{i.status}</Pill></td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-3 font-mono text-xs text-frost">{i.number}</td>
+                    <td className="px-4 py-3 text-frost-dim">{i.contactName}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(i.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(i.dueDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{i.currency !== 'AED' ? `${i.currency} ` : ''}{money(i.total)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{i.currency !== 'AED' ? `${i.currency} ` : ''}{money(i.balanceDue)}</td>
+                    <td className="px-4 py-3"><Pill tone={STATUS_TONE[i.status] ?? 'neutral'}>{i.status}</Pill></td>
+                    <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">
                         {i.status === 'Draft' && (
                           <Button className="px-3 py-1.5 text-xs" loading={busyId === i.id} onClick={() => void post(i.id)}>Post</Button>

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xorva.Core.Approvals;
+using Xorva.Modules.Accounting.Common;
+using Xorva.Modules.Commerce.Contacts.Common;
 using Xorva.Modules.Accounting.Purchases.Commands.PostBill;
 using Xorva.Modules.Accounting.Purchases.Commands.RecordSupplierPayment;
 using Xorva.Modules.Accounting.Sales.Commands.PostInvoice;
@@ -18,6 +20,9 @@ public static class CommerceModuleExtensions
     public static IServiceCollection AddCommerceModule(this IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CommerceModuleExtensions).Assembly));
+
+        // Accounting's voucher entry / AI inbox look up customers, suppliers and items through this port.
+        services.AddScoped<IPartyDirectory, PartyDirectory>();
 
         // Money actions expose an amount, so a rule for them may carry an amount threshold.
         services.AddSingleton(new ApprovableActionDescriptor(

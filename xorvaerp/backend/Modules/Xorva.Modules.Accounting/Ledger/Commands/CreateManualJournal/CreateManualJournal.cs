@@ -19,6 +19,8 @@ public record ManualJournalLineInput
     public decimal Debit { get; init; }
     public decimal Credit { get; init; }
     public Guid? ContactId { get; init; }
+    /// <summary>Optional cost centre / dimension allocation (must be a posting centre of this company).</summary>
+    public Guid? CostCentreId { get; init; }
     public string? Description { get; init; }
 }
 
@@ -91,6 +93,7 @@ public class CreateManualJournalHandler : IRequestHandler<CreateManualJournalCom
                 Debit = Math.Round(l.Debit * rate, 2),
                 Credit = Math.Round(l.Credit * rate, 2),
                 ContactId = l.ContactId,
+                CostCentreId = l.CostCentreId,
                 Description = l.Description,
             })],
         };

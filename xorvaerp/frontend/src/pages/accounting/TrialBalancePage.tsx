@@ -8,6 +8,7 @@ import { AppShell } from '../../components/AppShell';
 import { Card, Spinner } from '../../components/ui';
 import { Pill } from '../../components/dashboard-ui';
 import { useReportScope } from '../../components/accounting/useReportScope';
+import { ExportButtons } from '../../components/accounting/ExportButtons';
 
 const money = (n: number) => n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -35,11 +36,12 @@ export default function TrialBalancePage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Trial Balance</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Trial Balance</h1>
           <p className="mt-1 text-sm text-frost-dim">Every account's balance, straight from the posted ledger. Debits must equal credits.</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           {scopeControl}
+          <ExportButtons reportType="TrialBalance" companyId={companyId} disabled={!tb} />
           {tb && (
             tb.isBalanced
               ? <Pill tone="ok">Balanced</Pill>
@@ -59,7 +61,7 @@ export default function TrialBalancePage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3 w-24">Code</th>
                   <th className="px-4 py-3">Account</th>
@@ -71,11 +73,11 @@ export default function TrialBalancePage() {
               <tbody className="divide-y divide-border">
                 {tb.rows.map((r) => (
                   <tr key={r.code} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost-dim">{r.code}</td>
-                    <td className="px-4 py-2.5 text-frost">{r.name}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{r.accountType}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{r.debit ? money(r.debit) : ''}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{r.credit ? money(r.credit) : ''}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-frost-dim">{r.code}</td>
+                    <td className="px-4 py-3 text-frost">{r.name}</td>
+                    <td className="px-4 py-3 text-frost-dim">{r.accountType}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{r.debit ? money(r.debit) : ''}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{r.credit ? money(r.credit) : ''}</td>
                   </tr>
                 ))}
               </tbody>

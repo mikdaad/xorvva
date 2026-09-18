@@ -25,6 +25,11 @@ public class JournalEntry : CompanyEntity
     public decimal TotalDebit { get; set; }
     public decimal TotalCredit { get; set; }
 
+    /// <summary>The voucher that produced this entry (null for entries posted by JournalPoster). Sql/Accounting/0003.</summary>
+    public Guid? VoucherId { get; set; }
+    /// <summary>The reversing entry that voided this one (set by accounting.reverse_voucher).</summary>
+    public Guid? ReversedById { get; set; }
+
     public List<JournalLine> Lines { get; set; } = [];
 }
 
@@ -41,4 +46,7 @@ public class JournalLine : CompanyEntity
 
     /// <summary>Bank reconciliation flag — set when this line is matched to a bank statement.</summary>
     public bool IsReconciled { get; set; }
+
+    /// <summary>Leaf cost centre this line is tagged to (Sql/Accounting/0002). Groups are rejected by trigger.</summary>
+    public Guid? CostCentreId { get; set; }
 }

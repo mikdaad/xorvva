@@ -160,7 +160,7 @@ export default function EmployeeCreatePage() {
       </Link>
 
       <div className="mb-5">
-        <h1 className="text-3xl font-bold text-frost">New Employee</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">New Employee</h1>
         <p className="mt-1 text-sm text-frost-dim">Fill the Basic tab to create the employee, then the other tabs — or add them later.</p>
       </div>
 

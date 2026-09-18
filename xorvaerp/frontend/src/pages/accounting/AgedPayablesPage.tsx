@@ -31,7 +31,7 @@ export default function AgedPayablesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-frost">Aged Payables</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">Aged Payables</h1>
         <p className="mt-1 text-sm text-frost-dim">What you owe suppliers, bucketed by days past due.</p>
       </div>
 
@@ -46,7 +46,7 @@ export default function AgedPayablesPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Supplier</th>
                   {['Current', '1–30', '31–60', '61–90', '90+'].map((c) => <th key={c} className="px-4 py-3 text-right">{c}</th>)}
@@ -56,13 +56,13 @@ export default function AgedPayablesPage() {
               <tbody className="divide-y divide-border">
                 {data.rows.map((r) => (
                   <tr key={r.contactId} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 text-frost">{r.contactName}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(r.current)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(r.days1To30)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(r.days31To60)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(r.days61To90)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-warning">{money(r.days90Plus)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums font-semibold text-frost">{money(r.total)}</td>
+                    <td className="px-4 py-3 text-frost">{r.contactName}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(r.current)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(r.days1To30)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(r.days31To60)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(r.days61To90)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-warning">{money(r.days90Plus)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums font-semibold text-frost">{money(r.total)}</td>
                   </tr>
                 ))}
               </tbody>

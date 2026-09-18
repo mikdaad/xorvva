@@ -39,17 +39,34 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-void p-4">
-      {/* Ambient brand glow */}
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
-      <ThemeToggle className="absolute right-4 top-4" />
+    <div className="relative grid min-h-screen bg-void lg:grid-cols-[1.05fr_1fr]">
+      <ThemeToggle className="absolute right-4 top-4 z-10" />
 
-      <Card className="relative w-full max-w-md p-8">
-        <div className="mb-8 flex flex-col items-center gap-4 text-center">
-          <Logo size="lg" />
+      {/* Brand panel */}
+      <aside className="relative hidden overflow-hidden border-r border-border bg-abyss lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div className="mesh pointer-events-none absolute inset-0 opacity-40" />
+        <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
+        <Link to="/" className="relative"><Logo /></Link>
+        <div className="relative max-w-md">
+          <p className="text-[11px] font-semibold uppercase tracking-[.14em] text-glow">Xorva ERP</p>
+          <h2 className="mt-3 text-[34px] font-bold leading-[1.15] tracking-tight text-frost">
+            One calm workspace for people, money and approvals.
+          </h2>
+          <p className="mt-4 text-[15px] leading-relaxed text-frost-dim">
+            HR, accounting and sales on a single ledger — with the controls a growing UAE business actually needs.
+          </p>
+        </div>
+        <p className="relative text-xs text-dim">© {new Date().getFullYear()} Xorva</p>
+      </aside>
+
+      {/* Form */}
+      <div className="dots-bg relative flex items-center justify-center p-6">
+      <Card className="animate-pop relative w-full max-w-[400px] p-8">
+        <div className="mb-8 flex flex-col gap-5">
+          <span className="lg:hidden"><Logo /></span>
           <div>
-            <h1 className="text-2xl font-bold text-frost">Welcome back</h1>
-            <p className="mt-1 text-sm text-frost-dim">Sign in to your account to continue</p>
+            <h1 className="text-[22px] font-bold tracking-tight text-frost">Welcome back</h1>
+            <p className="mt-1 text-sm text-frost-dim">Sign in to your workspace</p>
           </div>
         </div>
 
@@ -64,8 +81,9 @@ export default function LoginPage() {
           {error && <Alert kind="error">{error}</Alert>}
 
           <Field
+            label="Email"
             type="email"
-            placeholder="Email address"
+            placeholder="you@company.com"
             autoComplete="email"
             icon={<IconMail size={18} stroke={1.5} />}
             value={email}
@@ -74,8 +92,9 @@ export default function LoginPage() {
           />
 
           <Field
+            label="Password"
             type="password"
-            placeholder="Password"
+            placeholder="••••••••"
             autoComplete="current-password"
             icon={<IconLock size={18} stroke={1.5} />}
             value={password}
@@ -83,20 +102,20 @@ export default function LoginPage() {
             error={fieldErrors.password}
           />
 
-          <Button type="submit" block loading={loading}>
-            Sign In
+          <Button type="submit" block loading={loading} className="mt-1">
+            Sign in
           </Button>
 
-          <p className="text-center text-sm text-dim">
-            New corporation?{' '}
-            <Link to="/signup" className="text-glow hover:underline">
-              Create your organization
+          <p className="text-center text-[13px] text-dim">
+            New organisation?{' '}
+            <Link to="/signup" className="font-semibold text-glow hover:underline">
+              Create your workspace
             </Link>
-            <br />
-            Joining an existing one? Contact your administrator.
           </p>
+          <p className="text-center text-xs text-dim">Joining an existing one? Ask your administrator for an invite.</p>
         </form>
       </Card>
+      </div>
     </div>
   );
 }

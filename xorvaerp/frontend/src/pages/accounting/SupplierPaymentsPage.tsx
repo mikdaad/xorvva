@@ -54,7 +54,7 @@ export default function SupplierPaymentsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Supplier Payments</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Supplier Payments</h1>
           <p className="mt-1 text-sm text-frost-dim">Pay suppliers and settle open bills.</p>
         </div>
         <Button disabled={!canRecord} onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> Record payment</Button>
@@ -71,18 +71,18 @@ export default function SupplierPaymentsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr><th className="px-4 py-3">Number</th><th className="px-4 py-3">Supplier</th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Method</th><th className="px-4 py-3 text-right">Amount</th><th className="px-4 py-3">Reference</th></tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {rows.map((p) => (
                   <tr key={p.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost">{p.number}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{p.contactName}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(p.date).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{p.method}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{p.currency !== 'AED' ? `${p.currency} ` : ''}{money(p.amount)}</td>
-                    <td className="px-4 py-2.5 text-dim">{p.reference ?? '—'}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-frost">{p.number}</td>
+                    <td className="px-4 py-3 text-frost-dim">{p.contactName}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(p.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-frost-dim">{p.method}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{p.currency !== 'AED' ? `${p.currency} ` : ''}{money(p.amount)}</td>
+                    <td className="px-4 py-3 text-dim">{p.reference ?? '—'}</td>
                   </tr>
                 ))}
               </tbody>

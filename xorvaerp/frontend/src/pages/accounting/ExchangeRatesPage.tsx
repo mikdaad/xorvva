@@ -74,7 +74,7 @@ export default function ExchangeRatesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-frost">Exchange Rates</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">Exchange Rates</h1>
         <p className="mt-1 text-sm text-frost-dim">
           Base-currency value of 1 unit of each foreign currency. Invoices, bills and payments use the
           latest rate on or before their date (you can also override the rate on a document).
@@ -121,7 +121,7 @@ export default function ExchangeRatesPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Currency</th><th className="px-4 py-3">Effective date</th>
                   <th className="px-4 py-3 text-right">Rate</th><th className="px-4 py-3"></th>
@@ -130,10 +130,10 @@ export default function ExchangeRatesPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((r) => (
                   <tr key={r.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-semibold text-frost">{r.currencyCode}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(r.rateDate).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{r.rate}</td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td className="px-4 py-3 font-semibold text-frost">{r.currencyCode}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(r.rateDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{r.rate}</td>
+                    <td className="px-4 py-3 text-right">
                       <button type="button" className="text-dim hover:text-danger disabled:opacity-30"
                         disabled={busyId === r.id} onClick={() => void remove(r.id)}>
                         <IconTrash size={16} stroke={1.6} />

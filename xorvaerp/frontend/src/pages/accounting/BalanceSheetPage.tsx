@@ -8,6 +8,7 @@ import { AppShell } from '../../components/AppShell';
 import { Card, Field, Spinner } from '../../components/ui';
 import { Pill } from '../../components/dashboard-ui';
 import { useReportScope } from '../../components/accounting/useReportScope';
+import { ExportButtons } from '../../components/accounting/ExportButtons';
 
 const money = (n: number) => n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -41,13 +42,14 @@ export default function BalanceSheetPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Balance Sheet</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Balance Sheet</h1>
           <p className="mt-1 text-sm text-frost-dim">What the company owns vs. owes, as at a date.</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           {scopeControl}
           {data && (data.isBalanced ? <Pill tone="ok">Balanced</Pill> : <Pill tone="bad">Out of balance</Pill>)}
           <Field label="As at" type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} />
+          <ExportButtons reportType="BalanceSheet" companyId={companyId} asOf={asOf} disabled={!data} />
         </div>
       </div>
 

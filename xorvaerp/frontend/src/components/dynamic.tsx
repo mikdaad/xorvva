@@ -62,7 +62,7 @@ function DynamicInput({
                 setUploading(true);
                 try { const r = await uploadFile(file); onChange(r.url); } finally { setUploading(false); }
               }}
-              className="max-w-full text-sm text-frost-dim file:mr-3 file:rounded-lg file:border-0 file:bg-primary/15 file:px-3 file:py-1.5 file:text-glow hover:file:bg-primary/25" />
+              className="max-w-full text-sm text-frost-dim file:mr-3 file:rounded-lg file:border-0 file:bg-brand-weak file:px-3 file:py-1.5 file:text-glow hover:file:bg-primary/25" />
             {uploading && <span className="text-xs text-dim">Uploading…</span>}
             {current && !uploading && <AttachmentView url={current} label="View current" />}
             {current && !uploading && (

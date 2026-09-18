@@ -8,6 +8,7 @@ import { useCompany } from '../../stores/CompanyContext';
 import { useToast } from '../../stores/ToastContext';
 import { AppShell } from '../../components/AppShell';
 import { Card, Field, SelectField, Spinner } from '../../components/ui';
+import { ExportButtons } from '../../components/accounting/ExportButtons';
 
 const money = (n: number) => n.toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const yearStart = () => `${new Date().getFullYear()}-01-01`;
@@ -49,7 +50,7 @@ export default function GeneralLedgerPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-frost">General Ledger</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">General Ledger</h1>
         <p className="mt-1 text-sm text-frost-dim">Every movement on an account, with a running balance.</p>
       </div>
 
@@ -60,6 +61,7 @@ export default function GeneralLedgerPage() {
         </div>
         <Field label="From" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
         <Field label="To" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+        <ExportButtons reportType="Ledger" companyId={companyId} accountId={accountId} from={from} to={to} disabled={!gl} />
       </div>
 
       {loading ? (
@@ -73,7 +75,7 @@ export default function GeneralLedgerPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Date</th><th className="px-4 py-3">Entry</th><th className="px-4 py-3">Description</th>
                   <th className="px-4 py-3 text-right">Debit</th><th className="px-4 py-3 text-right">Credit</th><th className="px-4 py-3 text-right">Balance</th>
@@ -86,12 +88,12 @@ export default function GeneralLedgerPage() {
                 </tr>
                 {gl.lines.map((l, idx) => (
                   <tr key={idx} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(l.date).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost">{l.entryNumber}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{l.description}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.debit ? money(l.debit) : ''}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.credit ? money(l.credit) : ''}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{money(l.running)}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(l.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-frost">{l.entryNumber}</td>
+                    <td className="px-4 py-3 text-frost-dim">{l.description}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.debit ? money(l.debit) : ''}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.credit ? money(l.credit) : ''}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{money(l.running)}</td>
                   </tr>
                 ))}
               </tbody>

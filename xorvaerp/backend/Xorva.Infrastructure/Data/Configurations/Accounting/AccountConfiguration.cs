@@ -22,6 +22,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         // Money — decimal, never float.
         builder.Property(a => a.CurrentBalance).HasColumnType("decimal(18,2)");
 
+        // Tally ledger attributes (Sql/Accounting/0005 — columns already exist when EF learns about them).
+        builder.Property(a => a.NameAr).HasMaxLength(150);
+        builder.Property(a => a.PartyTrn).HasMaxLength(15);
+        builder.Property(a => a.PlaceOfSupply).HasMaxLength(50);
+
         // Ledger code is unique within a company.
         builder.HasIndex(a => new { a.CompanyId, a.Code }).IsUnique()
             .HasDatabaseName("IX_Accounts_CompanyId_Code");

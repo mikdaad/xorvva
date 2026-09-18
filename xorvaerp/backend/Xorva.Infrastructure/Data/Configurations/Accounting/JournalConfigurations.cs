@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Xorva.Modules.Accounting.CostCentres.Entities;
 using Xorva.Modules.Accounting.Ledger.Entities;
+using Xorva.Modules.Accounting.Vouchers.Entities;
 
 namespace Xorva.Infrastructure.Data.Configurations.Accounting;
 
@@ -29,6 +31,10 @@ public class JournalEntryConfiguration : IEntityTypeConfiguration<JournalEntry>
             .HasDatabaseName("IX_JournalEntries_CompanyId_EntryNumber");
         b.HasIndex(e => new { e.CompanyId, e.Date })
             .HasDatabaseName("IX_JournalEntries_CompanyId_Date");
+
+        // Voucher link + reversal chain (Sql/Accounting/0003). FKs are created by the script.
+        b.HasOne<Voucher>().WithMany().HasForeignKey(e => e.VoucherId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<JournalEntry>().WithMany().HasForeignKey(e => e.ReversedById).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -50,5 +56,8 @@ public class JournalLineConfiguration : IEntityTypeConfiguration<JournalLine>
             .HasDatabaseName("IX_JournalLines_CompanyId_AccountId");
         b.HasIndex(l => l.JournalEntryId)
             .HasDatabaseName("IX_JournalLines_JournalEntryId");
+
+        // Cost centre tag (Sql/Accounting/0002). FK created by the script.
+        b.HasOne<CostCentre>().WithMany().HasForeignKey(l => l.CostCentreId).OnDelete(DeleteBehavior.SetNull);
     }
 }

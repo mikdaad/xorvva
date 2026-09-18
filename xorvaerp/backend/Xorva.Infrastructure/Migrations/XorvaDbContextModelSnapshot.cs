@@ -725,11 +725,298 @@ namespace Xorva.Infrastructure.Migrations
                     b.ToTable("BankAccounts", (string)null);
                 });
 
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankMatchRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Pattern")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("PatternField")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RuleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("TargetAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TargetContactId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TargetVoucherType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TimesUsed")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId", "Priority")
+                        .HasDatabaseName("IX_BankMatchRules_CompanyId_Priority");
+
+                    b.HasIndex("CompanyId", "RuleName")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_BankMatchRules_CompanyId_RuleName");
+
+                    b.ToTable("BankMatchRules", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankStatement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BankAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("ClosingBalance")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImportErrors")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("ImportStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ImportedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("LineCount")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("OpeningBalance")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateOnly>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SourceFile")
+                        .HasMaxLength(260)
+                        .HasColumnType("character varying(260)");
+
+                    b.Property<string>("SourceFormat")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateOnly?>("StatementDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TotalCredits")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("TotalDebits")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankAccountId")
+                        .HasDatabaseName("IX_BankStatements_BankAccountId");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_BankStatements_CompanyId");
+
+                    b.HasIndex("PeriodFrom", "PeriodTo")
+                        .HasDatabaseName("IX_BankStatements_Period");
+
+                    b.ToTable("BankStatements", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankStatementLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("Balance")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("BankAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ChequeNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Credit")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("Debit")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateOnly>("LineDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("MatchRuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("MatchStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("MatchedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("MatchedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("MatchedJournalLineId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("MatchedVoucherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RawData")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("StatementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SuggestedAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SuggestedContactId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("ValueDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankAccountId")
+                        .HasDatabaseName("IX_BankStatementLines_BankAccountId");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_BankStatementLines_CompanyId");
+
+                    b.HasIndex("MatchedJournalLineId")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_BankStatementLines_MatchedJournalLine");
+
+                    b.HasIndex("StatementId")
+                        .HasDatabaseName("IX_BankStatementLines_StatementId");
+
+                    b.HasIndex("CompanyId", "MatchStatus")
+                        .HasDatabaseName("IX_BankStatementLines_MatchStatus");
+
+                    b.ToTable("BankStatementLines", (string)null);
+                });
+
             modelBuilder.Entity("Xorva.Modules.Accounting.Contacts.Entities.Contact", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("AddressLine1")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -739,15 +1026,33 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
                     b.Property<string>("ContactType")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<Guid?>("ControlAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("CreditLimit")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid?>("DefaultTaxRateId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
@@ -759,6 +1064,10 @@ namespace Xorva.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("NameAr")
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
@@ -776,6 +1085,11 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
+                    b.Property<string>("TaxTreatment")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
 
@@ -792,6 +1106,145 @@ namespace Xorva.Infrastructure.Migrations
                         .HasDatabaseName("IX_Contacts_CompanyId_Code");
 
                     b.ToTable("Contacts", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.CostCentres.Entities.CostCentre", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("Budget")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DimensionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsGroup")
+                        .HasColumnType("boolean");
+
+                    b.Property<short>("Level")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_CostCentres_CompanyId");
+
+                    b.HasIndex("DimensionId")
+                        .HasDatabaseName("IX_CostCentres_DimensionId");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("CompanyId", "DimensionId", "Code")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_CostCentres_CompanyId_DimensionId_Code");
+
+                    b.ToTable("CostCentres", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.CostCentres.Entities.CostCentreDimension", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("DimensionType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsMandatory")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_CostCentreDimensions_CompanyId");
+
+                    b.HasIndex("CompanyId", "Code")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_CostCentreDimensions_CompanyId_Code");
+
+                    b.ToTable("CostCentreDimensions", (string)null);
                 });
 
             modelBuilder.Entity("Xorva.Modules.Accounting.Currency.Entities.ExchangeRate", b =>
@@ -838,6 +1291,277 @@ namespace Xorva.Infrastructure.Migrations
                     b.ToTable("ExchangeRates", (string)null);
                 });
 
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.AccountingDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedVoucherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DocumentKind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("character varying(260)");
+
+                    b.Property<long?>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<int?>("PageCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("StatusMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.PrimitiveCollection<List<string>>("Tags")
+                        .HasColumnType("text[]");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UploadedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("UploadedAt")
+                        .IsDescending()
+                        .HasDatabaseName("IX_AccountingDocuments_UploadedAt");
+
+                    b.HasIndex("CompanyId", "Status")
+                        .HasDatabaseName("IX_AccountingDocuments_CompanyId_Status");
+
+                    b.ToTable("AccountingDocuments", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.AccountingDocumentFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("character varying(260)");
+
+                    b.Property<string>("Sha256")
+                        .HasColumnType("character(64)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_AccountingDocumentFiles_CompanyId");
+
+                    b.ToTable("AccountingDocumentFiles", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.DocumentExtraction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AcceptedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("ConfidenceScore")
+                        .HasColumnType("numeric(5,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedVoucherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ExtractedData")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModelUsed")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<string>("ModelVersion")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<int?>("ProcessingTimeMs")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RawResponse")
+                        .HasColumnType("jsonb");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_DocumentExtractions_CompanyId");
+
+                    b.HasIndex("DocumentId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("IX_DocumentExtractions_DocumentId");
+
+                    b.ToTable("DocumentExtractions", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.DocumentFieldSuggestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Confidence")
+                        .HasColumnType("numeric(5,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ExtractedValue")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ExtractionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FieldGroup")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("FinalValue")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserOverride")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_DocumentFieldSuggestions_CompanyId");
+
+                    b.HasIndex("ExtractionId", "FieldName")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_DocumentFieldSuggestions_Extraction_Field");
+
+                    b.ToTable("DocumentFieldSuggestions", (string)null);
+                });
+
             modelBuilder.Entity("Xorva.Modules.Accounting.Ledger.Entities.Account", b =>
                 {
                     b.Property<Guid>("Id")
@@ -871,11 +1595,23 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<decimal>("CurrentBalance")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("DefaultTaxRateId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsBank")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsControl")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsGroup")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSystemAccount")
@@ -886,6 +1622,10 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
                     b.Property<string>("NormalBalance")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -893,6 +1633,14 @@ namespace Xorva.Infrastructure.Migrations
 
                     b.Property<Guid?>("ParentAccountId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("PartyTrn")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<string>("PlaceOfSupply")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
@@ -935,6 +1683,9 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
+                    b.Property<DateOnly?>("BooksBeginDate")
+                        .HasColumnType("date");
+
                     b.Property<Guid>("CashAccountId")
                         .HasColumnType("uuid");
 
@@ -942,8 +1693,16 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("CoaTemplate")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("CorporateTaxTrn")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
@@ -958,8 +1717,18 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<short>("DecimalPlaces")
+                        .HasColumnType("smallint");
+
                     b.Property<Guid>("DefaultBankAccountId")
                         .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DefaultCostCentreDimensionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FreeZoneName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("FxGainLossAccountId")
                         .HasColumnType("uuid");
@@ -969,12 +1738,19 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
+                    b.Property<bool>("IsFreeZone")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("JournalPrefix")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
                     b.Property<string>("LegalName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("MailingName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
@@ -1054,6 +1830,17 @@ namespace Xorva.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CloseStatus")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ClosedBy")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CompanyId")
@@ -1180,6 +1967,9 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<Guid?>("PostedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ReversedById")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("SourceId")
                         .HasColumnType("uuid");
 
@@ -1208,7 +1998,14 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<Guid?>("UpdatedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("VoucherId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ReversedById");
+
+                    b.HasIndex("VoucherId");
 
                     b.HasIndex("CompanyId", "Date")
                         .HasDatabaseName("IX_JournalEntries_CompanyId_Date");
@@ -1236,6 +2033,9 @@ namespace Xorva.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ContactId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CostCentreId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1273,6 +2073,8 @@ namespace Xorva.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CostCentreId");
 
                     b.HasIndex("JournalEntryId")
                         .HasDatabaseName("IX_JournalLines_JournalEntryId");
@@ -2108,13 +2910,35 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<string>("HsnCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid?>("PurchaseAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("PurchasePrice")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid?>("PurchaseTaxRateId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("SalesAccountId")
                         .HasColumnType("uuid");
@@ -2127,6 +2951,11 @@ namespace Xorva.Infrastructure.Migrations
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("UnitOfMeasure")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2153,6 +2982,10 @@ namespace Xorva.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
 
@@ -2162,10 +2995,17 @@ namespace Xorva.Infrastructure.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("FtaCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<Guid?>("InputAccountId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -2178,6 +3018,11 @@ namespace Xorva.Infrastructure.Migrations
 
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("TaxScope")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
@@ -2194,6 +3039,274 @@ namespace Xorva.Infrastructure.Migrations
                         .HasDatabaseName("IX_TaxRates_CompanyId_Name");
 
                     b.ToTable("TaxRates", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Vouchers.Entities.Voucher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("AmountDue")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("numeric(18,2)")
+                        .HasComputedColumnSql("\"TotalAmount\" - \"AmountPaid\"", true);
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseDiscount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseSubTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseTaxTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseTotalAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("BuyerTrn")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ContactId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<decimal>("DiscountTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasColumnType("numeric(18,6)");
+
+                    b.Property<Guid?>("FiscalPeriodId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("InternalNotes")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("JournalEntryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Narration")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("PlaceOfSupply")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("PostedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("PostedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("ReversalOfId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReversalReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid?>("ReversedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SellerTrn")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid?>("SourceBillId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SourceInvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateOnly?>("SupplyDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("TaxTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TermsAndConditions")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("VoucherDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("VoucherNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("VoucherType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_Vouchers_CompanyId");
+
+                    b.HasIndex("CompanyId", "Status")
+                        .HasDatabaseName("IX_Vouchers_CompanyId_Status");
+
+                    b.HasIndex("CompanyId", "VoucherDate")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("IX_Vouchers_CompanyId_Date");
+
+                    b.HasIndex("CompanyId", "VoucherType")
+                        .HasDatabaseName("IX_Vouchers_CompanyId_Type");
+
+                    b.HasIndex("CompanyId", "VoucherType", "VoucherNumber")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Vouchers_Company_Type_Number");
+
+                    b.ToTable("Vouchers", (string)null);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Vouchers.Entities.VoucherLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BaseLineAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseLineTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("BaseTaxAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CostCentreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<decimal>("DiscountPct")
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<string>("DrCr")
+                        .IsRequired()
+                        .HasColumnType("character(2)");
+
+                    b.Property<decimal>("LineAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("LineTotal")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,4)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid?>("TaxRateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TaxRatePercent")
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric(18,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VoucherId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .HasDatabaseName("IX_VoucherLines_AccountId");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("IX_VoucherLines_CompanyId");
+
+                    b.HasIndex("VoucherId")
+                        .HasDatabaseName("IX_VoucherLines_VoucherId");
+
+                    b.HasIndex("VoucherId", "LineNumber")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_VoucherLines_Voucher_LineNumber");
+
+                    b.ToTable("VoucherLines", (string)null);
                 });
 
             modelBuilder.Entity("Xorva.Modules.HR.Entities.Department", b =>
@@ -3319,8 +4432,85 @@ namespace Xorva.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankStatement", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Banking.Entities.BankAccount", null)
+                        .WithMany()
+                        .HasForeignKey("BankAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankStatementLine", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Banking.Entities.BankStatement", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("StatementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.CostCentres.Entities.CostCentre", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.CostCentres.Entities.CostCentreDimension", null)
+                        .WithMany()
+                        .HasForeignKey("DimensionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Xorva.Modules.Accounting.CostCentres.Entities.CostCentre", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.AccountingDocument", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Documents.Entities.AccountingDocumentFile", null)
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.DocumentExtraction", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Documents.Entities.AccountingDocument", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.DocumentFieldSuggestion", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Documents.Entities.DocumentExtraction", null)
+                        .WithMany("Fields")
+                        .HasForeignKey("ExtractionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Ledger.Entities.JournalEntry", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Ledger.Entities.JournalEntry", null)
+                        .WithMany()
+                        .HasForeignKey("ReversedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Xorva.Modules.Accounting.Vouchers.Entities.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Xorva.Modules.Accounting.Ledger.Entities.JournalLine", b =>
                 {
+                    b.HasOne("Xorva.Modules.Accounting.CostCentres.Entities.CostCentre", null)
+                        .WithMany()
+                        .HasForeignKey("CostCentreId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Xorva.Modules.Accounting.Ledger.Entities.JournalEntry", null)
                         .WithMany("Lines")
                         .HasForeignKey("JournalEntryId")
@@ -3378,6 +4568,15 @@ namespace Xorva.Infrastructure.Migrations
                     b.HasOne("Xorva.Modules.Accounting.Sales.Entities.CustomerPayment", null)
                         .WithMany("Allocations")
                         .HasForeignKey("CustomerPaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Vouchers.Entities.VoucherLine", b =>
+                {
+                    b.HasOne("Xorva.Modules.Accounting.Vouchers.Entities.Voucher", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3453,6 +4652,16 @@ namespace Xorva.Infrastructure.Migrations
                     b.Navigation("Companies");
                 });
 
+            modelBuilder.Entity("Xorva.Modules.Accounting.Banking.Entities.BankStatement", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Documents.Entities.DocumentExtraction", b =>
+                {
+                    b.Navigation("Fields");
+                });
+
             modelBuilder.Entity("Xorva.Modules.Accounting.Ledger.Entities.JournalEntry", b =>
                 {
                     b.Navigation("Lines");
@@ -3484,6 +4693,11 @@ namespace Xorva.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Xorva.Modules.Accounting.Sales.Entities.Invoice", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("Xorva.Modules.Accounting.Vouchers.Entities.Voucher", b =>
                 {
                     b.Navigation("Lines");
                 });

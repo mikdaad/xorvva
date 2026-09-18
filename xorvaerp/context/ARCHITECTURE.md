@@ -180,6 +180,49 @@ toggle (`useReportScope` hook) on those pages, CEO-only.
 (reverse, never edit/delete); closed periods reject posting; document + journal in one unit of work;
 reports read posted lines, not the cache.
 
+## Accounting — TrueLedge port (Phase 2b, Sept 2026)
+
+Two engines, one ledger. Xorva's `JournalPoster` (C#) and the ported PostgreSQL RPCs
+(`accounting.post_voucher_atomic`, `reverse_voucher`, bank matching, document inbox) both write the
+same `JournalEntries`/`JournalLines`/`Accounts.CurrentBalance`, and the same rules are enforced twice:
+in C# (`PeriodGuard`, `JournalPoster` balance/leaf/cost-centre checks) and in DB triggers
+(`trg_journal_entries_period`, balance, immutability, cost-centre leaf). They can never disagree.
+
+- **SQL is source of truth** for the ported schema: `Xorva.Infrastructure/Sql/Accounting/000N_*.sql`
+  (embedded resources) run by `SqlScript` inside EF migration `20260917120000_AccountingSqlPort`.
+  Idempotent (`IF NOT EXISTS` / `CREATE OR REPLACE`), so re-running is safe. EF entities for the new
+  tables are **read-model mappings** of SQL-created tables; the EF snapshot is caught up with an empty
+  follow-up migration (see PROGRESS.md).
+- **Session context:** `TenantSessionInterceptor` runs `app.set_session_context(user, tenant, company,
+  role, crossCompany)` on every opened connection; RLS policies (`app.install_company_rls`) and RPCs
+  read it via `app.current_*()`. EF global filters remain — RLS is defence in depth.
+  **Supabase notes (target DB since Sept 2026):** connect through the *session* pooler (port 5432) or
+  direct — never the transaction pooler (6543): the context is session-scoped (`set_config(..., false)`)
+  and EF migrations need real sessions. The `postgres` role Supabase hands out owns the tables and has
+  `BYPASSRLS`, so the policies do not filter the API's own connection — isolation for the API is the EF
+  global query filter (as before); RLS becomes active for any restricted role (PostgREST, read-only
+  analytics users). Schemas `app`/`accounting` are outside `public`, so PostgREST does not expose the RPCs.
+- **RPC facade:** `IAccountingRpc` (module `Common/`) implemented by `Infrastructure/Services/AccountingRpc`
+  on the DbContext's own connection, so EF writes + RPC run in one Npgsql session/transaction scope.
+- **Module boundary:** Accounting must not reference Commerce. Voucher entry / AI inbox need
+  customers, suppliers and items, so Accounting declares `IPartyDirectory` and Commerce registers
+  `PartyDirectory` in `AddCommerceModule` — the mirror of `IJournalPoster` (Core port, Accounting adapter).
+- **Voucher maths** live in the pure `VoucherEngine` (no I/O): compute totals, persisted lines and
+  base-currency ledger lines; reject unbalanced/zero entries **before** any write; FX rounding residue
+  is absorbed on the balancing line. Handler: validate masters from DB → engine → save draft →
+  `post_voucher_atomic`; if posting fails, a voucher created by this call is deleted (TrueLedge
+  compensation), an existing draft is left intact.
+- **Period close is graded:** `FiscalPeriods.CloseStatus` Open/SoftClosed/HardClosed (legacy
+  `IsClosed` kept in step by trigger + handler). SoftClosed: CompanyAdmin+ may post; HardClosed: nobody.
+- **AI inbox:** `IDocumentExtractor` (Gemini) is an infrastructure service; the flow is state-machined
+  in SQL (`begin/complete/fail_document_extraction`, `accept_document_extraction` links the voucher).
+  Files are stored in `AccountingDocumentFiles.Data` (bytea) — no object storage dependency.
+- **Report export:** `ReportTable` (renderer-neutral) → `XlsxWriter` (raw SpreadsheetML) / `PdfWriter`
+  (raw PDF 1.4, Helvetica). No NuGet additions. Latin-only PDFs; swap `PdfWriter` for QuestPDF + a
+  font when Arabic output is needed.
+- **Tests:** SQL suite (`Sql/Tests`, Node + pg, real Postgres) covers RPC/trigger semantics; .NET unit
+  tests use SQLite + `FakeAccountingRpc` and cover handler logic only.
+
 ## Integration testing pattern
 `XorvaApiFactory` (Tests.Integration) boots the REAL pipeline with environment **Testing**:
 Program skips DbInitializer, InfrastructureExtensions skips Npgsql (empty conn string),
@@ -202,11 +245,40 @@ because with minimal hosting those sources load BEFORE appsettings.json and get 
 Exception → RequestLogging → Swagger(dev) → CORS → Authentication → TenantResolver → Authorization → Controllers
 
 ## Frontend conventions
-- Tailwind v4: brand palette lives in `src/index.css` under `@theme` (colors: void, abyss,
-  surface, primary, glow, frost, frost-dim, dim, danger, success, warning). Buttons rounded-lg (8px),
-  cards rounded-2xl (16px) per brand guidelines.
+- Tailwind v4: the design system lives in `src/index.css`. Raw values are `--c-*` custom properties
+  scoped by `:root[data-theme="light|dark"]` (set pre-paint by `index.html` from
+  `localStorage['xorva.theme']`, owned at runtime by `stores/ThemeContext`); `@theme` maps them to
+  utilities so `bg-abyss` / `text-frost` etc. re-resolve on theme flip. Tokens: surfaces `void`
+  (page) → `abyss` (cards) → `elevated` (popovers), `surface` (inputs/secondary), `hover`; hairlines
+  `border` / `border-strong`; text `frost` / `frost-dim` / `dim`; brand `primary` (fills), `glow`
+  (brand text), `brand-weak` (active/selected tint — always this, never `bg-primary/15`); semantic
+  `success|warning|danger` with `--c-*-weak` tints. Shadows `shadow-soft-sm|soft|soft-lg`; radii:
+  buttons/inputs `rounded-lg`, cards `rounded-xl`, dialogs `rounded-2xl`. Global rules in `@layer base`
+  style every `main table` (sticky-friendly uppercase 11px thead, row hairlines, hover) so pages only
+  set cell padding. Helpers: `.popover` (menus/toasts), `.lift`, `.skeleton`, `.dots-bg`,
+  `.animate-page|fade|pop|menu`, `kbd`. Fonts: Plus Jakarta Sans (UI), JetBrains Mono (numbers),
+  Instrument Serif (`.font-display`, marketing only).
+- Shell: `AppShell` = 248 px `Sidebar` (grouped by module, role/module gated by `navConfig.ts`,
+  active = `bg-brand-weak text-glow`) + 56 px `Header` (breadcrumb derived from `navConfig`, company
+  switcher for SuperAdmin, theme toggle, approvals bell fed by `approvalsApi.pending()`, user menu) +
+  `CommandPalette` (⌘K / Ctrl+K or the sidebar search: navigation + company switch + theme + sign out).
+- Page anatomy: `PageHeader` (or the inline `text-[26px] font-bold tracking-tight` h1) → filters →
+  `Card`/`SectionCard`. Status chips are `Pill` (dot + tint + ring). Stat tiles are `StatTile`.
+- Design preview without the .NET API: `npm run dev:mock` (`vite.mock.config.ts` serves an in-memory
+  `/api` — demo tenant, companies, vouchers, cost centres, statements). Never used by `build`.
 - All API calls go through `src/api/client.ts` (JWT header + silent refresh; refresh logic
   skips /auth/login and /auth/refresh).
 - Client validation mirrors backend FluentValidation exactly (`src/utils/validation.ts`).
 - RBAC helpers mirror the backend hierarchy (`src/utils/roles.ts`).
 - Dev proxy: vite.config.ts `/api` → `http://localhost:5270` (must match launchSettings.json).
+- **TrueLedge-port screens (Phase 3)** live beside the older accounting pages and follow the same
+  patterns (`AppShell`, `useAuth`/`useCompany` company scoping, `useReportScope` for reports,
+  `useToast`, `components/ui` primitives, `Pill`/`StatTile` from `dashboard-ui`). Their API client is
+  `src/api/ledger.api.ts` (types mirror the C# DTOs 1:1; enums are string unions because the API
+  serialises enums as strings). Shared helpers: `fmtMoney`, `fmtDate`, `todayIso`, `VOUCHER_STATUS_TONE`.
+- `SearchSelect` (`components/accounting/`) is the keyboard combobox for the voucher grid — it swallows
+  Enter only while its list is open so the grid's "Enter = next field" handler keeps working.
+- File downloads (`exportReport`) and file previews (inbox) go through the axios client with
+  `responseType: 'blob'` so the JWT header is attached; never link to `/api/...` directly.
+- Inbox → voucher hand-off uses router state (`navigate('/accounting/vouchers/new', { state: { prefill } })`),
+  and the entry page calls `acceptDocument` after a successful post to link the document.

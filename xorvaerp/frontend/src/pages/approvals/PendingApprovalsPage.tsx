@@ -43,7 +43,7 @@ export default function PendingApprovalsPage() {
   return (
     <AppShell>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-frost">Pending Approvals</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">Pending Approvals</h1>
         <p className="mt-1 text-sm text-frost-dim">Requests awaiting your decision.</p>
       </div>
 

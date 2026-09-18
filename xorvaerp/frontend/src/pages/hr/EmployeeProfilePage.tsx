@@ -87,7 +87,7 @@ export default function EmployeeProfilePage() {
         <>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-lg font-bold text-glow">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-weak text-lg font-bold text-glow">
                 {emp.firstName[0]}{emp.lastName[0]}
               </span>
               <div>

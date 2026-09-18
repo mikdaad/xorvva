@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Xorva.Core.Exceptions;
 using Xorva.Core.Interfaces;
+using Xorva.Modules.Accounting.CostCentres.Entities;
 using Xorva.Modules.Accounting.Enums;
 using Xorva.Modules.Accounting.Ledger.Entities;
 
@@ -49,7 +50,7 @@ public class JournalPoster : IJournalPoster
             throw new BadRequestException("A journal cannot be for a zero amount.");
 
         var date = DateTime.SpecifyKind(draft.Date.Date, DateTimeKind.Utc);
-        await PeriodGuard.EnsureOpenAsync(_db, companyId, date, ct);
+        await PeriodGuard.EnsureOpenAsync(_db, companyId, date, ct, _tenant.Role);
 
         var settings = await _db.Set<AccountingSettings>().FirstOrDefaultAsync(s => s.CompanyId == companyId, ct)
             ?? throw new BadRequestException("Accounting is not set up for this company — create the chart of accounts first.");
@@ -75,6 +76,26 @@ public class JournalPoster : IJournalPoster
             throw new BadRequestException("One or more accounts do not exist in this company's chart of accounts.");
         if (accounts.Exists(a => !a.IsActive))
             throw new BadRequestException("Cannot post to an inactive account.");
+        if (accounts.Find(a => a.IsGroup) is { } group)
+            throw new BadRequestException($"Ledger \"{group.Name}\" is a group and cannot be posted to. Select a ledger under it.");
+
+        // Cost centres (TrueLedge dimensions): must exist in this company, be active and be a posting (leaf) centre.
+        // The DB trigger trg_journal_lines_cost_centre enforces the same rule; this gives a clean message up front.
+        var costCentreIds = lines.Where(l => l.CostCentreId.HasValue).Select(l => l.CostCentreId!.Value).Distinct().ToList();
+        if (costCentreIds.Count > 0)
+        {
+            var centres = await _db.Set<CostCentre>()
+                .Where(c => c.CompanyId == companyId && costCentreIds.Contains(c.Id))
+                .Select(c => new { c.Id, c.Name, c.IsGroup, c.IsActive })
+                .ToListAsync(ct);
+            foreach (var ccId in costCentreIds)
+            {
+                var cc = centres.Find(c => c.Id == ccId)
+                    ?? throw new BadRequestException("One or more cost centres do not exist in this company.");
+                if (cc.IsGroup) throw new BadRequestException($"Cost centre \"{cc.Name}\" is a group — allocate to a posting cost centre under it.");
+                if (!cc.IsActive) throw new BadRequestException($"Cost centre \"{cc.Name}\" is inactive.");
+            }
+        }
 
         var entry = new JournalEntry
         {
@@ -107,6 +128,7 @@ public class JournalPoster : IJournalPoster
                 Credit = Math.Round(l.Credit, 2),
                 ContactId = l.ContactId,
                 TaxRateId = l.TaxRateId,
+                CostCentreId = l.CostCentreId,
                 Description = l.Description?.Trim(),
             });
 

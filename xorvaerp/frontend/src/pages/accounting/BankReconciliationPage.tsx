@@ -53,7 +53,7 @@ export default function BankReconciliationPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Bank Reconciliation</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Bank Reconciliation</h1>
           <p className="mt-1 text-sm text-frost-dim">Tick the ledger movements that appear on your bank statement.</p>
         </div>
         <div className="min-w-64">
@@ -84,7 +84,7 @@ export default function BankReconciliationPage() {
           <Card className="overflow-hidden p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase text-dim">
+                <thead className="border-b border-border">
                   <tr>
                     <th className="px-4 py-3 w-10"></th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Entry</th>
                     <th className="px-4 py-3">Description</th><th className="px-4 py-3 text-right">Debit</th><th className="px-4 py-3 text-right">Credit</th><th className="px-4 py-3">Status</th>
@@ -93,16 +93,16 @@ export default function BankReconciliationPage() {
                 <tbody className="divide-y divide-border">
                   {data.lines.map((l) => (
                     <tr key={l.id} className="hover:bg-hover">
-                      <td className="px-4 py-2.5">
+                      <td className="px-4 py-3">
                         <input type="checkbox" className="accent-primary" checked={l.isReconciled}
                           disabled={busyLine === l.id} onChange={(e) => void toggle(l.id, e.target.checked)} />
                       </td>
-                      <td className="px-4 py-2.5 text-frost-dim">{new Date(l.date).toLocaleDateString()}</td>
-                      <td className="px-4 py-2.5 font-mono text-xs text-frost">{l.entryNumber}</td>
-                      <td className="px-4 py-2.5 text-frost-dim">{l.description}</td>
-                      <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.debit ? money(l.debit) : ''}</td>
-                      <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.credit ? money(l.credit) : ''}</td>
-                      <td className="px-4 py-2.5">{l.isReconciled ? <Pill tone="ok">Cleared</Pill> : <Pill tone="neutral">Open</Pill>}</td>
+                      <td className="px-4 py-3 text-frost-dim">{new Date(l.date).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-frost">{l.entryNumber}</td>
+                      <td className="px-4 py-3 text-frost-dim">{l.description}</td>
+                      <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.debit ? money(l.debit) : ''}</td>
+                      <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.credit ? money(l.credit) : ''}</td>
+                      <td className="px-4 py-3">{l.isReconciled ? <Pill tone="ok">Cleared</Pill> : <Pill tone="neutral">Open</Pill>}</td>
                     </tr>
                   ))}
                 </tbody>

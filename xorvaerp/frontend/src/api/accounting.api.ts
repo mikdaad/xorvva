@@ -386,12 +386,17 @@ export interface SupplierPayment {
 
 // ─── Fiscal years ───────────────────────────────────────────────
 
+export type PeriodCloseStatus = 'Open' | 'SoftClosed' | 'HardClosed';
+
 export interface FiscalPeriod {
   id: string;
   name: string;
   startDate: string;
   endDate: string;
   isClosed: boolean;
+  /** Graded close (TrueLedge port): SoftClosed still lets admins post adjustments. */
+  closeStatus?: PeriodCloseStatus;
+  closedAt?: string;
 }
 
 export interface FiscalYear {

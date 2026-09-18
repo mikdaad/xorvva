@@ -59,7 +59,7 @@ export default function DesignationsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Designations</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Designations</h1>
           <p className="mt-1 text-sm text-frost-dim">{items.length} title(s) · job titles and pay-grade tiers.</p>
         </div>
         {canManage && <Button onClick={() => setCreating(true)}><IconPlus size={18} stroke={1.5} /> New Designation</Button>}
@@ -78,7 +78,7 @@ export default function DesignationsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <SearchTh label="Title" value={f.title ?? ''} onChange={(v) => setFilter('title', v)} />
                   <SearchTh label="Code" value={f.code ?? ''} onChange={(v) => setFilter('code', v)} />
@@ -101,7 +101,7 @@ export default function DesignationsPage() {
                     <td className="px-4 py-3">{d.category ? <Pill tone="brand">{d.category}</Pill> : <span className="text-dim">—</span>}</td>
                     <td className="px-4 py-3 text-frost-dim">{d.employeeCount}</td>
                     <td className="px-4 py-3">
-                      <span className={`rounded-md px-2 py-0.5 text-xs font-medium ${d.isActive ? 'bg-success/15 text-success' : 'bg-frost-dim/15 text-frost-dim'}`}>
+                      <span className={`rounded-md px-2 py-0.5 text-xs font-medium ${d.isActive ? 'bg-[var(--c-ok-weak)] text-success' : 'bg-frost-dim/15 text-frost-dim'}`}>
                         {d.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>

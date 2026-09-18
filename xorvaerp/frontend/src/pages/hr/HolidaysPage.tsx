@@ -58,7 +58,7 @@ export default function HolidaysPage() {
           {items.map((h) => (
             <Card key={h.id} className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-glow">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-weak text-glow">
                   <IconCalendarEvent size={18} stroke={1.6} />
                 </span>
                 <div>

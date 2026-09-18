@@ -82,15 +82,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-void p-4">
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-[120px]" />
+    <div className="dots-bg relative flex min-h-screen items-center justify-center bg-void p-6">
       <ThemeToggle className="absolute right-4 top-4" />
 
-      <Card className="relative w-full max-w-xl p-8">
+      <Card className="animate-pop relative w-full max-w-xl p-8">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           <Logo size="lg" />
           <div>
-            <h1 className="text-2xl font-bold text-frost">Create your organization</h1>
+            <h1 className="text-[22px] font-bold tracking-tight text-frost">Create your organization</h1>
             <p className="mt-1 text-sm text-frost-dim">
               Your corporation, its first company, and your CEO account — in one step.
             </p>

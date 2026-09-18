@@ -74,7 +74,7 @@ export default function DepartmentsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Departments</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Departments</h1>
           <p className="mt-1 text-sm text-frost-dim">{items.length} department(s) · organizational structure & rules.</p>
         </div>
         {canManage && <Button onClick={() => setCreating(true)}><IconPlus size={18} stroke={1.5} /> New Department</Button>}
@@ -93,7 +93,7 @@ export default function DepartmentsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <SearchTh label="Name" value={f.name ?? ''} onChange={(v) => setFilter('name', v)} />
                   <SearchTh label="Code" value={f.code ?? ''} onChange={(v) => setFilter('code', v)} />

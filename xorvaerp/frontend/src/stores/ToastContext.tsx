@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-[100] flex w-full max-w-sm flex-col gap-2">
+      <div className="pointer-events-none fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2">
         {toasts.map((t) => <ToastCard key={t.id} toast={t} onClose={() => remove(t.id)} />)}
       </div>
     </ToastContext.Provider>
@@ -45,15 +45,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const tone = {
-    success: { icon: <IconCircleCheckFilled size={20} />, cls: 'text-success' },
-    error: { icon: <IconAlertTriangleFilled size={20} />, cls: 'text-danger' },
-    info: { icon: <IconInfoCircleFilled size={20} />, cls: 'text-glow' },
+    success: { icon: <IconCircleCheckFilled size={18} />, cls: 'text-success' },
+    error: { icon: <IconAlertTriangleFilled size={18} />, cls: 'text-danger' },
+    info: { icon: <IconInfoCircleFilled size={18} />, cls: 'text-glow' },
   }[toast.kind];
   return (
     <div
       role="status"
-      className="glass pointer-events-auto flex items-start gap-3 rounded-xl border border-border p-3.5 shadow-soft animate-in"
-      style={{ animation: 'xorva-toast-in .25s ease-out' }}
+      className="popover pointer-events-auto flex items-start gap-3 p-3.5"
+      style={{ animation: 'xorva-toast-in .22s cubic-bezier(.22,.61,.36,1)' }}
     >
       <span className={`mt-0.5 shrink-0 ${tone.cls}`}>{tone.icon}</span>
       <p className="flex-1 text-sm font-medium text-frost">{toast.message}</p>

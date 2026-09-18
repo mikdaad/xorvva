@@ -52,7 +52,7 @@ export default function LeavePage() {
     <AppShell>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">My Leave</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">My Leave</h1>
           <p className="mt-1 text-sm text-frost-dim">Balances and requests for this year.</p>
         </div>
         <Button onClick={() => setApplyOpen(true)} disabled={!linked}>
@@ -66,7 +66,7 @@ export default function LeavePage() {
         <div className="flex justify-center py-20"><Spinner size="lg" /></div>
       ) : !linked ? (
         <Card className="flex flex-col items-center gap-3 py-14 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/15 text-warning">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-warn-weak)] text-warning">
             <IconUserExclamation size={28} stroke={1.6} />
           </span>
           <div className="text-lg font-bold text-frost">No employee profile yet</div>

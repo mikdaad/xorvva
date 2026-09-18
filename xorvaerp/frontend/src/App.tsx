@@ -57,6 +57,11 @@ import DebitNotesPage from './pages/accounting/DebitNotesPage';
 import SupplierPaymentsPage from './pages/accounting/SupplierPaymentsPage';
 import VatReturnPage from './pages/accounting/VatReturnPage';
 import AgedPayablesPage from './pages/accounting/AgedPayablesPage';
+import VoucherEntryPage from './pages/accounting/VoucherEntryPage';
+import VoucherRegisterPage from './pages/accounting/VoucherRegisterPage';
+import CostCentresPage from './pages/accounting/CostCentresPage';
+import BankImportPage from './pages/accounting/BankImportPage';
+import DocumentInboxPage from './pages/accounting/DocumentInboxPage';
 
 function Protected({ children }: { children: React.ReactNode }) {
   return (
@@ -111,6 +116,12 @@ export default function App() {
           <Route path="/accounting/supplier-payments" element={<Protected><SupplierPaymentsPage /></Protected>} />
           <Route path="/accounting/debit-notes" element={<Protected><DebitNotesPage /></Protected>} />
           <Route path="/accounting/journals" element={<Protected><JournalsPage /></Protected>} />
+          <Route path="/accounting/vouchers" element={<Protected><VoucherRegisterPage /></Protected>} />
+          <Route path="/accounting/vouchers/new" element={<Protected><VoucherEntryPage /></Protected>} />
+          <Route path="/accounting/vouchers/:id/edit" element={<Protected><VoucherEntryPage /></Protected>} />
+          <Route path="/accounting/cost-centres" element={<Protected><CostCentresPage /></Protected>} />
+          <Route path="/accounting/bank-statements" element={<Protected><BankImportPage /></Protected>} />
+          <Route path="/accounting/inbox" element={<Protected><DocumentInboxPage /></Protected>} />
           <Route path="/accounting/general-ledger" element={<Protected><GeneralLedgerPage /></Protected>} />
           <Route path="/accounting/aged-receivables" element={<Protected><AgedReceivablesPage /></Protected>} />
           <Route path="/accounting/aged-payables" element={<Protected><AgedPayablesPage /></Protected>} />

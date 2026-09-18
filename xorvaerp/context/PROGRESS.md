@@ -213,6 +213,106 @@ boundary: with no foreign bank exposure yet, the AR/AP revaluation above is comp
 
 ---
 
+# TRUELEDGE PORT — Phase 2b backend (Sept 17–18, 2026) ✅ BUILD + 166 TESTS GREEN, MIGRATED TO SUPABASE
+
+Gap-fill port of the standalone **TrueLedge** app (Next.js + Supabase) into the accounting module.
+Strategy A (approved): keep Xorva's `JournalPoster`, entities, approvals and tests; add TrueLedge's
+missing capabilities additively. TrueLedge's Postgres/RPC/RLS layer is ported **as SQL**
+(`Xorva.Infrastructure/Sql/Accounting/000{1..7}_*.sql` — source of truth), applied by a thin EF
+migration wrapper; RPCs write into Xorva's existing `JournalEntries`/`JournalLines` (one ledger).
+
+### SQL layer — DONE, 155 tests green against real Postgres 18
+- `0001` schemas `app`/`accounting`, session context (`app.set_session_context`, `app.current_*`),
+  `app.install_company_rls(regclass)` · `0002` RLS on every accounting table · `0003` vouchers
+  (`Vouchers`, `VoucherLines`, `VoucherSequences`; `generate_voucher_number`, `post_voucher_atomic`,
+  `reverse_voucher`, immutability + balance triggers) + cost centres (`CostCentreDimensions`,
+  `CostCentres`, `JournalLines.CostCentreId`, hierarchy/level/leaf triggers) · `0004` bank statement
+  import (`BankStatements`, `BankStatementLines`, `BankMatchRules`; `import_bank_statement`,
+  `suggest_bank_matches`, confirm/unmatch/ignore) · `0005` master enrichment (Arabic names, FTA
+  fields, control accounts, item purchase side, soft/hard period close `FiscalPeriods.CloseStatus`,
+  `assert_period_open`, `set_period_close_status`) · `0006` AI document inbox (`AccountingDocumentFiles`,
+  `AccountingDocuments`, `DocumentExtractions`, `DocumentFieldSuggestions` + upload/begin/complete/fail/
+  override/accept/reject RPCs) · `0007` report RPCs (`get_balance_sheet`, `get_ledger_statement`,
+  `get_transaction_register`, `get_trial_balance`, `get_cost_centre_report`,
+  `get_bank_reconciliation_summary`) — JSONB shapes identical to TrueLedge `reports/types.ts`.
+- Harness: `Sql/Tests/run.mjs` (Node + pg; regenerates the EF baseline from the model snapshot via
+  `snapshot2sql.mjs`, applies 0001–0007, runs `test_000N_*.mjs`). Run instructions in `Sql/Tests/`.
+
+### .NET plumbing — WRITTEN (uncompiled here; sandbox has no .NET SDK)
+- Infrastructure: `SqlScript` (embedded `.sql` runner), `TenantSessionInterceptor` (sets the Postgres
+  session context per connection so RLS/RPC see user/tenant/company/role), `AccountingRpc`
+  (`IAccountingRpc` over Npgsql, same connection as EF), `GeminiDocumentExtractor`
+  (`IDocumentExtractor`; gemini-2.5-flash, response schema, 12-rule prompt, masters context),
+  EF configurations for all ported tables/columns, migration `20260917120000_AccountingSqlPort`
+  (+ Designer) that runs 0001–0007.
+- Accounting module slices: **Vouchers** (F4–F9 `VoucherEngine` + `VoucherTypes`, SaveAndPost /
+  Reverse / Cancel, Get / List / Types), **CostCentres** (dimensions + centres CRUD, report; manual
+  journal lines accept `CostCentreId`, `JournalPoster` validates leaf/active), **Banking import**
+  (`BankCsvParser` port for ENBD/ADCB/FAB/Mashreq/RAK/DIB, preview/import/suggest/confirm/unmatch/
+  ignore, match rules), **Documents** (upload → Gemini extract → review/override → accept-as-voucher /
+  reject), **LedgerReports** (RPC reports + **PDF/XLSX export** via dependency-free `PdfWriter` /
+  `XlsxWriter` over a renderer-neutral `ReportTable`), soft/hard **period close**
+  (`SetFiscalPeriodClosedCommand.CloseStatus`; `PeriodGuard` is role-aware).
+- Module boundary kept: Accounting reads Contacts/Products through the new `IPartyDirectory` port;
+  Commerce registers the adapter (`PartyDirectory`) — mirror image of `IJournalPoster`.
+- Controllers: `/api/accounting/vouchers`, `/cost-centres`, `/bank-statements`, `/documents`,
+  `/ledger-reports` (+ `/export`). Existing endpoints untouched.
+- Approvable action added: `Accounting.PostVoucher` (amount = base grand total).
+
+### Tests written (run locally): `Tests/Xorva.Tests.Unit/Accounting/`
+`VoucherEngineTests` (pure F4–F9 maths, FX rounding), `BankCsvParserTests`, `ReportExportTests`
+(XLSX package validity, PDF xref/pagination, builders), `VoucherEntryHandlerTests` (SQLite +
+`FakeAccountingRpc`: draft/post/repost, compensation on post failure, hard/soft close by role),
+`CostCentreHandlerTests`. Fake RPC lives in `TestHelpers/FakeAccountingRpc.cs`.
+
+### Local verification (Sept 18) — done
+- `dotnet build` green after 3 fixes (LINQ `from` keyword collision, duplicate `[Migration]` attribute,
+  voucher re-post attaching new lines as Modified). `dotnet test`: **166/166**.
+- EF catch-up: `20260918054345_AccountingReadModel` (empty Up/Down) registers the read-model; verified
+  against the SQL DDL with `Sql/Tests/verify_readmodel.mjs` (no real disagreements). Applied to
+  **Supabase** together with `AccountingSqlPort` (target DB moved from Neon to Supabase; use the
+  session pooler, port 5432).
+- `Gemini:ApiKey` user-secret enables the inbox (extractor reports `IsConfigured=false` otherwise).
+
+### Phase 3 (UI) — ✅ `tsc` + `vite build` green in the sandbox (Sept 18). Phase 4 (wiring + E2E) — not started.
+
+**UI upgrade (Sept 18, same day):** full visual refresh to a quiet, minimalist violet system —
+see ARCHITECTURE.md → Frontend conventions. New tokens (`border-strong`, `brand-weak`, `--c-*-weak`,
+soft shadows), rewritten `ui.tsx` (same exports; `Button size`, `Field hint`, Modal Esc/scroll-lock/
+bottom-sheet), `dashboard-ui.tsx` (quieter tiles, dotted `Pill`), new shell (248 px sidebar, 56 px
+header with breadcrumb + inbox bell, ⌘K `CommandPalette`), split-panel login, codemod across 59 pages
+(title scale, `bg-brand-weak`, `rounded-xl` cards, semantic tints, hairline borders). Verified with a
+jsdom render of every route against `vite.mock.config.ts` (0 runtime errors; palette navigates; theme
+toggle persists).
+
+Delivered (network was available this turn: `npm ci`, `tsc --noEmit`, `vite build` all pass):
+- `src/api/ledger.api.ts` — typed client for the Phase 2b surface (vouchers, cost centres, bank
+  statements, document inbox, SQL ledger reports, `exportReport` blob download, graded period close,
+  products). Kept separate from `accounting.api.ts` on purpose; `FiscalPeriod` gained `closeStatus`.
+- `components/accounting/SearchSelect.tsx` — keyboard-first combobox (type-to-filter, ↑/↓, Enter picks;
+  Enter on a closed picker bubbles to the grid). `components/accounting/ExportButtons.tsx` — PDF/Excel pair.
+- Pages under `pages/accounting/`: `VoucherEntryPage` (F4–F9 switcher, Ctrl+A post, Enter = next cell,
+  settlement/journal Dr-Cr grid vs invoice item grid, cost-centre column when centres exist, mandatory
+  dimension check, live totals mirroring `VoucherEngine`, save draft / save & post, edit-draft route,
+  inbox prefill via router state + auto-link on post), `VoucherRegisterPage` (filters, paging, detail
+  modal, reverse w/ reason, cancel draft, PDF/XLSX export), `CostCentresPage` (dimension list + tree +
+  spend report tab), `BankImportPage` (statement list w/ reconciliation bar, CSV upload → server preview
+  → import, line matching with candidates / suggest / ignore / unmatch, rules CRUD),
+  `DocumentInboxPage` (status tabs + counts, drag-drop upload, PDF/image preview, header + totals field
+  override, line items, accept → link voucher / create voucher from extraction, reject, 3 s polling while
+  Processing).
+- Existing pages touched: `FiscalYearsPage` (Open → Soft → Hard cycle), `TrialBalance` / `BalanceSheet` /
+  `GeneralLedger` (export buttons), `AccountingHomePage` (quick-action strip).
+- Routing: `/accounting/vouchers`, `/vouchers/new`, `/vouchers/:id/edit`, `/cost-centres`,
+  `/bank-statements`, `/inbox` in `App.tsx`; nav items in `navConfig.ts` (ADMINS, `accounting` group).
+
+Phase 4 checklist (after the build is green): smoke each screen against Supabase, post one voucher of
+every type and confirm `JournalEntries` rows + trial balance, import a real bank CSV, exercise the inbox
+with `Gemini:ApiKey` set, verify approvals interception (`pendingApproval`) on post/reverse, verify
+period-close guard messages, then update API_CONTRACTS/DAILY_LOG.
+
+---
+
 ## Known deferred items (Phase 1)
 - TanStack Query installed but not wired (adopt when list pages arrive)
 - i18next installed but not initialized (Day 5)

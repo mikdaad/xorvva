@@ -45,7 +45,7 @@ export default function TaxRatesPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Tax Rates</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Tax Rates</h1>
           <p className="mt-1 text-sm text-frost-dim">VAT rates used on invoices and bills.</p>
         </div>
         {rows.length > 0 && <Button onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New rate</Button>}
@@ -63,16 +63,16 @@ export default function TaxRatesPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3 text-right">Rate</th><th className="px-4 py-3">Applies to</th><th className="px-4 py-3">Status</th></tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {rows.map((t) => (
                   <tr key={t.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 text-frost">{t.name}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{t.rate}%</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{t.appliesTo}</td>
-                    <td className="px-4 py-2.5">{t.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
+                    <td className="px-4 py-3 text-frost">{t.name}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{t.rate}%</td>
+                    <td className="px-4 py-3 text-frost-dim">{t.appliesTo}</td>
+                    <td className="px-4 py-3">{t.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
                   </tr>
                 ))}
               </tbody>
