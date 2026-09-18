@@ -155,7 +155,7 @@ export function SearchSelect({
                 onMouseDown={(e) => { e.preventDefault(); pick(o); }}
                 onMouseEnter={() => setActive(i)}
                 className={`flex cursor-pointer items-center justify-between gap-3 px-3 py-1.5 text-sm
-                  ${i === active ? 'bg-primary/15 text-frost' : 'text-frost-dim'} ${o.value === value ? 'font-semibold' : ''}`}
+                  ${i === active ? 'bg-brand-weak text-frost' : 'text-frost-dim'} ${o.value === value ? 'font-semibold' : ''}`}
               >
                 <span className="truncate">{o.label}</span>
                 {o.hint && <span className="shrink-0 font-mono text-[11px] text-dim">{o.hint}</span>}

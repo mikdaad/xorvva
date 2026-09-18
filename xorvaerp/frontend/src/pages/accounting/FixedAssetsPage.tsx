@@ -48,7 +48,7 @@ export default function FixedAssetsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Fixed Assets</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Fixed Assets</h1>
           <p className="mt-1 text-sm text-frost-dim">Asset register with straight-line depreciation posted to the ledger.</p>
         </div>
         <div className="flex gap-2">
@@ -70,7 +70,7 @@ export default function FixedAssetsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Asset</th><th className="px-4 py-3">Acquired</th>
                   <th className="px-4 py-3 text-right">Cost</th><th className="px-4 py-3 text-right">Accum. dep.</th>
@@ -80,13 +80,13 @@ export default function FixedAssetsPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((a) => (
                   <tr key={a.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 text-frost">{a.name}{a.code ? <span className="ml-2 font-mono text-xs text-dim">{a.code}</span> : null}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(a.acquisitionDate).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(a.cost)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(a.accumulatedDepreciation)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{money(a.bookValue)}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{a.usefulLifeMonths} mo</td>
-                    <td className="px-4 py-2.5">{a.isDisposed ? <Pill tone="neutral">Disposed</Pill> : a.bookValue <= a.salvageValue ? <Pill tone="warn">Fully dep.</Pill> : <Pill tone="ok">Active</Pill>}</td>
+                    <td className="px-4 py-3 text-frost">{a.name}{a.code ? <span className="ml-2 font-mono text-xs text-dim">{a.code}</span> : null}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(a.acquisitionDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(a.cost)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(a.accumulatedDepreciation)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{money(a.bookValue)}</td>
+                    <td className="px-4 py-3 text-frost-dim">{a.usefulLifeMonths} mo</td>
+                    <td className="px-4 py-3">{a.isDisposed ? <Pill tone="neutral">Disposed</Pill> : a.bookValue <= a.salvageValue ? <Pill tone="warn">Fully dep.</Pill> : <Pill tone="ok">Active</Pill>}</td>
                   </tr>
                 ))}
               </tbody>

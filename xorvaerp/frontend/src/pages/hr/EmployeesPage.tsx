@@ -171,7 +171,7 @@ export default function EmployeesPage() {
             <Card className="overflow-hidden p-0">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border text-xs uppercase text-dim">
+                  <thead className="border-b border-border">
                     <tr>
                       <SearchTh label="Employee" value={f.employee ?? ''} onChange={(v) => setFilter('employee', v)} />
                       {isComp ? (

@@ -245,9 +245,27 @@ because with minimal hosting those sources load BEFORE appsettings.json and get 
 Exception → RequestLogging → Swagger(dev) → CORS → Authentication → TenantResolver → Authorization → Controllers
 
 ## Frontend conventions
-- Tailwind v4: brand palette lives in `src/index.css` under `@theme` (colors: void, abyss,
-  surface, primary, glow, frost, frost-dim, dim, danger, success, warning). Buttons rounded-lg (8px),
-  cards rounded-2xl (16px) per brand guidelines.
+- Tailwind v4: the design system lives in `src/index.css`. Raw values are `--c-*` custom properties
+  scoped by `:root[data-theme="light|dark"]` (set pre-paint by `index.html` from
+  `localStorage['xorva.theme']`, owned at runtime by `stores/ThemeContext`); `@theme` maps them to
+  utilities so `bg-abyss` / `text-frost` etc. re-resolve on theme flip. Tokens: surfaces `void`
+  (page) → `abyss` (cards) → `elevated` (popovers), `surface` (inputs/secondary), `hover`; hairlines
+  `border` / `border-strong`; text `frost` / `frost-dim` / `dim`; brand `primary` (fills), `glow`
+  (brand text), `brand-weak` (active/selected tint — always this, never `bg-primary/15`); semantic
+  `success|warning|danger` with `--c-*-weak` tints. Shadows `shadow-soft-sm|soft|soft-lg`; radii:
+  buttons/inputs `rounded-lg`, cards `rounded-xl`, dialogs `rounded-2xl`. Global rules in `@layer base`
+  style every `main table` (sticky-friendly uppercase 11px thead, row hairlines, hover) so pages only
+  set cell padding. Helpers: `.popover` (menus/toasts), `.lift`, `.skeleton`, `.dots-bg`,
+  `.animate-page|fade|pop|menu`, `kbd`. Fonts: Plus Jakarta Sans (UI), JetBrains Mono (numbers),
+  Instrument Serif (`.font-display`, marketing only).
+- Shell: `AppShell` = 248 px `Sidebar` (grouped by module, role/module gated by `navConfig.ts`,
+  active = `bg-brand-weak text-glow`) + 56 px `Header` (breadcrumb derived from `navConfig`, company
+  switcher for SuperAdmin, theme toggle, approvals bell fed by `approvalsApi.pending()`, user menu) +
+  `CommandPalette` (⌘K / Ctrl+K or the sidebar search: navigation + company switch + theme + sign out).
+- Page anatomy: `PageHeader` (or the inline `text-[26px] font-bold tracking-tight` h1) → filters →
+  `Card`/`SectionCard`. Status chips are `Pill` (dot + tint + ring). Stat tiles are `StatTile`.
+- Design preview without the .NET API: `npm run dev:mock` (`vite.mock.config.ts` serves an in-memory
+  `/api` — demo tenant, companies, vouchers, cost centres, statements). Never used by `build`.
 - All API calls go through `src/api/client.ts` (JWT header + silent refresh; refresh logic
   skips /auth/login and /auth/refresh).
 - Client validation mirrors backend FluentValidation exactly (`src/utils/validation.ts`).

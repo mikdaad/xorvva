@@ -196,3 +196,19 @@ a light static check for unused imports/state; the user runs `npm run build` nex
 new client file rather than growing `accounting.api.ts`; enums as string unions; blob downloads via the
 axios client so the JWT rides along; inbox→voucher via router state and auto-link on post.
 
+**Sept 18 (cont.) — build verified + UI upgrade.** npm registry was reachable this turn, so the
+Phase 3 code got its first real check: `tsc --noEmit` and `vite build` both clean on the first run.
+Then a whole-app visual refresh toward a calmer, more premium look (violet brand, hairline borders,
+soft shadows, JetBrains Mono numerals, 26 px page titles). Approach: tokens first (`index.css`),
+then primitives (`ui.tsx`, `dashboard-ui.tsx`), then the shell (new `Sidebar`, `Header` with
+navConfig-derived breadcrumb + approvals bell, new `CommandPalette` on ⌘K), then a mechanical codemod
+over the pages so nothing still uses `bg-primary/15` / `rounded-2xl` cards / `shadow-2xl`. Login is
+now a split panel. Verification without a browser: headless Chromium downloads were blocked, so a
+jsdom harness loaded the production bundle for all 45 routes against a tiny Vite mock API plugin
+(`vite.mock.config.ts`, exposed as `npm run dev:mock`) — every route renders its h1 with zero console
+errors, the palette filters + navigates + closes, the user menu opens, the theme toggle flips
+`data-theme` and persists. One pre-existing oddity surfaced: `/approvals/pending` assumes
+`steps[]` on every request — fine with the real API, so left alone. Lessons: keep alias tokens
+(`primary/glow/frost`) stable and swap only the raw `--c-*` values; audit which ui exports pages use
+before rewriting a primitives file; a design pass over 60 pages is best done as tokens → primitives →
+shell → sed, in that order, so most pages improve without being opened.

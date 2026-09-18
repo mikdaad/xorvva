@@ -49,7 +49,7 @@ export default function BranchesPage() {
     <AppShell>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Branches</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Branches</h1>
           <p className="mt-1 text-sm text-frost-dim">Physical locations of your companies.</p>
         </div>
         {canCreate && (
@@ -78,7 +78,7 @@ export default function BranchesPage() {
           {branches.map((branch) => (
             <Card key={branch.id}>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-glow">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-weak text-glow">
                   <IconMapPin size={22} stroke={1.5} />
                 </div>
                 <div>

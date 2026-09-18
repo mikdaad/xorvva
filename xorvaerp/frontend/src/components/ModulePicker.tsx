@@ -37,8 +37,8 @@ export function ModulePicker({
             onClick={() => onToggle(m.key)}
             className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
               on
-                ? 'border-primary bg-primary/15 text-glow'
-                : 'border-border bg-surface text-frost-dim hover:border-primary/50'
+                ? 'border-primary bg-brand-weak text-glow'
+                : 'border-border bg-surface text-frost-dim hover:border-border-strong'
             }`}
           >
             {on && <IconCheck size={13} stroke={2.2} />}

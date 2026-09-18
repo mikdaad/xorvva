@@ -129,7 +129,7 @@ export default function CostCentresPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Cost centres</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Cost centres</h1>
           <p className="mt-1 text-sm text-frost-dim">Departments, projects, locations — tag any voucher line and report spend by dimension.</p>
         </div>
         <div className="flex gap-2">
@@ -156,7 +156,7 @@ export default function CostCentresPage() {
                     type="button"
                     onClick={() => setSelectedDim(d.id)}
                     className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors
-                      ${d.id === selectedDim ? 'bg-primary/15 text-frost' : 'text-frost-dim hover:bg-hover'}`}
+                      ${d.id === selectedDim ? 'bg-brand-weak text-frost' : 'text-frost-dim hover:bg-hover'}`}
                   >
                     <span className="flex items-center gap-2 truncate">
                       <IconSitemap size={16} stroke={1.6} className="shrink-0 text-dim" />
@@ -203,20 +203,20 @@ export default function CostCentresPage() {
               <Card className="overflow-hidden p-0">
                 {tree.length === 0 ? <EmptyHint>No cost centres in {activeDim?.name ?? 'this dimension'} yet.</EmptyHint> : (
                   <table className="w-full text-left text-sm">
-                    <thead className="border-b border-border text-xs uppercase text-dim">
-                      <tr><th className="px-4 py-2.5">Code</th><th className="px-4 py-2.5">Name</th><th className="px-4 py-2.5 text-right">Budget</th><th className="px-4 py-2.5">Validity</th><th className="px-4 py-2.5">Status</th><th className="px-4 py-2.5" /></tr>
+                    <thead className="border-b border-border">
+                      <tr><th className="px-4 py-3">Code</th><th className="px-4 py-3">Name</th><th className="px-4 py-3 text-right">Budget</th><th className="px-4 py-3">Validity</th><th className="px-4 py-3">Status</th><th className="px-4 py-3" /></tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                       {tree.map(({ node, depth }) => (
                         <tr key={node.id} className="hover:bg-hover">
-                          <td className="px-4 py-2.5 font-mono text-frost-dim">{node.code}</td>
-                          <td className="px-4 py-2.5 text-frost" style={{ paddingLeft: `${16 + depth * 20}px` }}>
+                          <td className="px-4 py-3 font-mono text-frost-dim">{node.code}</td>
+                          <td className="px-4 py-3 text-frost" style={{ paddingLeft: `${16 + depth * 20}px` }}>
                             <span className={node.isGroup ? 'font-semibold' : ''}>{node.isGroup && <IconFolder size={14} className="mr-1.5 inline text-dim" />}{node.name}</span>
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{node.budget != null ? fmtMoney(node.budget) : '—'}</td>
-                          <td className="px-4 py-2.5 text-xs text-dim">{node.startDate || node.endDate ? `${node.startDate ?? '…'} → ${node.endDate ?? '…'}` : 'Always'}</td>
-                          <td className="px-4 py-2.5">{node.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="neutral">Inactive</Pill>}</td>
-                          <td className="px-4 py-2.5 text-right">
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{node.budget != null ? fmtMoney(node.budget) : '—'}</td>
+                          <td className="px-4 py-3 text-xs text-dim">{node.startDate || node.endDate ? `${node.startDate ?? '…'} → ${node.endDate ?? '…'}` : 'Always'}</td>
+                          <td className="px-4 py-3">{node.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="neutral">Inactive</Pill>}</td>
+                          <td className="px-4 py-3 text-right">
                             <button type="button" className="rounded p-1.5 text-dim hover:bg-hover hover:text-frost" aria-label="Edit" onClick={() => setCcModal(node)}><IconPencil size={16} stroke={1.6} /></button>
                             <button type="button" className="rounded p-1.5 text-dim hover:bg-hover hover:text-danger" aria-label="Delete" onClick={() => setDeleting(node)}><IconTrash size={16} stroke={1.6} /></button>
                           </td>
@@ -232,30 +232,30 @@ export default function CostCentresPage() {
                   <EmptyHint>No postings tagged to {activeDim?.name ?? 'this dimension'} in the selected range.</EmptyHint>
                 ) : (
                   <table className="w-full text-left text-sm">
-                    <thead className="border-b border-border text-xs uppercase text-dim">
-                      <tr><th className="px-4 py-2.5">Cost centre</th><th className="px-4 py-2.5 text-right">Debit</th><th className="px-4 py-2.5 text-right">Credit</th><th className="px-4 py-2.5 text-right">Net</th><th className="px-4 py-2.5 text-right">Budget</th><th className="px-4 py-2.5 text-right">Variance</th><th className="px-4 py-2.5 text-right">Lines</th></tr>
+                    <thead className="border-b border-border">
+                      <tr><th className="px-4 py-3">Cost centre</th><th className="px-4 py-3 text-right">Debit</th><th className="px-4 py-3 text-right">Credit</th><th className="px-4 py-3 text-right">Net</th><th className="px-4 py-3 text-right">Budget</th><th className="px-4 py-3 text-right">Variance</th><th className="px-4 py-3 text-right">Lines</th></tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                       {report.rows.map((r) => (
                         <tr key={r.costCentreId} className="hover:bg-hover">
-                          <td className="px-4 py-2.5 text-frost" style={{ paddingLeft: `${16 + Math.max(0, r.level - 1) * 20}px` }}>
+                          <td className="px-4 py-3 text-frost" style={{ paddingLeft: `${16 + Math.max(0, r.level - 1) * 20}px` }}>
                             <span className="mr-2 font-mono text-xs text-dim">{r.code}</span><span className={r.isGroup ? 'font-semibold' : ''}>{r.name}</span>
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(r.debit)}</td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(r.credit)}</td>
-                          <td className={`px-4 py-2.5 text-right font-mono tabular-nums ${r.net < 0 ? 'text-success' : 'text-frost'}`}>{fmtMoney(r.net)}</td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{r.budget != null ? fmtMoney(r.budget) : '—'}</td>
-                          <td className={`px-4 py-2.5 text-right font-mono tabular-nums ${r.variance == null ? 'text-dim' : r.variance < 0 ? 'text-danger' : 'text-success'}`}>{r.variance != null ? fmtMoney(r.variance) : '—'}</td>
-                          <td className="px-4 py-2.5 text-right text-dim">{r.lineCount}</td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(r.debit)}</td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(r.credit)}</td>
+                          <td className={`px-4 py-3 text-right font-mono tabular-nums ${r.net < 0 ? 'text-success' : 'text-frost'}`}>{fmtMoney(r.net)}</td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{r.budget != null ? fmtMoney(r.budget) : '—'}</td>
+                          <td className={`px-4 py-3 text-right font-mono tabular-nums ${r.variance == null ? 'text-dim' : r.variance < 0 ? 'text-danger' : 'text-success'}`}>{r.variance != null ? fmtMoney(r.variance) : '—'}</td>
+                          <td className="px-4 py-3 text-right text-dim">{r.lineCount}</td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot className="border-t border-border font-semibold">
                       <tr>
-                        <td className="px-4 py-2.5 text-frost">Total</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalDebit)}</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalCredit)}</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalNet)}</td>
+                        <td className="px-4 py-3 text-frost">Total</td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalDebit)}</td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalCredit)}</td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{fmtMoney(report.totalNet)}</td>
                         <td colSpan={3} />
                       </tr>
                     </tfoot>
@@ -321,7 +321,7 @@ export default function CostCentresPage() {
 function TabBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
   return (
     <button type="button" onClick={onClick}
-      className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active ? 'bg-primary/15 text-frost' : 'text-frost-dim hover:bg-hover'}`}>
+      className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active ? 'bg-brand-weak text-frost' : 'text-frost-dim hover:bg-hover'}`}>
       {children}
     </button>
   );

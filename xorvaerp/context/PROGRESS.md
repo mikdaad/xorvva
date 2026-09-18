@@ -274,9 +274,18 @@ migration wrapper; RPCs write into Xorva's existing `JournalEntries`/`JournalLin
   session pooler, port 5432).
 - `Gemini:ApiKey` user-secret enables the inbox (extractor reports `IsConfigured=false` otherwise).
 
-### Phase 3 (UI) — code written Sept 18, awaiting local `npm run build`. Phase 4 (wiring + E2E) — not started.
+### Phase 3 (UI) — ✅ `tsc` + `vite build` green in the sandbox (Sept 18). Phase 4 (wiring + E2E) — not started.
 
-Written blind (no `node_modules` in the sandbox — run `npm run build` in `frontend/` and paste errors):
+**UI upgrade (Sept 18, same day):** full visual refresh to a quiet, minimalist violet system —
+see ARCHITECTURE.md → Frontend conventions. New tokens (`border-strong`, `brand-weak`, `--c-*-weak`,
+soft shadows), rewritten `ui.tsx` (same exports; `Button size`, `Field hint`, Modal Esc/scroll-lock/
+bottom-sheet), `dashboard-ui.tsx` (quieter tiles, dotted `Pill`), new shell (248 px sidebar, 56 px
+header with breadcrumb + inbox bell, ⌘K `CommandPalette`), split-panel login, codemod across 59 pages
+(title scale, `bg-brand-weak`, `rounded-xl` cards, semantic tints, hairline borders). Verified with a
+jsdom render of every route against `vite.mock.config.ts` (0 runtime errors; palette navigates; theme
+toggle persists).
+
+Delivered (network was available this turn: `npm ci`, `tsc --noEmit`, `vite build` all pass):
 - `src/api/ledger.api.ts` — typed client for the Phase 2b surface (vouchers, cost centres, bank
   statements, document inbox, SQL ledger reports, `exportReport` blob download, graded period close,
   products). Kept separate from `accounting.api.ts` on purpose; `FiscalPeriod` gained `closeStatus`.

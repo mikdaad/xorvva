@@ -70,7 +70,7 @@ export default function ChartOfAccountsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Chart of Accounts</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Chart of Accounts</h1>
           <p className="mt-1 text-sm text-frost-dim">The ledger every transaction posts to — grouped by account type.</p>
         </div>
         {accounts.length > 0 && (
@@ -114,30 +114,30 @@ export default function ChartOfAccountsPage() {
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border text-xs uppercase text-dim">
+                  <thead className="border-b border-border">
                     <tr>
-                      <th className="px-4 py-2.5 w-24">Code</th>
-                      <th className="px-4 py-2.5">Name</th>
-                      <th className="px-4 py-2.5">Sub-type</th>
-                      <th className="px-4 py-2.5 text-right">Balance (AED)</th>
-                      <th className="px-4 py-2.5">Status</th>
-                      <th className="px-4 py-2.5"></th>
+                      <th className="px-4 py-3 w-24">Code</th>
+                      <th className="px-4 py-3">Name</th>
+                      <th className="px-4 py-3">Sub-type</th>
+                      <th className="px-4 py-3 text-right">Balance (AED)</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {g.rows.map((a) => (
                       <tr key={a.id} className="hover:bg-hover">
-                        <td className="px-4 py-2.5 font-mono text-xs text-frost-dim">{a.code}</td>
-                        <td className="px-4 py-2.5">
+                        <td className="px-4 py-3 font-mono text-xs text-frost-dim">{a.code}</td>
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-2 text-frost">
                             {a.name}
                             {a.isSystemAccount && <IconLock size={13} stroke={1.6} className="text-dim" title="System account" />}
                           </div>
                         </td>
-                        <td className="px-4 py-2.5 text-frost-dim">{humanizeSubType(a.accountSubType)}</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(a.currentBalance)}</td>
-                        <td className="px-4 py-2.5">{a.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
-                        <td className="px-4 py-2.5 text-right">
+                        <td className="px-4 py-3 text-frost-dim">{humanizeSubType(a.accountSubType)}</td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(a.currentBalance)}</td>
+                        <td className="px-4 py-3">{a.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
+                        <td className="px-4 py-3 text-right">
                           <Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => setEditing(a)}>Edit</Button>
                         </td>
                       </tr>

@@ -331,7 +331,7 @@ export default function VoucherEntryPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">{editing ? `Edit draft ${editing.voucherNumber}` : 'Voucher entry'}</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">{editing ? `Edit draft ${editing.voucherNumber}` : 'Voucher entry'}</h1>
           <p className="mt-1 text-sm text-frost-dim">Tally-style single screen for contra, payment, receipt, journal, sales and purchase vouchers.</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-dim">
@@ -353,7 +353,7 @@ export default function VoucherEntryPage() {
             disabled={!!editing && editing.voucherType !== t.type}
             onClick={() => switchType(t.type)}
             className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors disabled:opacity-40
-              ${t.type === voucherType ? 'border-primary bg-primary/15 text-frost' : 'border-border bg-abyss text-frost-dim hover:bg-hover'}`}
+              ${t.type === voucherType ? 'border-primary bg-brand-weak text-frost' : 'border-border bg-abyss text-frost-dim hover:bg-hover'}`}
           >
             <Kbd>{t.shortcut}</Kbd>
             <span className="font-medium">{t.label}</span>
@@ -401,7 +401,7 @@ export default function VoucherEntryPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="w-8 px-3 py-2.5">#</th>
                   {isInvoice && <th className="min-w-[180px] px-2 py-2.5">Item</th>}
@@ -431,7 +431,7 @@ export default function VoucherEntryPage() {
                   const rate = taxRates.find((t) => t.id === r.taxRateId)?.rate ?? 0;
                   const lineTotal = round2(net + net * rate / 100);
                   return (
-                    <tr key={r.key} className="align-top hover:bg-hover/40">
+                    <tr key={r.key} className="align-top hover:bg-hover/60">
                       <td className="px-3 py-2 text-xs text-dim">{idx + 1}</td>
                       {isInvoice && (
                         <td className="px-2 py-1.5">

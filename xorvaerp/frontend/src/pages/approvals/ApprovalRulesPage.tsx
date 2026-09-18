@@ -69,7 +69,7 @@ export default function ApprovalRulesPage() {
     <AppShell>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Approval Rules</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Approval Rules</h1>
           <p className="mt-1 text-sm text-frost-dim">
             Require sign-off before an action runs. Rules are configured per company.
           </p>
@@ -132,7 +132,7 @@ export default function ApprovalRulesPage() {
                   {rule.approverRoles.map((role, i) => (
                     <span key={role} className="flex items-center gap-1.5">
                       {i > 0 && <span className="text-dim">→</span>}
-                      <span className="rounded-md bg-primary/15 px-2 py-0.5 text-xs font-medium text-glow">
+                      <span className="rounded-md bg-brand-weak px-2 py-0.5 text-xs font-medium text-glow">
                         {role}
                       </span>
                     </span>
@@ -314,8 +314,8 @@ function RuleBuilder({
                   onClick={() => toggleRole(r.value)}
                   className={`flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-colors ${
                     active
-                      ? 'border-primary bg-primary/15 text-frost'
-                      : 'border-border bg-surface text-frost-dim hover:border-primary/50'
+                      ? 'border-primary bg-brand-weak text-frost'
+                      : 'border-border bg-surface text-frost-dim hover:border-border-strong'
                   }`}
                 >
                   <span>{r.label}</span>

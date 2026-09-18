@@ -53,7 +53,7 @@ export default function PayrollPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Payroll</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Payroll</h1>
           <p className="mt-1 text-sm text-frost-dim">Run monthly payroll. Posting accrues the salary journal in Accounting.</p>
         </div>
         <Button onClick={() => setRunOpen(true)}><IconPlus size={18} stroke={1.6} /> Run payroll</Button>
@@ -70,7 +70,7 @@ export default function PayrollPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Number</th><th className="px-4 py-3">Period</th>
                   <th className="px-4 py-3 text-right">Employees</th><th className="px-4 py-3 text-right">Net total</th>
@@ -80,12 +80,12 @@ export default function PayrollPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((p) => (
                   <tr key={p.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost">{p.number}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{period(p.year, p.month)}</td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-frost-dim">{p.employeeCount}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(p.totalNet)}</td>
-                    <td className="px-4 py-2.5">{p.status === 'Posted' ? <Pill tone="ok">Posted</Pill> : <Pill tone="neutral">Draft</Pill>}</td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td className="px-4 py-3 font-mono text-xs text-frost">{p.number}</td>
+                    <td className="px-4 py-3 text-frost-dim">{period(p.year, p.month)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-frost-dim">{p.employeeCount}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(p.totalNet)}</td>
+                    <td className="px-4 py-3">{p.status === 'Posted' ? <Pill tone="ok">Posted</Pill> : <Pill tone="neutral">Draft</Pill>}</td>
+                    <td className="px-4 py-3 text-right">
                       <Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => void view(p.id)}>View</Button>
                       {p.status === 'Draft' && (
                         <Button className="ml-1 px-3 py-1.5 text-xs" loading={busyId === p.id} onClick={() => void post(p.id)}>Post</Button>
@@ -145,7 +145,7 @@ function ViewModal({ payRun, onClose }: { payRun: PayRun; onClose: () => void })
       <div className="flex flex-col gap-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-border text-xs uppercase text-dim">
+            <thead className="border-b border-border">
               <tr><th className="py-2">Employee</th><th className="py-2 text-right">Gross</th><th className="py-2 text-right">Deductions</th><th className="py-2 text-right">Net</th></tr>
             </thead>
             <tbody className="divide-y divide-border">

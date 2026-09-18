@@ -128,7 +128,7 @@ export function EmployeeTabTable({ tab, companyId, canManage }: {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <SearchTh label="Employee" value={search} onChange={setSearchVal} />
                   {fields.map((f) => (

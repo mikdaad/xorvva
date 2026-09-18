@@ -40,7 +40,7 @@ export default function ContactsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Contacts</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Contacts</h1>
           <p className="mt-1 text-sm text-frost-dim">Customers and suppliers, with TRN for tax invoices.</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New contact</Button>
@@ -57,7 +57,7 @@ export default function ContactsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Code</th><th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Type</th><th className="px-4 py-3">TRN</th>
@@ -67,13 +67,13 @@ export default function ContactsPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((c) => (
                   <tr key={c.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost-dim">{c.code}</td>
-                    <td className="px-4 py-2.5 text-frost">{c.name}</td>
-                    <td className="px-4 py-2.5"><Pill tone={c.contactType === 'Customer' ? 'brand' : c.contactType === 'Supplier' ? 'warn' : 'neutral'}>{c.contactType}</Pill></td>
-                    <td className="px-4 py-2.5 font-mono text-xs text-dim">{c.taxNumber ?? '—'}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{money(c.outstandingBalance)}</td>
-                    <td className="px-4 py-2.5">{c.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
-                    <td className="px-4 py-2.5 text-right"><Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => setEditing(c)}>Edit</Button></td>
+                    <td className="px-4 py-3 font-mono text-xs text-frost-dim">{c.code}</td>
+                    <td className="px-4 py-3 text-frost">{c.name}</td>
+                    <td className="px-4 py-3"><Pill tone={c.contactType === 'Customer' ? 'brand' : c.contactType === 'Supplier' ? 'warn' : 'neutral'}>{c.contactType}</Pill></td>
+                    <td className="px-4 py-3 font-mono text-xs text-dim">{c.taxNumber ?? '—'}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{money(c.outstandingBalance)}</td>
+                    <td className="px-4 py-3">{c.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="bad">Inactive</Pill>}</td>
+                    <td className="px-4 py-3 text-right"><Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => setEditing(c)}>Edit</Button></td>
                   </tr>
                 ))}
               </tbody>

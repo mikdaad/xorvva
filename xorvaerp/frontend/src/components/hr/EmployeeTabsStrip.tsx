@@ -133,7 +133,7 @@ export function EmployeeTabsStrip({
                 onClick={() => void seed()}
                 disabled={seeding}
                 title="Create the standard UAE tabs"
-                className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium text-glow transition-colors hover:bg-primary/20 disabled:opacity-60"
+                className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-brand-weak px-3 py-1.5 text-sm font-medium text-glow transition-colors hover:bg-primary/20 disabled:opacity-60"
               >
                 <IconWand size={15} stroke={1.8} /> {seeding ? 'Working…' : 'Standard tabs'}
               </button>

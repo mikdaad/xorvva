@@ -118,7 +118,7 @@ export default function VoucherRegisterPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Voucher register</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Voucher register</h1>
           <p className="mt-1 text-sm text-frost-dim">Every voucher across all types — drill into lines, reverse, or export.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -157,33 +157,33 @@ export default function VoucherRegisterPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
-                  <th className="px-4 py-2.5">Date</th>
-                  <th className="px-4 py-2.5">Voucher</th>
-                  <th className="px-4 py-2.5">Type</th>
-                  <th className="px-4 py-2.5">Party</th>
-                  <th className="px-4 py-2.5">Reference / narration</th>
-                  <th className="px-4 py-2.5">Journal</th>
-                  <th className="px-4 py-2.5 text-right">Amount</th>
-                  <th className="px-4 py-2.5">Status</th>
-                  <th className="px-4 py-2.5" />
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Voucher</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Party</th>
+                  <th className="px-4 py-3">Reference / narration</th>
+                  <th className="px-4 py-3">Journal</th>
+                  <th className="px-4 py-3 text-right">Amount</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {rows.map((r) => (
                   <tr key={r.id} className="cursor-pointer hover:bg-hover" onClick={() => void openDetail(r.id)}>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-frost-dim">{fmtDate(r.voucherDate)}</td>
-                    <td className="px-4 py-2.5 font-mono text-frost">{r.voucherNumber}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{typeLabel[r.voucherType] ?? r.voucherType}</td>
-                    <td className="px-4 py-2.5 text-frost">{r.contactName ?? <span className="text-dim">—</span>}</td>
-                    <td className="max-w-[260px] truncate px-4 py-2.5 text-frost-dim" title={r.narration ?? ''}>{r.reference ? <span className="text-frost">{r.reference}</span> : null}{r.reference && r.narration ? ' · ' : ''}{r.narration}</td>
-                    <td className="px-4 py-2.5 font-mono text-xs text-dim">{r.entryNumber ?? '—'}</td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-right font-mono tabular-nums text-frost">
+                    <td className="whitespace-nowrap px-4 py-3 text-frost-dim">{fmtDate(r.voucherDate)}</td>
+                    <td className="px-4 py-3 font-mono text-frost">{r.voucherNumber}</td>
+                    <td className="px-4 py-3 text-frost-dim">{typeLabel[r.voucherType] ?? r.voucherType}</td>
+                    <td className="px-4 py-3 text-frost">{r.contactName ?? <span className="text-dim">—</span>}</td>
+                    <td className="max-w-[260px] truncate px-4 py-3 text-frost-dim" title={r.narration ?? ''}>{r.reference ? <span className="text-frost">{r.reference}</span> : null}{r.reference && r.narration ? ' · ' : ''}{r.narration}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-dim">{r.entryNumber ?? '—'}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-right font-mono tabular-nums text-frost">
                       {fmtMoney(r.totalAmount)} <span className="text-xs text-dim">{r.currency}</span>
                     </td>
-                    <td className="px-4 py-2.5"><Pill tone={VOUCHER_STATUS_TONE[r.status]}>{r.status}</Pill></td>
-                    <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-4 py-3"><Pill tone={VOUCHER_STATUS_TONE[r.status]}>{r.status}</Pill></td>
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       {r.status === 'Draft' && (
                         <Link to={`/accounting/vouchers/${r.id}/edit`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline"><IconPencil size={14} /> Edit</Link>
                       )}
@@ -227,7 +227,7 @@ export default function VoucherRegisterPage() {
             </dl>
             <div className="overflow-x-auto rounded-lg border border-border">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase text-dim">
+                <thead className="border-b border-border">
                   <tr>
                     <th className="px-3 py-2">#</th><th className="px-3 py-2">Ledger</th><th className="px-3 py-2">Narration</th><th className="px-3 py-2">Cost centre</th>
                     <th className="px-3 py-2 text-right">Qty × rate</th><th className="px-3 py-2 text-right">Tax</th><th className="px-3 py-2 text-right">Debit</th><th className="px-3 py-2 text-right">Credit</th>

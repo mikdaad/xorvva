@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { IconChevronRight, IconX, IconPlus, IconStack2 } from '@tabler/icons-react';
+import { IconChevronRight, IconX, IconPlus, IconStack2, IconSearch } from '@tabler/icons-react';
 import { useAuth } from '../../stores/AuthContext';
 import { useCompany } from '../../stores/CompanyContext';
 import { usePlatform } from '../../stores/PlatformContext';
@@ -9,7 +9,9 @@ import type { EntityDefinition } from '../../api/platform.api';
 import { Logo } from '../ui';
 import { DASHBOARD, NAV_GROUPS, type NavGroup, type RoleName } from './navConfig';
 
-export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+export const SIDEBAR_WIDTH = 'w-[248px]';
+
+export function Sidebar({ open, onClose, onSearch }: { open: boolean; onClose: () => void; onSearch?: () => void }) {
   const { user } = useAuth();
   const { activeCompany, activeCompanyId } = useCompany();
   const { definitions, openBuilder } = usePlatform();
@@ -35,22 +37,19 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
   const hasAccountingAccess = acctAccess ?? isFinanceAdmin;
 
-  // Module gate: show a business-module group only if the active company has it on.
   const hasModule = (m?: string) =>
     !m || (activeCompany ? activeCompany.activeModules.includes(m) : true);
 
   const groups = NAV_GROUPS
     .filter((g) => hasModule(g.module))
     .map((g) => {
-      // Function-gated groups (Accounting) follow the department-function model, not item roles.
       if (g.functionGate === 'Accounting')
         return { ...g, items: hasAccountingAccess ? g.items : [] };
       return { ...g, items: g.items.filter((i) => i.roles.includes(role)) };
     })
     .filter((g) => g.items.length > 0);
 
-  // Accordion: exactly one group open at a time. Opening the group that owns the current
-  // route by default, and following navigation.
+  // Accordion: one group open at a time, following the route.
   const activeKey = groups.find((g) =>
     g.items.some((i) => location.pathname === i.to || location.pathname.startsWith(i.to + '/')))?.key ?? null;
   const [openKey, setOpenKey] = useState<string | null>(activeKey ?? groups[0]?.key ?? null);
@@ -65,51 +64,85 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
   return (
     <>
-      {open && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onClose} />}
+      {open && <div className="animate-fade fixed inset-0 z-30 bg-black/40 backdrop-blur-[1px] md:hidden" onClick={onClose} />}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-primary/15 bg-abyss
-          transition-transform md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-40 flex ${SIDEBAR_WIDTH} flex-col border-r border-border bg-abyss
+          transition-transform duration-200 md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
-        <div className="flex h-16 items-center justify-between px-5">
-          <Link to="/dashboard" onClick={onClose}><Logo /></Link>
-          <button className="text-frost-dim md:hidden" onClick={onClose} aria-label="Close menu">
-            <IconX size={20} />
+        {/* Brand */}
+        <div className="flex h-14 items-center justify-between px-4">
+          <Link to="/dashboard" onClick={onClose} className="rounded-lg"><Logo /></Link>
+          <button className="rounded-md p-1.5 text-frost-dim hover:bg-hover md:hidden" onClick={onClose} aria-label="Close menu">
+            <IconX size={18} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-6">
-          {/* Dashboard — standalone */}
-          <Link
-            to={DASHBOARD.to}
-            onClick={onClose}
-            className={`relative mb-4 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              dashActive ? 'bg-primary/15 text-glow' : 'text-frost-dim hover:bg-surface hover:text-frost'
-            }`}
-          >
-            {dashActive && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary" />}
-            <DASHBOARD.icon size={18} stroke={1.6} />
-            {DASHBOARD.label}
-          </Link>
+        {/* Search trigger */}
+        {onSearch && (
+          <div className="px-3 pb-2">
+            <button
+              type="button"
+              onClick={() => { onSearch(); onClose(); }}
+              className="flex h-9 w-full items-center gap-2 rounded-lg border border-border bg-surface px-2.5 text-[13px] text-dim transition-colors hover:border-border-strong hover:text-frost-dim"
+            >
+              <IconSearch size={15} stroke={2} />
+              <span className="flex-1 text-left">Search…</span>
+              <kbd className="hidden md:inline">⌘K</kbd>
+            </button>
+          </div>
+        )}
 
-          {/* Module groups — accordion (one open at a time) */}
-          {groups.map((g) => (
-            <ModuleGroup
-              key={g.key}
-              group={g}
-              subModules={subModulesFor(g.module)}
-              canAdd={isAdmin && !!g.module}
-              onAdd={() => { openBuilder(g.module); onClose(); }}
-              expanded={openKey === g.key}
-              onToggle={() => setOpenKey((k) => (k === g.key ? null : g.key))}
-              onOpen={() => setOpenKey(g.key)}
-              pathname={location.pathname}
-              onNavigate={onClose}
-            />
-          ))}
+        <nav className="flex-1 overflow-y-auto px-3 pb-4 pt-1">
+          <NavLink to={DASHBOARD.to} active={dashActive} icon={<DASHBOARD.icon size={17} stroke={1.75} />} onClick={onClose}>
+            {DASHBOARD.label}
+          </NavLink>
+
+          <div className="mt-4 space-y-1">
+            {groups.map((g) => (
+              <ModuleGroup
+                key={g.key}
+                group={g}
+                subModules={subModulesFor(g.module)}
+                canAdd={isAdmin && !!g.module}
+                onAdd={() => { openBuilder(g.module); onClose(); }}
+                expanded={openKey === g.key}
+                onToggle={() => setOpenKey((k) => (k === g.key ? null : g.key))}
+                onOpen={() => setOpenKey(g.key)}
+                pathname={location.pathname}
+                onNavigate={onClose}
+              />
+            ))}
+          </div>
         </nav>
+
+        {/* Footer: active company */}
+        {activeCompany && (
+          <div className="border-t border-border px-4 py-3">
+            <p className="text-[10.5px] font-semibold uppercase tracking-wider text-dim">Company</p>
+            <p className="truncate text-[13px] font-medium text-frost" title={activeCompany.name}>{activeCompany.name}</p>
+          </div>
+        )}
       </aside>
     </>
+  );
+}
+
+function NavLink({ to, active, icon, children, onClick, nested }: {
+  to: string; active: boolean; icon: ReactNode; children: ReactNode; onClick: () => void; nested?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      aria-current={active ? 'page' : undefined}
+      className={`group relative flex items-center gap-2.5 rounded-lg py-[7px] text-[13.5px] transition-colors duration-100
+        ${nested ? 'pl-3 pr-2.5' : 'px-2.5'}
+        ${active ? 'bg-brand-weak font-semibold text-glow' : 'font-medium text-frost-dim hover:bg-hover hover:text-frost'}`}
+    >
+      <span className={`shrink-0 transition-colors ${active ? 'text-glow' : 'text-dim group-hover:text-frost-dim'}`}>{icon}</span>
+      <span className="truncate">{children}</span>
+    </Link>
   );
 }
 
@@ -127,63 +160,51 @@ function ModuleGroup({
   onNavigate: () => void;
 }) {
   const Icon = group.icon;
-  const overviewPath = group.items[0]?.to ?? '#'; // first item = module Overview / landing
+  const overviewPath = group.items[0]?.to ?? '#';
+  const groupActive = group.items.some((i) => pathname === i.to || pathname.startsWith(i.to + '/'))
+    || subModules.some((d) => pathname === `/m/${d.id}`);
 
   return (
-    <div className="mb-1.5">
-      <div className="flex w-full items-center rounded-lg text-frost-dim transition-colors hover:text-frost">
-        {/* Clicking the module opens its Overview first (and expands the group). */}
+    <div>
+      <div className={`flex items-center rounded-lg transition-colors ${groupActive && !expanded ? 'bg-hover' : ''}`}>
         <Link
           to={overviewPath}
           onClick={() => { onOpen(); onNavigate(); }}
-          className="flex flex-1 items-center gap-3 rounded-lg px-3 py-2"
+          className="flex flex-1 items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13.5px] font-semibold text-frost hover:bg-hover"
         >
-          <Icon size={17} stroke={1.6} className="text-dim" />
-          <span className="text-[11px] font-semibold uppercase tracking-wider">{group.heading}</span>
+          <Icon size={17} stroke={1.75} className={groupActive ? 'text-glow' : 'text-dim'} />
+          <span>{group.heading}</span>
         </Link>
-        <button onClick={onToggle} aria-label={`Toggle ${group.heading}`} className="rounded-lg px-2 py-2">
-          <IconChevronRight size={15} className={`text-dim transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        <button
+          onClick={onToggle}
+          aria-label={`Toggle ${group.heading}`}
+          aria-expanded={expanded}
+          className="mr-0.5 rounded-md p-1.5 text-dim transition-colors hover:bg-hover hover:text-frost"
+        >
+          <IconChevronRight size={14} stroke={2} className={`transition-transform duration-150 ${expanded ? 'rotate-90' : ''}`} />
         </button>
       </div>
 
       {expanded && (
-        <div className="mb-3 ml-3 flex flex-col gap-0.5 border-l border-primary/10 pl-3">
+        <div className="animate-fade relative mb-2 ml-[19px] mt-0.5 flex flex-col gap-px border-l border-border pl-2">
           {group.items.map((item) => {
             const active = pathname === item.to;
             const ItemIcon = item.icon;
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={onNavigate}
-                className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  active ? 'bg-primary/15 text-glow' : 'text-frost-dim hover:bg-surface hover:text-frost'
-                }`}
-              >
-                {active && <span className="absolute -left-3 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary" />}
-                <ItemIcon size={17} stroke={1.6} />
+              <NavLink key={item.to} to={item.to} active={active} nested onClick={onNavigate}
+                icon={<ItemIcon size={15} stroke={1.75} />}>
                 {item.label}
-              </Link>
+              </NavLink>
             );
           })}
 
-          {/* Tenant-defined custom sub-modules for this module */}
           {subModules.map((d) => {
             const to = `/m/${d.id}`;
-            const active = pathname === to;
             return (
-              <Link
-                key={d.id}
-                to={to}
-                onClick={onNavigate}
-                className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  active ? 'bg-primary/15 text-glow' : 'text-frost-dim hover:bg-surface hover:text-frost'
-                }`}
-              >
-                {active && <span className="absolute -left-3 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary" />}
-                <IconStack2 size={17} stroke={1.6} />
+              <NavLink key={d.id} to={to} active={pathname === to} nested onClick={onNavigate}
+                icon={<IconStack2 size={15} stroke={1.75} />}>
                 {d.pluralLabel}
-              </Link>
+              </NavLink>
             );
           })}
 
@@ -191,9 +212,9 @@ function ModuleGroup({
             <button
               type="button"
               onClick={onAdd}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-dim transition-colors hover:bg-surface hover:text-glow"
+              className="flex items-center gap-2.5 rounded-lg py-[7px] pl-3 pr-2.5 text-[13px] font-medium text-dim transition-colors hover:bg-hover hover:text-glow"
             >
-              <IconPlus size={17} stroke={1.6} /> Add sub-module
+              <IconPlus size={15} stroke={1.75} /> Add sub-module
             </button>
           )}
         </div>

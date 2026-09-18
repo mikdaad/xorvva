@@ -66,7 +66,7 @@ export default function UsersPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Users</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Users</h1>
           <p className="mt-1 text-sm text-frost-dim">
             {isCeo ? 'Everyone with a login across your companies.'
               : user?.role === 'Manager' ? 'Employees in your company.' : 'People with a login in your company.'}
@@ -106,7 +106,7 @@ export default function UsersPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Role</th>

@@ -67,7 +67,7 @@ export default function ModulesPage() {
         title="Modules"
         subtitle="Choose which modules your organization uses. Turn one on to make it available to your companies."
         action={sub && (
-          <span className="rounded-lg bg-primary/15 px-3 py-1.5 text-xs font-semibold text-glow">
+          <span className="rounded-lg bg-brand-weak px-3 py-1.5 text-xs font-semibold text-glow">
             Plan: {sub.planKey}
           </span>
         )}
@@ -91,7 +91,7 @@ export default function ModulesPage() {
               <div className="flex h-full flex-col">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${m.isSubscribed ? 'bg-linear-to-br from-brand-2/25 to-primary/20 text-glow' : 'bg-surface text-dim'}`}>
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${m.isSubscribed ? 'bg-brand-weak text-glow' : 'bg-surface text-dim'}`}>
                       <IconApps size={22} stroke={1.5} />
                     </div>
                     <div>

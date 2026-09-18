@@ -114,10 +114,10 @@ function ModuleCard({ to, label, desc, icon: Ico, accent = false }: {
 }) {
   return (
     <Link to={to}
-      className="group flex items-start gap-3 rounded-2xl border border-border bg-abyss p-4 shadow-soft-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft">
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
-        accent ? 'bg-surface text-frost-dim' : 'bg-linear-to-br from-brand-2/25 to-primary/20 text-glow'}`}>
-        <Ico size={22} stroke={1.6} />
+      className="lift group flex items-start gap-3 rounded-xl border border-border bg-abyss p-4 shadow-soft-sm">
+      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+        accent ? 'bg-surface text-frost-dim' : 'bg-brand-weak text-glow'}`}>
+        <Ico size={20} stroke={1.7} />
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
@@ -293,7 +293,7 @@ function GettingStarted() {
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {steps.map((s) => (
           <Link key={s.to} to={s.to}
-            className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm text-frost-dim transition-colors hover:border-primary/40 hover:text-frost">
+            className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm text-frost-dim transition-colors hover:border-border-strong hover:text-frost">
             <span className="flex items-center gap-2.5">{s.icon}{s.label}</span>
             <IconArrowRight size={16} className="text-dim" />
           </Link>

@@ -1,123 +1,203 @@
 /* ═══════════════════════════════════════════════════════════════
    XORVA ERP — Global Design System (Tailwind CSS v4)
-   Refined-violet, soft-flat. Dual theme (light + dark).
-   The app's existing color names (void/abyss/surface/frost/primary…)
-   are re-mapped to runtime, theme-aware variables so every utility
-   re-resolves when <html data-theme> flips. Values below are the
-   approved direction from docs/design-preview.html.
+   Quiet-violet, minimalist. Dual theme (light + dark).
+
+   Principles
+   · One accent (violet) used sparingly: primary actions, active nav,
+     focus rings, links. Everything else is neutral ink on calm paper.
+   · Depth comes from tone, not shadows: ground → surface → inset.
+     Shadows are whisper-light and reserved for floating layers.
+   · Hairlines, 12–14px radii, 4px spacing grid, tabular numerals.
+   · Motion is short (150–220ms) and only confirms an action.
+
+   The app's colour names (void/abyss/surface/frost/primary…) are
+   mapped to runtime, theme-aware variables so every utility
+   re-resolves when <html data-theme> flips.
    ═══════════════════════════════════════════════════════════════ */
 
 @import "tailwindcss";
 
-/* Map existing Tailwind color names → runtime --c-* vars.
-   `inline` makes utilities reference the --c-* vars directly (not a
-   frozen build-time value), which is what makes theming work. */
 @theme inline {
-  --color-void:       var(--c-ground);   /* page background            */
-  --color-abyss:      var(--c-surface);  /* cards, sidebar, modals     */
-  --color-surface:    var(--c-inset);    /* inputs, hover, secondary   */
-  --color-elevated:   var(--c-elevated); /* nested surface             */
+  --color-void:       var(--c-ground);    /* page background            */
+  --color-abyss:      var(--c-surface);   /* cards, modals, popovers    */
+  --color-surface:    var(--c-inset);     /* inputs, secondary buttons  */
+  --color-elevated:   var(--c-elevated);  /* nested surface             */
   --color-hover:      var(--c-hover);
 
-  --color-primary:    var(--c-brand);    /* buttons, active            */
-  --color-glow:       var(--c-brand-ink);/* hover, focus, links        */
-  --color-brand-2:    var(--c-brand-2);  /* gradient partner           */
-  --color-brand-weak: var(--c-brand-weak);/* badges, active nav fill   */
+  --color-primary:    var(--c-brand);     /* buttons, active            */
+  --color-glow:       var(--c-brand-ink); /* hover, focus, links        */
+  --color-brand-2:    var(--c-brand-2);   /* gradient partner (landing) */
+  --color-brand-weak: var(--c-brand-weak);/* badges, active nav fill    */
 
-  --color-frost:      var(--c-ink);      /* primary text               */
-  --color-frost-dim:  var(--c-muted);    /* secondary text             */
-  --color-dim:        var(--c-faint);    /* muted text, labels         */
-  --color-border:     var(--c-border);   /* hairlines                  */
+  --color-frost:      var(--c-ink);       /* primary text               */
+  --color-frost-dim:  var(--c-muted);     /* secondary text             */
+  --color-dim:        var(--c-faint);     /* muted text, labels         */
+  --color-border:     var(--c-border);    /* hairlines                  */
+  --color-border-strong: var(--c-border-strong);
 
   --color-danger:     var(--c-bad);
   --color-success:    var(--c-ok);
   --color-warning:    var(--c-warn);
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Consolas", monospace;
+
+  --radius-xl:  0.875rem;   /* 14px — cards, modals                */
+  --radius-2xl: 1rem;       /* 16px — hero surfaces                 */
+
+  --ease-out-soft: cubic-bezier(.22,.61,.36,1);
 }
 
 /* ─── Runtime palette — LIGHT is the base ─────────────────────── */
 :root {
-  --c-ground:#F5F5FB; --c-surface:#FFFFFF; --c-elevated:#FFFFFF; --c-inset:#F1F1F8; --c-hover:#F4F3FC;
-  --c-border:#E7E7F1; --c-border-strong:#DADAE8;
-  --c-ink:#191922; --c-muted:#565669; --c-faint:#9494A6;
-  --c-brand:#7C6FE0; --c-brand-ink:#5A4CC4; --c-brand-weak:#EEECFC; --c-brand-2:#9E85FA;
-  --c-ok:#12A150; --c-warn:#B7791F; --c-bad:#DA3B3B;
+  --c-ground:#F6F6F9; --c-surface:#FFFFFF; --c-elevated:#FFFFFF; --c-inset:#F2F2F6; --c-hover:#F5F4FA;
+  --c-border:#E8E8EF; --c-border-strong:#D9D9E3;
+  --c-ink:#15151C; --c-muted:#5B5B6E; --c-faint:#8E8EA0;
+  --c-brand:#6D5DE7; --c-brand-ink:#5546CF; --c-brand-weak:#EFEDFD; --c-brand-2:#8F7BF7;
+  --c-ok:#15934B; --c-warn:#A66A12; --c-bad:#D63A3A;
+  --c-ok-weak:rgba(21,147,75,.10); --c-warn-weak:rgba(166,106,18,.11); --c-bad-weak:rgba(214,58,58,.10);
+  --c-shadow-sm: 0 1px 1px rgba(18,18,35,.04), 0 1px 3px rgba(18,18,35,.04);
+  --c-shadow:    0 1px 2px rgba(18,18,35,.04), 0 6px 20px -4px rgba(18,18,35,.08);
+  --c-shadow-lg: 0 2px 6px rgba(18,18,35,.06), 0 24px 48px -12px rgba(18,18,35,.18);
+  --c-ring: rgba(109,93,231,.28);
   color-scheme: light;
 }
 
-/* ─── Dark override (set explicitly via the header toggle) ─────── */
+/* ─── Dark override ────────────────────────────────────────────── */
 :root[data-theme="dark"] {
-  --c-ground:#090910; --c-surface:#12121B; --c-elevated:#1A1A27; --c-inset:#191925; --c-hover:#20202F;
-  --c-border:#262639; --c-border-strong:#33334B;
-  --c-ink:#EAEAF4; --c-muted:#A6A6BE; --c-faint:#6B6B83;
-  --c-brand:#8D7FEE; --c-brand-ink:#B3A2FB; --c-brand-weak:rgba(124,111,224,.16); --c-brand-2:#6D5FD6;
-  --c-ok:#3DDC87; --c-warn:#F5C15A; --c-bad:#F26D6C;
+  --c-ground:#0B0B11; --c-surface:#13131B; --c-elevated:#1A1A24; --c-inset:#1B1B26; --c-hover:#20202C;
+  --c-border:#23232F; --c-border-strong:#2F2F3E;
+  --c-ink:#ECECF4; --c-muted:#A3A3B8; --c-faint:#6E6E85;
+  --c-brand:#8B7CF2; --c-brand-ink:#B1A3FB; --c-brand-weak:rgba(139,124,242,.14); --c-brand-2:#6E5FDC;
+  --c-ok:#3FD98A; --c-warn:#F2BE57; --c-bad:#F27272;
+  --c-ok-weak:rgba(63,217,138,.12); --c-warn-weak:rgba(242,190,87,.12); --c-bad-weak:rgba(242,114,114,.12);
+  --c-shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+  --c-shadow:    0 1px 2px rgba(0,0,0,.35), 0 8px 24px -6px rgba(0,0,0,.45);
+  --c-shadow-lg: 0 2px 6px rgba(0,0,0,.4), 0 28px 56px -12px rgba(0,0,0,.6);
+  --c-ring: rgba(139,124,242,.35);
   color-scheme: dark;
 }
 
-html, body, #root { height: 100%; }
+/* ─── Base ─────────────────────────────────────────────────────── */
+@layer base {
+  html, body, #root { height: 100%; }
 
-body {
-  background-color: var(--c-ground);
-  color: var(--c-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color .2s ease, color .2s ease;
+  body {
+    background-color: var(--c-ground);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01";
+    transition: background-color .2s ease, color .2s ease;
+  }
+
+  ::selection { background: var(--c-brand-weak); color: var(--c-brand-ink); }
+
+  h1, h2, h3, h4 { letter-spacing: -0.015em; text-wrap: balance; }
+  h1 { font-size: 1.625rem; line-height: 1.2; font-weight: 700; }
+  h2 { font-size: 1.125rem; line-height: 1.3; font-weight: 700; }
+
+  /* Every control gets the same quiet focus ring. */
+  :where(button, [role="button"], a, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--c-ring);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+  :where(input, select, textarea):focus-visible { outline-offset: 0; }
+
+  /* Native date/number inputs pick up the theme. */
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+  :root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+  input[type="number"] { font-variant-numeric: tabular-nums; }
+  input::placeholder, textarea::placeholder { color: var(--c-faint); }
+
+  /* Tables — applied globally so every list screen gets the same rhythm.
+     Utilities on the elements still win (this lives in @layer base). */
+  main table { border-collapse: separate; border-spacing: 0; }
+  main thead th {
+    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--c-faint); background: color-mix(in srgb, var(--c-inset) 55%, transparent);
+    white-space: nowrap;
+  }
+  main tbody td { font-variant-numeric: tabular-nums; }
+  main tbody tr { transition: background-color .12s ease; }
+  main tfoot td { background: color-mix(in srgb, var(--c-inset) 45%, transparent); }
+
+  code, kbd { font-family: var(--font-mono); }
+  kbd {
+    font-size: 11px; line-height: 1; padding: 3px 6px; border-radius: 6px;
+    border: 1px solid var(--c-border-strong); background: var(--c-inset); color: var(--c-muted);
+    box-shadow: inset 0 -1px 0 var(--c-border-strong);
+  }
 }
-
-::selection { background: var(--c-brand-weak); color: var(--c-brand-ink); }
 
 /* ─── Scrollbar ───────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--c-brand); }
+::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 8px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-faint); background-clip: padding-box; border: 3px solid transparent; }
+* { scrollbar-width: thin; scrollbar-color: var(--c-border-strong) transparent; }
 
-/* ─── Soft elevation (theme-aware) ────────────────────────────── */
-:root {
-  --c-shadow-sm: 0 1px 2px rgba(22,22,45,.05);
-  --c-shadow:    0 1px 2px rgba(22,22,45,.04), 0 8px 24px rgba(22,22,45,.07);
-}
-:root[data-theme="dark"] {
-  --c-shadow-sm: 0 1px 2px rgba(0,0,0,.4);
-  --c-shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.4);
-}
-.shadow-soft    { box-shadow: var(--c-shadow); }
+/* ─── Elevation utilities ─────────────────────────────────────── */
 .shadow-soft-sm { box-shadow: var(--c-shadow-sm); }
+.shadow-soft    { box-shadow: var(--c-shadow); }
+.shadow-soft-lg { box-shadow: var(--c-shadow-lg); }
 
-/* ─── Landing-page motion ─────────────────────────────────────── */
-@media (prefers-reduced-motion: no-preference) {
-  html { scroll-behavior: smooth; }
+/* ─── Surfaces ────────────────────────────────────────────────── */
+/* Floating layers (dropdowns, popovers, toasts). */
+.popover {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--c-shadow-lg);
 }
-@keyframes xorva-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-26px); }
+/* Interactive card lift — restrained. */
+.lift { transition: transform .18s var(--ease-out-soft), box-shadow .18s var(--ease-out-soft), border-color .18s ease; }
+.lift:hover { transform: translateY(-1px); box-shadow: var(--c-shadow); border-color: var(--c-border-strong); }
+
+/* ─── Motion ──────────────────────────────────────────────────── */
+@keyframes xorva-fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes xorva-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xorva-pop     { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes xorva-menu    { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes xorva-toast-in { from { opacity: 0; transform: translateX(16px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes xorva-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+.animate-page   { animation: xorva-fade-up .28s var(--ease-out-soft) both; }
+.animate-fade   { animation: xorva-fade-in .18s ease-out both; }
+.animate-pop    { animation: xorva-pop .22s var(--ease-out-soft) both; }
+.animate-menu   { animation: xorva-menu .14s var(--ease-out-soft) both; transform-origin: top; }
+.skeleton {
+  background: linear-gradient(90deg, var(--c-inset) 25%, var(--c-hover) 50%, var(--c-inset) 75%);
+  background-size: 200% 100%; animation: xorva-shimmer 1.4s linear infinite; border-radius: .5rem;
 }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ─── Landing-page effects (unchanged API) ────────────────────── */
+@keyframes xorva-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-26px); } }
 .animate-float { animation: xorva-float 9s ease-in-out infinite; }
-@keyframes xorva-float-slow {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50%      { transform: translateY(22px) translateX(-14px); }
-}
+@keyframes xorva-float-slow { 0%, 100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(22px) translateX(-14px); } }
 .animate-float-slow { animation: xorva-float-slow 13s ease-in-out infinite; }
-
-/* Editorial display face (available if needed). */
 .font-display { font-family: "Instrument Serif", Georgia, "Times New Roman", serif; font-weight: 400; }
-
-/* ─── Landing: glass + gradient mesh (modern SaaS look) ───────── */
 .glass {
-  background: color-mix(in srgb, var(--c-surface) 62%, transparent);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid color-mix(in srgb, var(--c-border) 80%, transparent);
+  background: color-mix(in srgb, var(--c-surface) 66%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in srgb, var(--c-border) 85%, transparent);
 }
 .mesh {
   background:
-    radial-gradient(45% 45% at 18% 12%,  color-mix(in srgb, var(--c-brand)    38%, transparent), transparent 70%),
-    radial-gradient(42% 42% at 85% 18%,  color-mix(in srgb, var(--c-brand-ink) 34%, transparent), transparent 70%),
-    radial-gradient(55% 55% at 55% 105%, color-mix(in srgb, var(--c-brand-2)   26%, transparent), transparent 72%);
+    radial-gradient(45% 45% at 18% 12%,  color-mix(in srgb, var(--c-brand)    34%, transparent), transparent 70%),
+    radial-gradient(42% 42% at 85% 18%,  color-mix(in srgb, var(--c-brand-ink) 30%, transparent), transparent 70%),
+    radial-gradient(55% 55% at 55% 105%, color-mix(in srgb, var(--c-brand-2)   22%, transparent), transparent 72%);
 }
 .text-gradient {
   background: linear-gradient(100deg, var(--c-brand-2), var(--c-brand-ink));
@@ -127,10 +207,6 @@ body {
 .animate-spin-slow { animation: xorva-spin 20s linear infinite; }
 @keyframes xorva-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .animate-marquee { animation: xorva-marquee 28s linear infinite; }
-@keyframes xorva-toast-in { from { opacity: 0; transform: translateX(16px) scale(.98); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  .animate-spin-slow, .animate-marquee, .animate-float, .animate-float-slow { animation: none !important; }
-}
 .grid-bg {
   background-image:
     linear-gradient(var(--c-border) 1px, transparent 1px),
@@ -138,4 +214,11 @@ body {
   background-size: 46px 46px;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
           mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+}
+/* Auth screens: faint dot grid, fades toward the edges. */
+.dots-bg {
+  background-image: radial-gradient(var(--c-border-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 75%);
+          mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 75%);
 }

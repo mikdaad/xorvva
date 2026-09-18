@@ -44,7 +44,7 @@ export default function CompaniesPage() {
     <AppShell>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Companies</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Companies</h1>
           <p className="mt-1 text-sm text-frost-dim">
             Legal entities in your organization. Modules are activated per company.
           </p>
@@ -68,7 +68,7 @@ export default function CompaniesPage() {
             <Card key={company.id}>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-glow">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-weak text-glow">
                     <IconBuilding size={22} stroke={1.5} />
                   </div>
                   <div>
@@ -86,7 +86,7 @@ export default function CompaniesPage() {
                 {company.activeModules.map((m) => (
                   <span
                     key={m}
-                    className="rounded-md bg-primary/15 px-2 py-0.5 text-xs font-medium text-glow"
+                    className="rounded-md bg-brand-weak px-2 py-0.5 text-xs font-medium text-glow"
                   >
                     {m}
                   </span>

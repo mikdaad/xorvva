@@ -183,7 +183,7 @@ export default function DocumentInboxPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Document inbox</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Document inbox</h1>
           <p className="mt-1 text-sm text-frost-dim">Drop supplier invoices and receipts — Gemini extracts the fields, you review, and a voucher is one click away.</p>
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -199,7 +199,7 @@ export default function DocumentInboxPage() {
           <div className="mb-4 flex flex-wrap gap-2">
             {(['', 'Pending', 'Processing', 'Extracted', 'Accepted', 'Rejected', 'Failed'] as const).map((s) => (
               <button key={s || 'all'} type="button" onClick={() => setStatus(s)}
-                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm ${status === s ? 'bg-primary/15 text-frost' : 'text-frost-dim hover:bg-hover'}`}>
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm ${status === s ? 'bg-brand-weak text-frost' : 'text-frost-dim hover:bg-hover'}`}>
                 {s || 'All'}<span className="rounded-full bg-surface px-1.5 text-[11px] text-dim">{s ? counts[s] ?? 0 : Object.values(counts).reduce((a, b) => a + b, 0)}</span>
               </button>
             ))}
@@ -217,20 +217,20 @@ export default function DocumentInboxPage() {
                 <EmptyHint>Nothing here. Drag PDFs or photos onto this table, or use <strong>Upload</strong>.</EmptyHint>
               ) : (
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border text-xs uppercase text-dim">
-                    <tr><th className="px-4 py-2.5">Document</th><th className="px-4 py-2.5">Kind</th><th className="px-4 py-2.5">Supplier / invoice</th><th className="px-4 py-2.5 text-right">Total</th><th className="px-4 py-2.5">Confidence</th><th className="px-4 py-2.5">Status</th><th className="px-4 py-2.5">Voucher</th><th className="px-4 py-2.5">Uploaded</th></tr>
+                  <thead className="border-b border-border">
+                    <tr><th className="px-4 py-3">Document</th><th className="px-4 py-3">Kind</th><th className="px-4 py-3">Supplier / invoice</th><th className="px-4 py-3 text-right">Total</th><th className="px-4 py-3">Confidence</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Voucher</th><th className="px-4 py-3">Uploaded</th></tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {list.rows.map((d: InboxDocument) => (
                       <tr key={d.id} className="cursor-pointer hover:bg-hover" onClick={() => setParams({ doc: d.id })}>
-                        <td className="max-w-[260px] px-4 py-2.5"><div className="flex items-center gap-2 text-frost"><IconFileInvoice size={16} className="shrink-0 text-dim" /><span className="truncate" title={d.fileName}>{d.fileName}</span></div><div className="text-[11px] text-dim">{d.mimeType}{d.pageCount ? ` · ${d.pageCount}p` : ''}{d.fileSize ? ` · ${(d.fileSize / 1024).toFixed(0)} KB` : ''}</div></td>
-                        <td className="px-4 py-2.5 text-frost-dim">{KIND_LABEL[d.documentKind]}</td>
-                        <td className="px-4 py-2.5 text-frost">{d.supplierName ?? <span className="text-dim">—</span>}{d.invoiceNumber && <div className="font-mono text-xs text-dim">{d.invoiceNumber}</div>}</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost">{d.grandTotal != null ? fmtMoney(d.grandTotal) : ''}</td>
-                        <td className="px-4 py-2.5">{d.confidenceScore != null && <Pill tone={confTone(d.confidenceScore)}>{Math.round(d.confidenceScore * 100)}%</Pill>}</td>
-                        <td className="px-4 py-2.5"><Pill tone={STATUS_TONE[d.status]}>{d.status}</Pill></td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-frost-dim">{d.createdVoucherNumber ?? ''}</td>
-                        <td className="whitespace-nowrap px-4 py-2.5 text-xs text-dim">{fmtDate(d.uploadedAt)}</td>
+                        <td className="max-w-[260px] px-4 py-3"><div className="flex items-center gap-2 text-frost"><IconFileInvoice size={16} className="shrink-0 text-dim" /><span className="truncate" title={d.fileName}>{d.fileName}</span></div><div className="text-[11px] text-dim">{d.mimeType}{d.pageCount ? ` · ${d.pageCount}p` : ''}{d.fileSize ? ` · ${(d.fileSize / 1024).toFixed(0)} KB` : ''}</div></td>
+                        <td className="px-4 py-3 text-frost-dim">{KIND_LABEL[d.documentKind]}</td>
+                        <td className="px-4 py-3 text-frost">{d.supplierName ?? <span className="text-dim">—</span>}{d.invoiceNumber && <div className="font-mono text-xs text-dim">{d.invoiceNumber}</div>}</td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-frost">{d.grandTotal != null ? fmtMoney(d.grandTotal) : ''}</td>
+                        <td className="px-4 py-3">{d.confidenceScore != null && <Pill tone={confTone(d.confidenceScore)}>{Math.round(d.confidenceScore * 100)}%</Pill>}</td>
+                        <td className="px-4 py-3"><Pill tone={STATUS_TONE[d.status]}>{d.status}</Pill></td>
+                        <td className="px-4 py-3 font-mono text-xs text-frost-dim">{d.createdVoucherNumber ?? ''}</td>
+                        <td className="whitespace-nowrap px-4 py-3 text-xs text-dim">{fmtDate(d.uploadedAt)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -243,7 +243,7 @@ export default function DocumentInboxPage() {
         <div className="grid gap-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
           {/* Preview */}
           <Card className="overflow-hidden p-0">
-            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <div className="min-w-0"><p className="truncate text-sm font-semibold text-frost" title={detail.document.fileName}>{detail.document.fileName}</p><p className="text-[11px] text-dim">{KIND_LABEL[detail.document.documentKind]} · uploaded {fmtDate(detail.document.uploadedAt)}</p></div>
               {fileUrl && <a href={fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline"><IconExternalLink size={14} /> Open</a>}
             </div>
@@ -307,7 +307,7 @@ export default function DocumentInboxPage() {
                   <p className="border-b border-border px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-dim">Line items ({data.line_items?.length ?? 0})</p>
                   {(data.line_items ?? []).length === 0 ? <EmptyHint>No line items detected.</EmptyHint> : (
                     <table className="w-full text-left text-sm">
-                      <thead className="border-b border-border text-xs uppercase text-dim"><tr><th className="px-4 py-2">Description</th><th className="px-4 py-2 text-right">Qty</th><th className="px-4 py-2 text-right">Rate</th><th className="px-4 py-2 text-right">VAT %</th><th className="px-4 py-2 text-right">Amount</th><th className="px-4 py-2">Match</th></tr></thead>
+                      <thead className="border-b border-border"><tr><th className="px-4 py-2">Description</th><th className="px-4 py-2 text-right">Qty</th><th className="px-4 py-2 text-right">Rate</th><th className="px-4 py-2 text-right">VAT %</th><th className="px-4 py-2 text-right">Amount</th><th className="px-4 py-2">Match</th></tr></thead>
                       <tbody className="divide-y divide-border">
                         {(data.line_items ?? []).map((li, i) => (
                           <tr key={i} className="hover:bg-hover">

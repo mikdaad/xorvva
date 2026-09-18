@@ -48,7 +48,7 @@ export default function ProfitAndLossPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Profit &amp; Loss</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Profit &amp; Loss</h1>
           <p className="mt-1 text-sm text-frost-dim">Revenue minus expenses over a period.</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">

@@ -185,7 +185,7 @@ export default function BankImportPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Bank statements</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Bank statements</h1>
           <p className="mt-1 text-sm text-frost-dim">Import CSV statements from UAE banks, auto-suggest matches against the ledger and reconcile line by line.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -208,19 +208,19 @@ export default function BankImportPage() {
               <EmptyHint>No statements imported yet. Click <strong>Import CSV</strong> to get started.</EmptyHint>
             ) : (
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase text-dim">
-                  <tr><th className="px-4 py-2.5">Bank account</th><th className="px-4 py-2.5">Period</th><th className="px-4 py-2.5">Source</th><th className="px-4 py-2.5 text-right">Lines</th><th className="px-4 py-2.5 text-right">Debits</th><th className="px-4 py-2.5 text-right">Credits</th><th className="px-4 py-2.5">Reconciliation</th><th className="px-4 py-2.5">Status</th></tr>
+                <thead className="border-b border-border">
+                  <tr><th className="px-4 py-3">Bank account</th><th className="px-4 py-3">Period</th><th className="px-4 py-3">Source</th><th className="px-4 py-3 text-right">Lines</th><th className="px-4 py-3 text-right">Debits</th><th className="px-4 py-3 text-right">Credits</th><th className="px-4 py-3">Reconciliation</th><th className="px-4 py-3">Status</th></tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {statements.map((s) => (
                     <tr key={s.id} className="cursor-pointer hover:bg-hover" onClick={() => void openStatement(s.id)}>
-                      <td className="px-4 py-2.5 text-frost"><IconBuildingBank size={14} className="mr-1.5 inline text-dim" />{s.bankAccountName ?? '—'}</td>
-                      <td className="whitespace-nowrap px-4 py-2.5 text-frost-dim">{fmtDate(s.periodFrom)} → {fmtDate(s.periodTo)}</td>
-                      <td className="px-4 py-2.5 text-xs text-dim">{s.sourceFormat ?? ''} <span className="text-frost-dim">{s.sourceFile}</span></td>
-                      <td className="px-4 py-2.5 text-right text-frost-dim">{s.lineCount}</td>
-                      <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(s.totalDebits)}</td>
-                      <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(s.totalCredits)}</td>
-                      <td className="px-4 py-2.5">
+                      <td className="px-4 py-3 text-frost"><IconBuildingBank size={14} className="mr-1.5 inline text-dim" />{s.bankAccountName ?? '—'}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-frost-dim">{fmtDate(s.periodFrom)} → {fmtDate(s.periodTo)}</td>
+                      <td className="px-4 py-3 text-xs text-dim">{s.sourceFormat ?? ''} <span className="text-frost-dim">{s.sourceFile}</span></td>
+                      <td className="px-4 py-3 text-right text-frost-dim">{s.lineCount}</td>
+                      <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(s.totalDebits)}</td>
+                      <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{fmtMoney(s.totalCredits)}</td>
+                      <td className="px-4 py-3">
                         <div className="flex h-2 w-40 overflow-hidden rounded-full bg-surface" title={`${s.matchedCount} matched · ${s.suggestedCount} suggested · ${s.unmatchedCount} unmatched · ${s.ignoredCount} ignored`}>
                           {[['bg-success', s.matchedCount], ['bg-primary', s.suggestedCount], ['bg-warning', s.unmatchedCount], ['bg-dim', s.ignoredCount]].map(([cls, n], i) => (
                             <span key={i} className={cls as string} style={{ width: `${s.lineCount ? (Number(n) / s.lineCount) * 100 : 0}%` }} />
@@ -228,7 +228,7 @@ export default function BankImportPage() {
                         </div>
                         <span className="text-[11px] text-dim">{s.matchedCount}/{s.lineCount} matched</span>
                       </td>
-                      <td className="px-4 py-2.5"><Pill tone={IMPORT_TONE[s.importStatus] ?? 'neutral'}>{s.importStatus}</Pill></td>
+                      <td className="px-4 py-3"><Pill tone={IMPORT_TONE[s.importStatus] ?? 'neutral'}>{s.importStatus}</Pill></td>
                     </tr>
                   ))}
                 </tbody>
@@ -279,7 +279,7 @@ export default function BankImportPage() {
                 {preview.errors.length > 0 && <div className="p-4"><Alert kind="error">{preview.errors.slice(0, 5).join(' · ')}</Alert></div>}
                 <div className="max-h-[520px] overflow-auto">
                   <table className="w-full text-left text-sm">
-                    <thead className="sticky top-0 border-b border-border bg-abyss text-xs uppercase text-dim">
+                    <thead className="sticky top-0 z-[1] border-b border-border bg-abyss">
                       <tr><th className="px-4 py-2">Date</th><th className="px-4 py-2">Description</th><th className="px-4 py-2">Ref</th><th className="px-4 py-2 text-right">Debit</th><th className="px-4 py-2 text-right">Credit</th><th className="px-4 py-2 text-right">Balance</th></tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -317,7 +317,7 @@ export default function BankImportPage() {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               {(['', 'Unmatched', 'Suggested', 'Matched', 'Ignored'] as const).map((s) => (
                 <button key={s || 'all'} type="button" onClick={() => { setLineFilter(s); void openStatement(detail.statement.id, s); }}
-                  className={`rounded-lg px-3 py-1.5 text-sm ${lineFilter === s ? 'bg-primary/15 text-frost' : 'text-frost-dim hover:bg-hover'}`}>{s || 'All lines'}</button>
+                  className={`rounded-lg px-3 py-1.5 text-sm ${lineFilter === s ? 'bg-brand-weak text-frost' : 'text-frost-dim hover:bg-hover'}`}>{s || 'All lines'}</button>
               ))}
               <span className="flex-1" />
               <Button variant="secondary" loading={suggesting} onClick={() => void suggest()}><IconSparkles size={16} stroke={1.6} /> Auto-suggest matches</Button>
@@ -326,29 +326,29 @@ export default function BankImportPage() {
               {detail.lines.length === 0 ? <EmptyHint>No lines in this view.</EmptyHint> : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
-                    <thead className="border-b border-border text-xs uppercase text-dim">
-                      <tr><th className="px-4 py-2.5">#</th><th className="px-4 py-2.5">Date</th><th className="px-4 py-2.5">Description</th><th className="px-4 py-2.5 text-right">Debit</th><th className="px-4 py-2.5 text-right">Credit</th><th className="px-4 py-2.5">Match</th><th className="px-4 py-2.5">Status</th><th className="px-4 py-2.5" /></tr>
+                    <thead className="border-b border-border">
+                      <tr><th className="px-4 py-3">#</th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Description</th><th className="px-4 py-3 text-right">Debit</th><th className="px-4 py-3 text-right">Credit</th><th className="px-4 py-3">Match</th><th className="px-4 py-3">Status</th><th className="px-4 py-3" /></tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                       {detail.lines.map((l) => (
                         <tr key={l.id} className="hover:bg-hover">
-                          <td className="px-4 py-2.5 text-xs text-dim">{l.lineNumber}</td>
-                          <td className="whitespace-nowrap px-4 py-2.5 text-frost-dim">{fmtDate(l.lineDate)}</td>
-                          <td className="max-w-[360px] px-4 py-2.5">
+                          <td className="px-4 py-3 text-xs text-dim">{l.lineNumber}</td>
+                          <td className="whitespace-nowrap px-4 py-3 text-frost-dim">{fmtDate(l.lineDate)}</td>
+                          <td className="max-w-[360px] px-4 py-3">
                             <div className="truncate text-frost" title={l.description}>{l.description}</div>
                             {(l.reference || l.chequeNumber) && <div className="font-mono text-[11px] text-dim">{l.reference}{l.chequeNumber ? ` · chq ${l.chequeNumber}` : ''}</div>}
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.debit ? fmtMoney(l.debit) : ''}</td>
-                          <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{l.credit ? fmtMoney(l.credit) : ''}</td>
-                          <td className="max-w-[260px] px-4 py-2.5 text-xs">
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.debit ? fmtMoney(l.debit) : ''}</td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{l.credit ? fmtMoney(l.credit) : ''}</td>
+                          <td className="max-w-[260px] px-4 py-3 text-xs">
                             {l.matchedEntryNumber ? (
                               <><span className="font-mono text-frost">{l.matchedEntryNumber}</span><div className="truncate text-dim">{l.matchedDescription}</div></>
                             ) : l.suggestedAccountName ? (
                               <><span className="text-frost-dim">→ {l.suggestedAccountName}</span>{l.matchRuleName && <div className="text-dim">rule: {l.matchRuleName}</div>}</>
                             ) : <span className="text-dim">—</span>}
                           </td>
-                          <td className="px-4 py-2.5"><Pill tone={MATCH_TONE[l.matchStatus]}>{l.matchStatus}</Pill></td>
-                          <td className="whitespace-nowrap px-4 py-2.5 text-right">
+                          <td className="px-4 py-3"><Pill tone={MATCH_TONE[l.matchStatus]}>{l.matchStatus}</Pill></td>
+                          <td className="whitespace-nowrap px-4 py-3 text-right">
                             {l.matchStatus === 'Matched' ? (
                               <IconBtn title="Unmatch" onClick={() => void lineAction(l, 'unmatch')}><IconLinkOff size={16} stroke={1.6} /></IconBtn>
                             ) : (
@@ -381,19 +381,19 @@ export default function BankImportPage() {
               <EmptyHint>No rules. Rules run after exact-amount matching and suggest a ledger for recurring descriptions (e.g. <code>DEWA|ETISALAT</code> → Utilities).</EmptyHint>
             ) : (
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase text-dim">
-                  <tr><th className="px-4 py-2.5">Priority</th><th className="px-4 py-2.5">Rule</th><th className="px-4 py-2.5">Pattern</th><th className="px-4 py-2.5">Suggests</th><th className="px-4 py-2.5 text-right">Used</th><th className="px-4 py-2.5">Status</th><th className="px-4 py-2.5" /></tr>
+                <thead className="border-b border-border">
+                  <tr><th className="px-4 py-3">Priority</th><th className="px-4 py-3">Rule</th><th className="px-4 py-3">Pattern</th><th className="px-4 py-3">Suggests</th><th className="px-4 py-3 text-right">Used</th><th className="px-4 py-3">Status</th><th className="px-4 py-3" /></tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {rules.map((r) => (
                     <tr key={r.id} className="hover:bg-hover">
-                      <td className="px-4 py-2.5 text-frost-dim">{r.priority}</td>
-                      <td className="px-4 py-2.5 text-frost">{r.ruleName}{r.description && <div className="text-xs text-dim">{r.description}</div>}</td>
-                      <td className="px-4 py-2.5"><code className="rounded bg-surface px-1.5 py-0.5 font-mono text-xs text-frost">{r.pattern}</code> <span className="text-xs text-dim">on {r.patternField}</span></td>
-                      <td className="px-4 py-2.5 text-frost-dim">{r.targetAccountId ? accountName[r.targetAccountId] ?? '…' : '—'}{r.targetVoucherType && <span className="ml-1 text-xs text-dim">({r.targetVoucherType})</span>}</td>
-                      <td className="px-4 py-2.5 text-right text-frost-dim">{r.timesUsed}</td>
-                      <td className="px-4 py-2.5">{r.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="neutral">Off</Pill>}</td>
-                      <td className="px-4 py-2.5 text-right">
+                      <td className="px-4 py-3 text-frost-dim">{r.priority}</td>
+                      <td className="px-4 py-3 text-frost">{r.ruleName}{r.description && <div className="text-xs text-dim">{r.description}</div>}</td>
+                      <td className="px-4 py-3"><code className="rounded bg-surface px-1.5 py-0.5 font-mono text-xs text-frost">{r.pattern}</code> <span className="text-xs text-dim">on {r.patternField}</span></td>
+                      <td className="px-4 py-3 text-frost-dim">{r.targetAccountId ? accountName[r.targetAccountId] ?? '…' : '—'}{r.targetVoucherType && <span className="ml-1 text-xs text-dim">({r.targetVoucherType})</span>}</td>
+                      <td className="px-4 py-3 text-right text-frost-dim">{r.timesUsed}</td>
+                      <td className="px-4 py-3">{r.isActive ? <Pill tone="ok">Active</Pill> : <Pill tone="neutral">Off</Pill>}</td>
+                      <td className="px-4 py-3 text-right">
                         <IconBtn title="Edit" onClick={() => setRuleModal({ id: r.id, ruleName: r.ruleName, description: r.description, pattern: r.pattern, patternField: r.patternField, targetAccountId: r.targetAccountId, targetContactId: r.targetContactId, targetVoucherType: r.targetVoucherType, priority: r.priority, isActive: r.isActive })}><IconPencil size={16} stroke={1.6} /></IconBtn>
                         <IconBtn title="Delete" danger onClick={() => void deleteRule(r)}><IconTrash size={16} stroke={1.6} /></IconBtn>
                       </td>
@@ -426,7 +426,7 @@ export default function BankImportPage() {
             ) : (
               <div className="max-h-80 overflow-auto rounded-lg border border-border">
                 <table className="w-full text-left text-sm">
-                  <thead className="sticky top-0 border-b border-border bg-abyss text-xs uppercase text-dim"><tr><th className="px-3 py-2">Entry</th><th className="px-3 py-2">Date</th><th className="px-3 py-2">Description</th><th className="px-3 py-2 text-right">Amount</th><th className="px-3 py-2" /></tr></thead>
+                  <thead className="sticky top-0 z-[1] border-b border-border bg-abyss"><tr><th className="px-3 py-2">Entry</th><th className="px-3 py-2">Date</th><th className="px-3 py-2">Description</th><th className="px-3 py-2 text-right">Amount</th><th className="px-3 py-2" /></tr></thead>
                   <tbody className="divide-y divide-border">
                     {candidates.map((c) => (
                       <tr key={c.journalLineId} className="hover:bg-hover">

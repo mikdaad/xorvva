@@ -66,7 +66,7 @@ export default function BillsPage() {
     <AppShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-frost">Bills</h1>
+          <h1 className="text-[26px] font-bold tracking-tight text-frost">Bills</h1>
           <p className="mt-1 text-sm text-frost-dim">Supplier bills. Posting a bill books the expense and VAT automatically.</p>
         </div>
         <Button disabled={suppliers.length === 0} onClick={() => setCreateOpen(true)}><IconPlus size={18} stroke={1.6} /> New bill</Button>
@@ -83,7 +83,7 @@ export default function BillsPage() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border text-xs uppercase text-dim">
+              <thead className="border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Number</th><th className="px-4 py-3">Supplier</th><th className="px-4 py-3">Ref</th>
                   <th className="px-4 py-3">Date</th><th className="px-4 py-3">Due</th>
@@ -94,15 +94,15 @@ export default function BillsPage() {
               <tbody className="divide-y divide-border">
                 {rows.map((b) => (
                   <tr key={b.id} className="hover:bg-hover">
-                    <td className="px-4 py-2.5 font-mono text-xs text-frost">{b.number}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{b.contactName}</td>
-                    <td className="px-4 py-2.5 text-dim">{b.supplierReference ?? '—'}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(b.date).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-frost-dim">{new Date(b.dueDate).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{b.currency !== 'AED' ? `${b.currency} ` : ''}{money(b.total)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono tabular-nums text-frost-dim">{b.currency !== 'AED' ? `${b.currency} ` : ''}{money(b.balanceDue)}</td>
-                    <td className="px-4 py-2.5"><Pill tone={STATUS_TONE[b.status] ?? 'neutral'}>{b.status}</Pill></td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td className="px-4 py-3 font-mono text-xs text-frost">{b.number}</td>
+                    <td className="px-4 py-3 text-frost-dim">{b.contactName}</td>
+                    <td className="px-4 py-3 text-dim">{b.supplierReference ?? '—'}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(b.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-frost-dim">{new Date(b.dueDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{b.currency !== 'AED' ? `${b.currency} ` : ''}{money(b.total)}</td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums text-frost-dim">{b.currency !== 'AED' ? `${b.currency} ` : ''}{money(b.balanceDue)}</td>
+                    <td className="px-4 py-3"><Pill tone={STATUS_TONE[b.status] ?? 'neutral'}>{b.status}</Pill></td>
+                    <td className="px-4 py-3 text-right">
                       {b.status === 'Draft' && <Button className="px-3 py-1.5 text-xs" loading={busyId === b.id} onClick={() => void post(b.id)}>Post</Button>}
                       {b.status === 'Posted' && <Button variant="ghost" className="px-3 py-1.5 text-xs" loading={busyId === b.id} onClick={() => void voidBill(b.id)}>Void</Button>}
                     </td>

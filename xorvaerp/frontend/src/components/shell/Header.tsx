@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { IconBell, IconCheck, IconChevronDown, IconLogout, IconMenu2, IconMoon, IconSun } from '@tabler/icons-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { IconBell, IconCheck, IconChevronDown, IconLogout, IconMenu2, IconMoon, IconSun, IconSearch, IconSelector } from '@tabler/icons-react';
 import { useAuth } from '../../stores/AuthContext';
 import { useCompany } from '../../stores/CompanyContext';
 import { useTheme } from '../../stores/ThemeContext';
 import { approvalsApi } from '../../api/approvals.api';
 import { ROLE_LABELS } from '../../utils/roles';
+import { DASHBOARD, NAV_GROUPS } from './navConfig';
 
 function useClickOutside<T extends HTMLElement>(onOut: () => void) {
   const ref = useRef<T>(null);
@@ -19,11 +20,28 @@ function useClickOutside<T extends HTMLElement>(onOut: () => void) {
   return ref;
 }
 
-export function Header({ onMenu }: { onMenu: () => void }) {
+/** Breadcrumb derived from navConfig: "Accounting / Voucher Register". */
+function useCrumbs(pathname: string) {
+  if (pathname === DASHBOARD.to) return [{ label: DASHBOARD.label, to: DASHBOARD.to }];
+  for (const g of NAV_GROUPS) {
+    const item = [...g.items].sort((a, b) => b.to.length - a.to.length)
+      .find((i) => pathname === i.to || pathname.startsWith(i.to + '/'));
+    if (item) {
+      const crumbs = [{ label: g.heading, to: g.items[0]?.to ?? item.to }];
+      if (item.to !== g.items[0]?.to) crumbs.push({ label: item.label, to: item.to });
+      return crumbs;
+    }
+  }
+  return [];
+}
+
+export function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void }) {
   const { user, logout } = useAuth();
   const { companies, activeCompany, setActiveCompanyId, canSwitch } = useCompany();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const crumbs = useCrumbs(pathname);
 
   const [companyOpen, setCompanyOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -32,81 +50,91 @@ export function Header({ onMenu }: { onMenu: () => void }) {
   const companyRef = useClickOutside<HTMLDivElement>(() => setCompanyOpen(false));
   const userRef = useClickOutside<HTMLDivElement>(() => setUserOpen(false));
 
-  // Role-appropriate chrome: only approvers have an inbox; only self-service roles take leave.
   const isApprover = ['SuperAdmin', 'CompanyAdmin', 'Manager'].includes(user?.role ?? '');
   const isSelfService = ['Manager', 'Employee'].includes(user?.role ?? '');
 
   useEffect(() => {
     if (!isApprover) return;
     approvalsApi.pending().then((r) => setPending(r.data.data?.length ?? 0)).catch(() => {});
-  }, [isApprover]);
+  }, [isApprover, pathname]);
 
   if (!user) return null;
   const initials = `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase();
 
+  const iconBtn = 'flex h-9 w-9 items-center justify-center rounded-lg text-frost-dim transition-colors hover:bg-hover hover:text-frost';
+
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-primary/15 bg-abyss/80 px-4 backdrop-blur md:px-6">
-      <div className="flex items-center gap-3">
-        <button className="text-frost-dim md:hidden" onClick={onMenu} aria-label="Open menu">
-          <IconMenu2 size={22} />
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-border bg-void/80 px-4 backdrop-blur-md md:px-8">
+      <div className="flex min-w-0 items-center gap-2">
+        <button className={`${iconBtn} -ml-2 md:hidden`} onClick={onMenu} aria-label="Open menu">
+          <IconMenu2 size={20} />
         </button>
 
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-[13px] sm:flex">
+          {crumbs.map((c, i) => (
+            <span key={c.to} className="flex min-w-0 items-center gap-1.5">
+              {i > 0 && <span className="text-border-strong">/</span>}
+              {i === crumbs.length - 1
+                ? <span className="truncate font-semibold text-frost">{c.label}</span>
+                : <Link to={c.to} className="truncate text-frost-dim hover:text-frost">{c.label}</Link>}
+            </span>
+          ))}
+        </nav>
+      </div>
+
+      <div className="flex items-center gap-1">
         {/* Company switcher */}
         {canSwitch ? (
-          <div className="relative" ref={companyRef}>
+          <div className="relative mr-1" ref={companyRef}>
             <button
               onClick={() => setCompanyOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-lg border border-primary/20 bg-surface px-3 py-1.5 text-sm text-frost hover:border-primary/50"
+              aria-haspopup="listbox"
+              aria-expanded={companyOpen}
+              className="flex h-9 items-center gap-2 rounded-lg border border-border bg-abyss px-2.5 text-[13px] font-medium text-frost shadow-soft-sm transition-colors hover:border-border-strong"
             >
-              <span className="max-w-[10rem] truncate font-medium">{activeCompany?.name ?? 'Select company'}</span>
-              <IconChevronDown size={16} className="text-dim" />
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-brand-weak text-[10px] font-bold text-glow">
+                {(activeCompany?.name ?? '?').slice(0, 1).toUpperCase()}
+              </span>
+              <span className="hidden max-w-[11rem] truncate sm:block">{activeCompany?.name ?? 'Select company'}</span>
+              <IconSelector size={14} className="text-dim" />
             </button>
             {companyOpen && (
-              <div className="absolute left-0 mt-2 w-60 rounded-xl border border-primary/20 bg-abyss p-1.5 shadow-2xl">
-                <div className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-dim">Switch company</div>
+              <div className="popover animate-menu absolute right-0 mt-1.5 w-64 p-1.5">
+                <div className="px-2.5 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-dim">Switch company</div>
                 {companies.map((c) => (
                   <button
                     key={c.id}
+                    role="option"
+                    aria-selected={c.id === activeCompany?.id}
                     onClick={() => { setActiveCompanyId(c.id); setCompanyOpen(false); }}
-                    className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm text-frost-dim hover:bg-surface hover:text-frost"
+                    className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-[13px] text-frost-dim transition-colors hover:bg-hover hover:text-frost"
                   >
                     <span className="truncate">{c.name}</span>
-                    {c.id === activeCompany?.id && <IconCheck size={16} className="text-glow" />}
+                    {c.id === activeCompany?.id && <IconCheck size={15} stroke={2.2} className="text-glow" />}
                   </button>
                 ))}
               </div>
             )}
           </div>
-        ) : (
-          activeCompany && (
-            <span className="hidden rounded-lg border border-primary/15 bg-surface px-3 py-1.5 text-sm font-medium text-frost-dim sm:block">
-              {activeCompany.name}
-            </span>
-          )
-        )}
-      </div>
+        ) : null}
 
-      <div className="flex items-center gap-2">
-        {/* Theme toggle */}
+        <button onClick={onSearch} className={`${iconBtn} md:hidden`} aria-label="Search"><IconSearch size={19} stroke={1.75} /></button>
+
         <button
           onClick={toggleTheme}
-          className="rounded-lg p-2 text-frost-dim transition-colors hover:bg-surface hover:text-frost"
+          className={iconBtn}
           aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
           title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
         >
-          {theme === 'dark' ? <IconSun size={20} stroke={1.6} /> : <IconMoon size={20} stroke={1.6} />}
+          {theme === 'dark' ? <IconSun size={19} stroke={1.75} /> : <IconMoon size={19} stroke={1.75} />}
         </button>
 
-        {/* Notifications — approvers only */}
         {isApprover && (
-          <Link
-            to="/approvals/pending"
-            className="relative rounded-lg p-2 text-frost-dim transition-colors hover:bg-surface hover:text-frost"
-            aria-label="Pending approvals"
-          >
-            <IconBell size={20} stroke={1.6} />
+          <Link to="/approvals/pending" className={`${iconBtn} relative`} aria-label="Pending approvals">
+            <IconBell size={19} stroke={1.75} />
             {pending > 0 && (
-              <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-white ring-2 ring-void">
                 {pending > 9 ? '9+' : pending}
               </span>
             )}
@@ -114,39 +142,41 @@ export function Header({ onMenu }: { onMenu: () => void }) {
         )}
 
         {/* User menu */}
-        <div className="relative" ref={userRef}>
+        <div className="relative ml-1" ref={userRef}>
           <button
             onClick={() => setUserOpen((o) => !o)}
-            className="flex items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 hover:bg-surface"
+            aria-haspopup="menu"
+            aria-expanded={userOpen}
+            className="flex h-9 items-center gap-2 rounded-lg pl-1 pr-1.5 transition-colors hover:bg-hover"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-white">
               {initials || 'U'}
             </span>
-            <span className="hidden text-left sm:block">
-              <span className="block text-sm font-medium leading-tight text-frost">{user.fullName}</span>
-              <span className="block text-xs leading-tight text-dim">{ROLE_LABELS[user.role] ?? user.role}</span>
-            </span>
-            <IconChevronDown size={16} className="hidden text-dim sm:block" />
+            <IconChevronDown size={14} className="hidden text-dim sm:block" />
           </button>
           {userOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-xl border border-primary/20 bg-abyss p-1.5 shadow-2xl">
-              <div className="border-b border-primary/10 px-3 py-2">
-                <div className="text-sm font-medium text-frost">{user.fullName}</div>
+            <div className="popover animate-menu absolute right-0 mt-1.5 w-60 p-1.5" role="menu">
+              <div className="px-2.5 py-2">
+                <div className="truncate text-[13px] font-semibold text-frost">{user.fullName}</div>
                 <div className="truncate text-xs text-dim">{user.email}</div>
+                <span className="mt-1.5 inline-block rounded-md bg-surface px-1.5 py-0.5 text-[10.5px] font-semibold text-frost-dim">{ROLE_LABELS[user.role] ?? user.role}</span>
               </div>
+              <div className="my-1 border-t border-border" />
               {isSelfService && (
                 <button
+                  role="menuitem"
                   onClick={() => { setUserOpen(false); navigate('/hr/leave'); }}
-                  className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-frost-dim hover:bg-surface hover:text-frost"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] text-frost-dim transition-colors hover:bg-hover hover:text-frost"
                 >
                   My Leave
                 </button>
               )}
               <button
+                role="menuitem"
                 onClick={logout}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-danger hover:bg-danger/10"
+                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] text-danger transition-colors hover:bg-[var(--c-bad-weak)]"
               >
-                <IconLogout size={16} /> Sign out
+                <IconLogout size={15} /> Sign out
               </button>
             </div>
           )}

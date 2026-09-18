@@ -68,7 +68,7 @@ export default function EInvoicingSettingsPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-frost">E-Invoicing</h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-frost">E-Invoicing</h1>
         <p className="mt-1 text-sm text-frost-dim">
           Your tax identity is stamped on every generated e-invoice (UBL 2.1 · PINT AE). Complete it before filing.
         </p>

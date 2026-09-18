@@ -105,7 +105,7 @@ export default function SubModulePage() {
         <>
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-frost">{def.pluralLabel}</h1>
+              <h1 className="text-[26px] font-bold tracking-tight text-frost">{def.pluralLabel}</h1>
               {def.description && <p className="mt-1 text-sm text-frost-dim">{def.description}</p>}
             </div>
             <Button onClick={() => setCreating(true)}><IconPlus size={18} stroke={1.5} /> Add {def.label}</Button>
@@ -126,7 +126,7 @@ export default function SubModulePage() {
                       No records yet. Click “Add {def.label}”.
                     </td></tr>
                   ) : records.map((rec) => (
-                    <tr key={rec.id} className="border-b border-border/60 last:border-0 hover:bg-hover/40">
+                    <tr key={rec.id} className="border-b border-border/60 last:border-0 hover:bg-hover/60">
                       {def.fields.map((f) => (
                         <td key={f.key} className="px-4 py-3 text-frost-dim">{renderCell(f, rec.data[f.key])}</td>
                       ))}
